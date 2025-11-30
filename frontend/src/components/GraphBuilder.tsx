@@ -110,7 +110,8 @@ const GraphBuilder = () => {
   const onNodesChange = useCallback(
     (changes: NodeChange[]) => {
       changes.forEach((change) => {
-        if (change.type === 'position' && 'position' in change && change.position) {
+        if (change.type === 'position' && 'position' in change && change.position && !change.dragging) {
+          // Only update position when drag ends, not during dragging
           moveNode(change.id, change.position);
         } else if (change.type === 'select' && 'selected' in change && change.selected) {
           selectNode(change.id);
@@ -262,7 +263,7 @@ const GraphBuilder = () => {
   };
 
   return (
-    <div style={{ height: '100vh', width: '100vw' }}>
+    <div className="h-full w-full pb-20 lg:pb-0">
       <ReactFlow
         nodes={nodes}
         edges={edges}
@@ -275,13 +276,28 @@ const GraphBuilder = () => {
         onEdgeContextMenu={onEdgeContextMenu}
         isValidConnection={isValidConnection}
         style={{ background: 'transparent' }}
+        fitView
+        attributionPosition="bottom-left"
+        className="touch-pan-x touch-pinch-zoom"
+        panOnDrag={[1, 2]} // Allow panning with mouse and touch
+        selectionOnDrag={false} // Prevent selection on drag for better touch experience
+        nodesDraggable={true}
+        nodesConnectable={true}
+        elementsSelectable={true}
+        minZoom={0.1}
+        maxZoom={2}
       >
         <Background gap={20} />
-        <Controls showZoom={true} showFitView={true} showInteractive={true} />
+        <Controls
+          showZoom={true}
+          showFitView={true}
+          showInteractive={true}
+          className="!bottom-24 lg:!bottom-4 !left-4"
+        />
 
-        {/* Custom Tidy Up Button */}
+        {/* Custom Tidy Up Button - Hidden on mobile, shown on larger screens */}
         {nodes.length > 0 && (
-          <div className="absolute top-4 right-4 z-10">
+          <div className="absolute top-4 right-4 z-10 hidden md:block">
             <button
               onClick={tidyUpNodes}
               className="flex items-center gap-2 px-3 py-2 bg-background border border-border rounded-md shadow-sm hover:bg-accent transition-colors"
@@ -292,6 +308,21 @@ const GraphBuilder = () => {
             </button>
           </div>
         )}
+
+        {/* Mobile-specific controls */}
+        <div className="absolute top-4 right-4 z-10 md:hidden">
+          <div className="flex gap-2">
+            {nodes.length > 0 && (
+              <button
+                onClick={tidyUpNodes}
+                className="p-2 bg-background border border-border rounded-md shadow-sm hover:bg-accent transition-colors"
+                title="Tidy up nodes"
+              >
+                <DotsNineIcon className="w-5 h-5" />
+              </button>
+            )}
+          </div>
+        </div>
       </ReactFlow>
 
       {/* Edge Context Menu */}

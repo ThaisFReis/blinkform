@@ -34,10 +34,10 @@ const initialState = {
   creatorAddress: null,
   collectionSettings: null,
 
-  // UI
-  isMobilePreviewVisible: true,
-  isLeftSidebarVisible: true,
-  isRightSidebarVisible: true,
+  // UI - Default to closed on mobile, open on desktop
+  isMobilePreviewVisible: false,
+  isLeftSidebarVisible: typeof window !== 'undefined' ? window.innerWidth >= 1024 : true,
+  isRightSidebarVisible: typeof window !== 'undefined' ? window.innerWidth >= 1280 : true,
 
   // API
   isSaving: false,
@@ -58,9 +58,9 @@ export const useFormBuilderStore = create<FormBuilderStore>()(
           ...createMetadataSlice(set, get, api),
           ...createApiSlice(set, get, api),
 
-          isMobilePreviewVisible: true,
-          isLeftSidebarVisible: true,
-          isRightSidebarVisible: true,
+          isMobilePreviewVisible: false,
+          isLeftSidebarVisible: typeof window !== 'undefined' ? window.innerWidth >= 1024 : true,
+          isRightSidebarVisible: typeof window !== 'undefined' ? window.innerWidth >= 1280 : true,
 
           toggleMobilePreview: () => {
             set((state: any) => ({

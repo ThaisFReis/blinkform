@@ -197,3 +197,123 @@ body {
   background-size: 30px 30px;
   background-position: 0 0;
 }
+
+/* Mobile-specific styles */
+@media (max-width: 1023px) {
+  /* Ensure touch targets are at least 44px */
+  button, .touch-target {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Improve text readability on mobile */
+  body {
+    font-size: 16px;
+    line-height: 1.5;
+  }
+
+  /* Better spacing for mobile */
+  .mobile-spacing {
+    padding: 1rem;
+  }
+
+  /* Expand touch area for ReactFlow handles */
+  .react-flow__handle {
+    /* Visible handle is already 24x24px via Tailwind classes */
+    position: relative;
+  }
+
+  /* Add invisible touch area expansion using pseudo-element */
+  .react-flow__handle::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 48px;
+    height: 48px;
+    /* Creates 48x48px touch target (meets 44x44px minimum) */
+    pointer-events: auto;
+  }
+
+  /* Larger checkboxes and radios for touch */
+  input[type="checkbox"],
+  input[type="radio"] {
+    width: 20px;
+    height: 20px;
+    min-width: 20px;
+    min-height: 20px;
+  }
+
+  /* Ensure labels have adequate touch target */
+  label[for] {
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+  }
+
+  /* Textareas get similar treatment */
+  textarea {
+    min-height: 88px; /* Approximately 2 lines at 44px per line */
+  }
+}
+
+/* Safe area support for notched devices */
+@supports (padding: env(safe-area-inset-bottom)) {
+  .mobile-navigation {
+    padding-bottom: calc(0.5rem + env(safe-area-inset-bottom));
+  }
+
+  .canvas-container {
+    padding-bottom: calc(5rem + env(safe-area-inset-bottom));
+  }
+
+  /* Safe area for top notch */
+  .mobile-header {
+    padding-top: calc(0.5rem + env(safe-area-inset-top));
+  }
+}
+
+/* Landscape orientation adjustments */
+@media (max-height: 500px) and (orientation: landscape) {
+  /* Reduce header height in landscape */
+  header {
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+  }
+
+  /* Adjust mobile navigation for landscape */
+  .mobile-nav-landscape {
+    padding: 0.5rem;
+  }
+}
+
+/* Touch-friendly interactions */
+@media (hover: none) and (pointer: coarse) {
+  /* Remove hover effects on touch devices */
+  .hover\:bg-accent:hover {
+    background-color: transparent;
+  }
+
+  /* Ensure active states work on touch */
+  button:active {
+    transform: scale(0.98);
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .border-border {
+    border-width: 2px;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

@@ -45,6 +45,16 @@ export const BaseNode: React.FC<BaseNodeProps> = ({
     openMenu(event.clientX, event.clientY);
   };
 
+  const handleDoubleClick = (event: React.MouseEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+    const { selectNode, toggleRightSidebar, isRightSidebarVisible } = useFormBuilderStore.getState();
+    selectNode(id);
+    if (!isRightSidebarVisible) {
+      toggleRightSidebar();
+    }
+  };
+
   const contextMenuItems: MenuItemType[] = [
     {
       icon: <TrashIcon className="w-4 h-4" />,
@@ -65,32 +75,36 @@ export const BaseNode: React.FC<BaseNodeProps> = ({
   return (
     <>
       <div
-        className="group relative"
+        className="group relative touch-manipulation"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
         onContextMenu={handleContextMenu}
+        onDoubleClick={handleDoubleClick}
+        onTouchStart={() => setIsHovered(true)}
+        onTouchEnd={() => setIsHovered(false)}
       >
         <div
           className={`
-            bg-card border-2 rounded-lg shadow-sm min-w-[200px] max-w-[300px]
+            bg-card border-2 rounded-lg shadow-sm min-w-[200px] max-w-[300px] md:min-w-[220px] md:max-w-[320px]
             ${selected ? 'border-primary' : 'border-border'}
             transition-colors duration-200
+            ${selected ? 'ring-2 ring-primary/20' : ''}
           `}
         >
-          {/* Input Handle */}
+          {/* Input Handle - Larger on mobile for better touch targets */}
           {handles.input && (
             <Handle
               type="target"
               position={Position.Top}
-              className="!bg-primary !border-primary-foreground !w-3 !h-3"
+              className="!bg-primary !border-primary-foreground !w-6 !h-6 lg:!w-4 lg:!h-4 !border-2 touch-manipulation"
             />
           )}
 
-          {/* Node Content */}
-          <div className="p-4">
+          {/* Node Content - Better spacing on mobile */}
+          <div className="p-3 md:p-4">
             {/* Header with Icon */}
             <div className="flex items-center gap-2 mb-2">
-              <div className="w-6 h-6 bg-primary/10 rounded flex items-center justify-center">
+              <div className="w-7 h-7 md:w-6 md:h-6 bg-primary/10 rounded flex items-center justify-center">
                 {icon}
               </div>
               <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
@@ -102,20 +116,23 @@ export const BaseNode: React.FC<BaseNodeProps> = ({
             {children}
           </div>
 
-          {/* Output Handle */}
+          {/* Output Handle - Larger on mobile for better touch targets */}
           {handles.output && (
             <Handle
               type="source"
               position={Position.Bottom}
-              className="!bg-primary !border-primary-foreground !w-3 !h-3"
+              className="!bg-primary !border-primary-foreground !w-6 !h-6 lg:!w-4 lg:!h-4 !border-2 touch-manipulation"
             />
           )}
         </div>
 
-        {/* Delete Button */}
-        {(isHovered || selected) && (
-          <NodeDeleteButton onDelete={handleDelete} />
-        )}
+        {/* Delete Button - Always visible on mobile when selected, hover on desktop */}
+        <div className="md:hidden">
+          {selected && <NodeDeleteButton onDelete={handleDelete} />}
+        </div>
+        <div className="hidden md:block">
+          {(isHovered || selected) && <NodeDeleteButton onDelete={handleDelete} />}
+        </div>
       </div>
 
       {/* Context Menu */}

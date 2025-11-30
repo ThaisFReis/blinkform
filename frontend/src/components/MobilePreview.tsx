@@ -11,7 +11,7 @@ export const MobilePreview = () => {
 
   if (!isMobilePreviewVisible) {
     return (
-      <div className="fixed bottom-4 right-4 z-50">
+      <div className="fixed bottom-24 lg:bottom-4 right-4 z-40">
         <button
           onClick={toggleMobilePreview}
           className="bg-blue-500 hover:bg-blue-600 text-white p-3 rounded-full shadow-lg transition-colors"
@@ -26,7 +26,7 @@ export const MobilePreview = () => {
   }
 
   return (
-    <div className="fixed bottom-4 right-4 z-50">
+    <div className="fixed bottom-24 lg:bottom-4 right-4 z-40">
       <div className="bg-white rounded-2xl shadow-2xl border border-gray-200 overflow-hidden w-80 max-h-96">
         {/* Mobile device frame with close button */}
         <div className="bg-gray-900 text-white p-2 flex items-center justify-between">

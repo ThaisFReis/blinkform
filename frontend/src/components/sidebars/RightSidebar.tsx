@@ -132,7 +132,7 @@ export const RightSidebar = () => {
                                         min="0"
                                         value={validation.minLength || ''}
                                         onChange={(e) => handleNodeValidationChange('minLength', e.target.value ? parseInt(e.target.value) : undefined)}
-                                        className="w-full px-3 py-2 border border-input bg-background rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
+                                        className="w-full px-3 py-3 lg:py-2 text-base lg:text-sm min-h-[44px] border border-input bg-background rounded-md focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
                                         placeholder="No minimum"
                                     />
                                 </div>
@@ -143,7 +143,7 @@ export const RightSidebar = () => {
                                         min="0"
                                         value={validation.maxLength || ''}
                                         onChange={(e) => handleNodeValidationChange('maxLength', e.target.value ? parseInt(e.target.value) : undefined)}
-                                        className="w-full px-3 py-2 border border-input bg-background rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
+                                        className="w-full px-3 py-3 lg:py-2 text-base lg:text-sm min-h-[44px] border border-input bg-background rounded-md focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
                                         placeholder="No maximum"
                                     />
                                 </div>
@@ -159,7 +159,7 @@ export const RightSidebar = () => {
                                         type="number"
                                         value={validation.min || ''}
                                         onChange={(e) => handleNodeValidationChange('min', e.target.value ? parseFloat(e.target.value) : undefined)}
-                                        className="w-full px-3 py-2 border border-input bg-background rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
+                                        className="w-full px-3 py-3 lg:py-2 text-base lg:text-sm min-h-[44px] border border-input bg-background rounded-md focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
                                         placeholder="No minimum"
                                     />
                                 </div>
@@ -169,7 +169,7 @@ export const RightSidebar = () => {
                                         type="number"
                                         value={validation.max || ''}
                                         onChange={(e) => handleNodeValidationChange('max', e.target.value ? parseFloat(e.target.value) : undefined)}
-                                        className="w-full px-3 py-2 border border-input bg-background rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
+                                        className="w-full px-3 py-3 lg:py-2 text-base lg:text-sm min-h-[44px] border border-input bg-background rounded-md focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
                                         placeholder="No maximum"
                                     />
                                 </div>
@@ -188,7 +188,7 @@ export const RightSidebar = () => {
                                         min="0"
                                         value={validation.minLength || ''}
                                         onChange={(e) => handleNodeValidationChange('minLength', e.target.value ? parseInt(e.target.value) : undefined)}
-                                        className="w-full px-3 py-2 border border-input bg-background rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
+                                        className="w-full px-3 py-3 lg:py-2 text-base lg:text-sm min-h-[44px] border border-input bg-background rounded-md focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
                                         placeholder="No minimum"
                                     />
                                 </div>
@@ -199,7 +199,7 @@ export const RightSidebar = () => {
                                         min="0"
                                         value={validation.maxLength || ''}
                                         onChange={(e) => handleNodeValidationChange('maxLength', e.target.value ? parseInt(e.target.value) : undefined)}
-                                        className="w-full px-3 py-2 border border-input bg-background rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
+                                        className="w-full px-3 py-3 lg:py-2 text-base lg:text-sm min-h-[44px] border border-input bg-background rounded-md focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
                                         placeholder="No maximum"
                                     />
                                 </div>
@@ -225,7 +225,7 @@ export const RightSidebar = () => {
                                         min="0"
                                         value={validation.minLength || ''}
                                         onChange={(e) => handleNodeValidationChange('minLength', e.target.value ? parseInt(e.target.value) : undefined)}
-                                        className="w-full px-3 py-2 border border-input bg-background rounded-md text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
+                                        className="w-full px-3 py-3 lg:py-2 text-base lg:text-sm min-h-[44px] border border-input bg-background rounded-md text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
                                         placeholder="No minimum"
                                     />
                                 </div>
@@ -236,7 +236,7 @@ export const RightSidebar = () => {
                                         min="0"
                                         value={validation.maxLength || ''}
                                         onChange={(e) => handleNodeValidationChange('maxLength', e.target.value ? parseInt(e.target.value) : undefined)}
-                                        className="w-full px-3 py-2 border border-input bg-background rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
+                                        className="w-full px-3 py-3 lg:py-2 text-base lg:text-sm min-h-[44px] border border-input bg-background rounded-md focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
                                         placeholder="No maximum"
                                     />
                                 </div>
@@ -354,14 +354,14 @@ export const RightSidebar = () => {
                         {/* Question Settings */}
                         <div>
                             <h4 className="text-sm font-medium text-sidebar-foreground mb-3">Question Settings</h4>
-                            <div className="space-y-3">
+                            <div className="space-y-4 lg:space-y-3">
                                 <div>
                                     <label className="block text-xs font-medium text-sidebar-foreground mb-1">Question Text</label>
                                     <input
                                         type="text"
                                         value={selectedNode.data.questionText || ''}
                                         onChange={(e) => handleNodeQuestionTextChange(e.target.value)}
-                                        className="w-full px-3 py-2 border border-input bg-background rounded-md text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
+                                        className="w-full px-3 py-3 lg:py-2 text-base lg:text-sm min-h-[44px] border border-input bg-background rounded-md text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
                                         placeholder="Enter your question..."
                                     />
                                 </div>
@@ -372,7 +372,7 @@ export const RightSidebar = () => {
                                             <select
                                                 value={selectedNode.data.inputType || 'text'}
                                                 onChange={(e) => selectedNodeId && updateNode(selectedNodeId, { inputType: e.target.value })}
-                                                className="w-full px-3 py-2 border border-input bg-background rounded-md text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
+                                                className="w-full px-3 py-3 lg:py-2 text-base lg:text-sm min-h-[44px] border border-input bg-background rounded-md text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
                                             >
                                                 <option value="text">Text</option>
                                                 <option value="number">Number</option>
@@ -390,7 +390,7 @@ export const RightSidebar = () => {
                                                     type="text"
                                                     value={selectedNode.data.placeholder || ''}
                                                     onChange={(e) => handleNodePlaceholderChange(e.target.value)}
-                                                    className="w-full px-3 py-2 border border-input bg-background rounded-md text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
+                                                    className="w-full px-3 py-3 lg:py-2 text-base lg:text-sm min-h-[44px] border border-input bg-background rounded-md text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
                                                     placeholder="Enter placeholder text..."
                                                 />
                                             </div>
@@ -455,7 +455,7 @@ export const RightSidebar = () => {
                                                 updateNode(selectedNodeId, { options: newOptions });
                                             }
                                         }}
-                                        className="w-full px-3 py-2 border border-dashed border-input bg-background hover:bg-accent rounded-md text-sm text-muted-foreground hover:text-foreground transition-colors"
+                                        className="w-full px-3 py-3 lg:py-2 text-base lg:text-sm min-h-[44px] border border-dashed border-input bg-background hover:bg-accent rounded-md text-muted-foreground hover:text-foreground transition-colors"
                                     >
                                         + Add Option
                                     </button>
@@ -466,7 +466,7 @@ export const RightSidebar = () => {
                         {/* Validation Settings */}
                         <div>
                             <h4 className="text-sm font-medium text-sidebar-foreground mb-3">Validation Rules</h4>
-                            <div className="space-y-3">
+                            <div className="space-y-4 lg:space-y-3">
                                 <div className="flex items-center gap-2">
                                     <input
                                         type="checkbox"
@@ -496,14 +496,14 @@ export const RightSidebar = () => {
                         {/* Basic Form Settings */}
                         <div>
                             <h4 className="text-sm font-medium text-sidebar-foreground mb-3">Basic Settings</h4>
-                            <div className="space-y-3">
+                            <div className="space-y-4 lg:space-y-3">
                                 <div>
                                     <label className="block text-xs font-medium text-sidebar-foreground mb-1">Form Title</label>
                                     <input
                                         type="text"
                                         value={title}
                                         onChange={(e) => handleTitleChange(e.target.value)}
-                                        className="w-full px-3 py-2 border border-input bg-background rounded-md text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
+                                        className="w-full px-3 py-3 lg:py-2 text-base lg:text-sm min-h-[44px] border border-input bg-background rounded-md text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
                                         placeholder="Untitled Form"
                                     />
                                 </div>
@@ -533,14 +533,14 @@ export const RightSidebar = () => {
                         {/* Collection Settings */}
                         <div>
                             <h4 className="text-sm font-medium text-sidebar-foreground mb-3">Collection Settings</h4>
-                            <div className="space-y-3">
+                            <div className="space-y-4 lg:space-y-3">
                                 <div>
                                     <label className="block text-xs font-medium text-sidebar-foreground mb-1">Collection Name</label>
                                     <input
                                         type="text"
                                         value={collectionSettings?.collectionName || ''}
                                         onChange={(e) => handleCollectionNameChange(e.target.value)}
-                                        className="w-full px-3 py-2 border border-input bg-background rounded-md text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
+                                        className="w-full px-3 py-3 lg:py-2 text-base lg:text-sm min-h-[44px] border border-input bg-background rounded-md text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
                                         placeholder="My NFT Collection"
                                     />
                                 </div>
@@ -563,7 +563,7 @@ export const RightSidebar = () => {
                                         step="0.1"
                                         value={collectionSettings?.royalties || 0}
                                         onChange={(e) => handleRoyaltiesChange(e.target.value)}
-                                        className="w-full px-3 py-2 border border-input bg-background rounded-md text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
+                                        className="w-full px-3 py-3 lg:py-2 text-base lg:text-sm min-h-[44px] border border-input bg-background rounded-md text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
                                         placeholder="5.0"
                                     />
                                 </div>
