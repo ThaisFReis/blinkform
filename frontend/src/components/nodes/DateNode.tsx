@@ -23,7 +23,7 @@ export const DateNode: React.FC<DateNodeProps> = (props) => {
         {questionText || 'Enter your question...'}
       </div>
 
-      {/* Validation Indicators */}
+      {/* Validation Indicators*/}
       {validation && (
         <div className="flex gap-1 mb-2">
           {validation.required && (
