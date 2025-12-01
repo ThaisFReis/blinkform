@@ -1,7 +1,5 @@
 import { Edge } from '@xyflow/react';
-
-// Operators for conditional logic
-export type ConditionOperator = 'equals' | 'contains' | 'greater_than' | 'less_than' | 'not_equals';
+import { ConditionOperator } from './nodes';
 
 // Conditional logic for edges
 export interface EdgeCondition {

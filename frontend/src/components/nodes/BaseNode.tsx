@@ -16,7 +16,9 @@ interface BaseNodeProps extends Omit<NodeProps, 'data'> {
   handles?: {
     input?: boolean;
     output?: boolean;
+    custom?: React.ReactNode;
   };
+  renderCustomContainer?: (content: React.ReactNode) => React.ReactNode;
 }
 
 export const BaseNode: React.FC<BaseNodeProps> = ({
@@ -26,7 +28,8 @@ export const BaseNode: React.FC<BaseNodeProps> = ({
   icon,
   label,
   children,
-  handles = { input: true, output: true }
+  handles = { input: true, output: true },
+  renderCustomContainer
 }) => {
   const [isHovered, setIsHovered] = useState(false);
   const { isOpen, position, openMenu, closeMenu } = useNodeContextMenu();
@@ -72,6 +75,61 @@ export const BaseNode: React.FC<BaseNodeProps> = ({
     },
   ];
 
+  // Default content (icon + label + children)
+  const defaultContent = (
+    <div className="p-3 md:p-4">
+      {/* Header with Icon */}
+      <div className="flex items-center gap-2 mb-2">
+        <div className="w-7 h-7 md:w-6 md:h-6 bg-primary/10 rounded flex items-center justify-center">
+          {icon}
+        </div>
+        <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+          {label}
+        </span>
+      </div>
+
+      {/* Specific Content */}
+      {children}
+    </div>
+  );
+
+  // Container rendering - use custom or default
+  const containerContent = renderCustomContainer ? (
+    renderCustomContainer(defaultContent)
+  ) : (
+    <div
+      className={`
+        bg-card border-2 rounded-lg shadow-sm min-w-[200px] max-w-[300px] md:min-w-[220px] md:max-w-[320px]
+        ${selected ? 'border-primary' : 'border-border'}
+        transition-colors duration-200
+        ${selected ? 'ring-2 ring-primary/20' : ''}
+      `}
+    >
+      {/* Input Handle - Larger on mobile for better touch targets */}
+      {handles.input && (
+        <Handle
+          type="target"
+          position={Position.Top}
+          className="!bg-primary !border-primary-foreground !w-6 !h-6 lg:!w-4 lg:!h-4 !border-2 touch-manipulation"
+        />
+      )}
+
+      {defaultContent}
+
+      {/* Output Handle - Larger on mobile for better touch targets */}
+      {handles.output && (
+        <Handle
+          type="source"
+          position={Position.Bottom}
+          className="!bg-primary !border-primary-foreground !w-6 !h-6 lg:!w-4 lg:!h-4 !border-2 touch-manipulation"
+        />
+      )}
+
+      {/* Custom handles (for ConditionalNode) */}
+      {handles.custom}
+    </div>
+  );
+
   return (
     <>
       <div
@@ -83,48 +141,7 @@ export const BaseNode: React.FC<BaseNodeProps> = ({
         onTouchStart={() => setIsHovered(true)}
         onTouchEnd={() => setIsHovered(false)}
       >
-        <div
-          className={`
-            bg-card border-2 rounded-lg shadow-sm min-w-[200px] max-w-[300px] md:min-w-[220px] md:max-w-[320px]
-            ${selected ? 'border-primary' : 'border-border'}
-            transition-colors duration-200
-            ${selected ? 'ring-2 ring-primary/20' : ''}
-          `}
-        >
-          {/* Input Handle - Larger on mobile for better touch targets */}
-          {handles.input && (
-            <Handle
-              type="target"
-              position={Position.Top}
-              className="!bg-primary !border-primary-foreground !w-6 !h-6 lg:!w-4 lg:!h-4 !border-2 touch-manipulation"
-            />
-          )}
-
-          {/* Node Content - Better spacing on mobile */}
-          <div className="p-3 md:p-4">
-            {/* Header with Icon */}
-            <div className="flex items-center gap-2 mb-2">
-              <div className="w-7 h-7 md:w-6 md:h-6 bg-primary/10 rounded flex items-center justify-center">
-                {icon}
-              </div>
-              <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-                {label}
-              </span>
-            </div>
-
-            {/* Specific Content */}
-            {children}
-          </div>
-
-          {/* Output Handle - Larger on mobile for better touch targets */}
-          {handles.output && (
-            <Handle
-              type="source"
-              position={Position.Bottom}
-              className="!bg-primary !border-primary-foreground !w-6 !h-6 lg:!w-4 lg:!h-4 !border-2 touch-manipulation"
-            />
-          )}
-        </div>
+        {containerContent}
 
         {/* Delete Button - Always visible on mobile when selected, hover on desktop */}
         <div className="md:hidden">

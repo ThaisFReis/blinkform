@@ -2,13 +2,58 @@
 
 import React from 'react';
 import { useFormBuilderStore } from '@/store/formBuilderStore';
+import { MobileFormRenderer } from './mobile/MobileFormRenderer';
 
 export const MobilePreview = () => {
-  const { title, description, nodes, isMobilePreviewVisible, toggleMobilePreview } = useFormBuilderStore();
+  const {
+    title,
+    description,
+    nodes,
+    isMobilePreviewVisible,
+    toggleMobilePreview,
+    mobilePreview,
+    startMobilePreview,
+    resetMobilePreview
+  } = useFormBuilderStore();
 
   // Get the first question node for preview
   const firstQuestionNode = nodes.find(node => node.type === 'question');
 
+  // If form is started, show the full mobile form renderer
+  if (isMobilePreviewVisible && mobilePreview.isFormStarted) {
+    return (
+      <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center p-4">
+        <div className="bg-white rounded-2xl shadow-2xl overflow-hidden w-full max-w-sm max-h-[90vh] flex flex-col">
+          {/* Mobile device frame header */}
+          <div className="bg-gray-900 text-white p-3 flex items-center justify-between flex-shrink-0">
+            <span className="text-sm font-medium">Mobile Preview</span>
+            <button
+              onClick={() => {
+                resetMobilePreview();
+                toggleMobilePreview();
+              }}
+              className="text-white hover:text-gray-300 transition-colors p-1"
+              title="Close Preview"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+
+          {/* Form content */}
+          <div className="flex-1 overflow-hidden">
+            <MobileFormRenderer />
+          </div>
+
+          {/* Mobile frame bottom */}
+          <div className="bg-gray-900 h-1 flex-shrink-0"></div>
+        </div>
+      </div>
+    );
+  }
+
+  // Show the compact preview toggle
   if (!isMobilePreviewVisible) {
     return (
       <div className="fixed bottom-24 lg:bottom-4 right-4 z-40">
@@ -25,6 +70,7 @@ export const MobilePreview = () => {
     );
   }
 
+  // Show the expanded preview with form info
   return (
     <div className="fixed bottom-24 lg:bottom-4 right-4 z-40">
       <div className="bg-white rounded-2xl shadow-2xl border border-gray-200 overflow-hidden w-80 max-h-96">
@@ -65,12 +111,17 @@ export const MobilePreview = () => {
           {/* Action buttons */}
           <div className="space-y-2">
             {firstQuestionNode ? (
-              <button className="w-full bg-blue-500 hover:bg-blue-600 text-white py-3 px-4 rounded-lg text-sm font-medium transition-colors">
-                Start Form
+              <button
+                onClick={() => {
+                  startMobilePreview();
+                }}
+                className="w-full bg-blue-500 hover:bg-blue-600 text-white py-3 px-4 rounded-lg text-sm font-medium transition-colors"
+              >
+                Start Interactive Preview
               </button>
             ) : (
               <div className="text-center py-4">
-                <p className="text-xs text-gray-500">Add nodes to see preview</p>
+                <p className="text-xs text-gray-500">Add question nodes to test the interactive preview</p>
               </div>
             )}
 

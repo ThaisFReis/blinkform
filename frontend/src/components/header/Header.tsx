@@ -20,10 +20,10 @@ export const Header = () => {
   return (
     <header className="flex items-center justify-between bg-sidebar px-3 sm:px-4 lg:px-6 py-3 w-full border-b border-border">
       <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
-        {/* Left Sidebar Toggle - Always visible on mobile/tablet */}
+        {/* Left Sidebar Toggle - Always visible */}
         <button
           onClick={toggleLeftSidebar}
-          className="p-2 rounded-lg hover:bg-secondary transition-colors lg:hidden"
+          className="p-2 rounded-lg hover:bg-secondary transition-colors"
           title="Toggle Components Sidebar"
         >
           {isLeftSidebarVisible ? (

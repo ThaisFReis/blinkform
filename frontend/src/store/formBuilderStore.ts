@@ -15,6 +15,19 @@ export type FormBuilderStore = NodesSlice & EdgesSlice & MetadataSlice & ApiSlic
   toggleLeftSidebar: () => void;
   isRightSidebarVisible: boolean;
   toggleRightSidebar: () => void;
+
+  // Mobile preview state
+  mobilePreview: {
+    currentNodeId: string | null;
+    responses: Record<string, any>;
+    navigationHistory: string[];
+    isFormStarted: boolean;
+  };
+  startMobilePreview: () => void;
+  navigateToNode: (nodeId: string) => void;
+  goBackInPreview: () => void;
+  updateResponse: (nodeId: string, value: any) => void;
+  resetMobilePreview: () => void;
 };
 
 // Initial state
@@ -38,6 +51,14 @@ const initialState = {
   isMobilePreviewVisible: false,
   isLeftSidebarVisible: typeof window !== 'undefined' ? window.innerWidth >= 1024 : true,
   isRightSidebarVisible: typeof window !== 'undefined' ? window.innerWidth >= 1280 : true,
+
+  // Mobile preview state
+  mobilePreview: {
+    currentNodeId: null,
+    responses: {},
+    navigationHistory: [],
+    isFormStarted: false,
+  },
 
   // API
   isSaving: false,
@@ -80,6 +101,68 @@ export const useFormBuilderStore = create<FormBuilderStore>()(
             }));
           },
 
+          // Mobile preview functions
+          mobilePreview: {
+            currentNodeId: null,
+            responses: {},
+            navigationHistory: [],
+            isFormStarted: false,
+          },
+
+          startMobilePreview: () => {
+            const { nodes } = get();
+            const firstQuestionNode = nodes.find(node => node.type === 'question');
+            if (firstQuestionNode) {
+              set((state: any) => {
+                state.mobilePreview.currentNodeId = firstQuestionNode.id;
+                state.mobilePreview.isFormStarted = true;
+                state.mobilePreview.navigationHistory = [firstQuestionNode.id];
+                state.mobilePreview.responses = {};
+              });
+            }
+          },
+
+          navigateToNode: (nodeId: string) => {
+            set((state: any) => {
+              const currentHistory = [...state.mobilePreview.navigationHistory];
+              // Only add to history if it's not already the current node
+              if (state.mobilePreview.currentNodeId !== nodeId) {
+                currentHistory.push(nodeId);
+              }
+              state.mobilePreview.currentNodeId = nodeId;
+              state.mobilePreview.navigationHistory = currentHistory;
+            });
+          },
+
+          goBackInPreview: () => {
+            set((state: any) => {
+              const history = [...state.mobilePreview.navigationHistory];
+              if (history.length > 1) {
+                history.pop(); // Remove current node
+                const previousNodeId = history[history.length - 1];
+                state.mobilePreview.currentNodeId = previousNodeId;
+                state.mobilePreview.navigationHistory = history;
+              }
+            });
+          },
+
+          updateResponse: (nodeId: string, value: any) => {
+            set((state: any) => {
+              state.mobilePreview.responses[nodeId] = value;
+            });
+          },
+
+          resetMobilePreview: () => {
+            set((state: any) => {
+              state.mobilePreview = {
+                currentNodeId: null,
+                responses: {},
+                navigationHistory: [],
+                isFormStarted: false,
+              };
+            });
+          },
+
           reset: () => set(initialState),
         }),
         {
@@ -94,6 +177,7 @@ export const useFormBuilderStore = create<FormBuilderStore>()(
             isLeftSidebarVisible: state.isLeftSidebarVisible,
             isRightSidebarVisible: state.isRightSidebarVisible,
             isMobilePreviewVisible: state.isMobilePreviewVisible,
+            // Don't persist mobile preview state - should reset on page reload
           }),
         }
       )

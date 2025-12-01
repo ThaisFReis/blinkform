@@ -4,6 +4,7 @@ import {
   NodeType,
   QuestionNodeData,
   TransactionNodeData,
+  LogicNodeData,
   EndNodeData,
   NodeData,
 } from '@/types';
@@ -44,16 +45,74 @@ const createDefaultNodeData = (type: NodeType, questionType?: string): NodeData 
       }
 
     case 'transaction':
+      if (questionType === 'nft') {
+        return {
+          transactionType: 'SPL_MINT',
+          program: 'SPL Token Program',
+          parameters: {
+            amount: 1,
+            decimals: 0,
+            name: 'My NFT',
+            symbol: 'NFT',
+            uri: '',
+          },
+        } as TransactionNodeData;
+      }
+      if (questionType === 'contract') {
+        return {
+          transactionType: 'CUSTOM_CALL',
+          program: 'Custom Program',
+          parameters: {
+            programId: '',
+            instructionData: '',
+            accounts: [],
+          },
+        } as TransactionNodeData;
+      }
       return {
         transactionType: 'SYSTEM_TRANSFER',
         program: 'System Program',
         parameters: {},
       } as TransactionNodeData;
 
+    case 'logic':
+      if (questionType === 'validation') {
+        return {
+          logicType: 'validation',
+          validationRules: [],
+          blockOnFailure: true,
+        } as any; // Type assertion needed due to union type
+      }
+      if (questionType === 'calculation') {
+        return {
+          logicType: 'calculation',
+          operations: [],
+        } as any; // Type assertion needed due to union type
+      }
+      return {
+        logicType: 'conditional',
+        mode: 'switch', // Default to switch mode
+        branches: [
+          {
+            id: 'branch-true',
+            label: 'True',
+            color: '#22c55e', // Green
+            matchValues: ['true', 'yes', '1'],
+          },
+          {
+            id: 'branch-false',
+            label: 'False',
+            color: '#ef4444', // Red
+            matchValues: ['false', 'no', '0'],
+          },
+        ],
+      } as LogicNodeData;
+
     case 'end':
       return {
-        label: 'End',
-        message: 'Thank you for completing this form!',
+        label: 'Form Complete',
+        message: 'Thank you for completing this form! Your submission has been processed successfully.',
+        successActions: [],
       } as EndNodeData;
 
     default:

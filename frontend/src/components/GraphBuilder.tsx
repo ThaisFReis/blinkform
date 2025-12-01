@@ -15,6 +15,13 @@ import { useFormBuilderStore } from '@/store/formBuilderStore';
 import { InputNode } from '@/components/nodes/InputNode';
 import { DateNode } from '@/components/nodes/DateNode';
 import { ChoiceNode } from '@/components/nodes/ChoiceNode';
+import { TransactionNode } from '@/components/nodes/TransactionNode';
+import { MintNFTNode } from '@/components/nodes/MintNFTNode';
+import { CallContractNode } from '@/components/nodes/CallContractNode';
+import { ConditionalNode } from '@/components/nodes/ConditionalNode';
+import { ValidationNode } from '@/components/nodes/ValidationNode';
+import { CalculationNode } from '@/components/nodes/CalculationNode';
+import { EndNode } from '@/components/nodes/EndNode';
 import { ContextMenu } from '@/components/ui/ContextMenu';
 import { MenuItemType } from '@/types/ui';
 import { TrashIcon, DotsNineIcon } from '@phosphor-icons/react';
@@ -257,9 +264,40 @@ const GraphBuilder = () => {
     }
   };
 
+  // Generic TransactionNode that renders the appropriate specific node
+  const TransactionNodeRenderer = (props: any) => {
+    const { data } = props;
+    // Check if it's a custom contract call
+    if (data.transactionType === 'CUSTOM_CALL') {
+      return <CallContractNode {...props} />;
+    }
+    // Check if it's an NFT minting node (has NFT-specific parameters)
+    if (data.transactionType === 'SPL_MINT' &&
+        (data.parameters?.name || data.parameters?.symbol || data.parameters?.uri)) {
+      return <MintNFTNode {...props} />;
+    }
+    return <TransactionNode {...props} />;
+  };
+
+  // Generic LogicNode that renders the appropriate specific node
+  const LogicNodeRenderer = (props: any) => {
+    const { data } = props;
+    if (data.logicType === 'validation') {
+      return <ValidationNode {...props} />;
+    }
+    if (data.logicType === 'calculation') {
+      return <CalculationNode {...props} />;
+    }
+    // Default to conditional node
+    return <ConditionalNode {...props} />;
+  };
+
   // Node types for ReactFlow
   const nodeTypes = {
     question: QuestionNode,
+    transaction: TransactionNodeRenderer,
+    logic: LogicNodeRenderer,
+    end: EndNode,
   };
 
   return (
