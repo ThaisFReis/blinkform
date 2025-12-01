@@ -91,8 +91,10 @@ export class SchemaParserService {
       }
     };
 
-    // Generate actions based on node type
-    switch (currentNode.type) {
+    // Generate actions based on node data questionType
+    const questionType = currentNode.data?.questionType;
+
+    switch (questionType) {
       case 'input':
         baseResponse.links.actions = [{
           label: currentNode.data.questionText || 'Enter your response',
