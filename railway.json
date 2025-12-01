@@ -3,7 +3,7 @@
   "build": {
     "builder": "NIXPACKS",
     "cwd": "backend",
-    "buildCommand": "npx prisma generate && npm run build"
+    "buildCommand": "npm run db:migrate && npm run db:generate && npm run build"
   },
   "deploy": {
     "startCommand": "npm run start:prod",
