@@ -43,3 +43,7 @@ docs/
 
 # Prisma
 backend/src/generated/
+
+# Config files
+config.md
+claude.md
