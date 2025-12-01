@@ -2399,9 +2399,10 @@ export const RightSidebar = () => {
                             </div>
                         </div>
                     </div>
+                ) : (
+                    /* Empty fallback for when no specific node type matches */
+                    selectedNode && <div className="text-sm text-muted-foreground">Node configuration not available</div>
                 )}
-                {/* Empty fallback for when no specific node type matches */}
-                {selectedNode && <div className="text-sm text-muted-foreground">Node configuration not available</div>}
             </div>
         </div>
     )
