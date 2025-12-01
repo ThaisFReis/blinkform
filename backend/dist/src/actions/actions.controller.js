@@ -23,6 +23,9 @@ let ActionsController = class ActionsController {
     async getAction(formId, account) {
         return this.actionsService.getAction(formId, account);
     }
+    async postAction(formId, account, body) {
+        return this.actionsService.postAction(formId, account, body);
+    }
 };
 exports.ActionsController = ActionsController;
 __decorate([
@@ -33,6 +36,15 @@ __decorate([
     __metadata("design:paramtypes", [String, String]),
     __metadata("design:returntype", Promise)
 ], ActionsController.prototype, "getAction", null);
+__decorate([
+    (0, common_1.Post)(':formId'),
+    __param(0, (0, common_1.Param)('formId')),
+    __param(1, (0, common_1.Query)('account')),
+    __param(2, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String, Object]),
+    __metadata("design:returntype", Promise)
+], ActionsController.prototype, "postAction", null);
 exports.ActionsController = ActionsController = __decorate([
     (0, common_1.Controller)('actions'),
     __metadata("design:paramtypes", [actions_service_1.ActionsService])

@@ -14,6 +14,9 @@ const app_service_1 = require("./app.service");
 const prisma_module_1 = require("./prisma/prisma.module");
 const redis_module_1 = require("./redis/redis.module");
 const actions_module_1 = require("./actions/actions.module");
+const forms_controller_1 = require("./forms/forms.controller");
+const forms_service_1 = require("./forms/forms.service");
+const schema_parser_service_1 = require("./schema-parser/schema-parser.service");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -25,8 +28,8 @@ exports.AppModule = AppModule = __decorate([
             redis_module_1.RedisModule,
             actions_module_1.ActionsModule,
         ],
-        controllers: [app_controller_1.AppController],
-        providers: [app_service_1.AppService],
+        controllers: [app_controller_1.AppController, forms_controller_1.FormsController],
+        providers: [app_service_1.AppService, forms_service_1.FormsService, schema_parser_service_1.SchemaParserService],
     })
 ], AppModule);
 //# sourceMappingURL=app.module.js.map

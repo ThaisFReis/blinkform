@@ -32,6 +32,9 @@ let RedisService = class RedisService {
         }
         return this.client.set(key, value);
     }
+    async del(key) {
+        return this.client.del(key);
+    }
 };
 exports.RedisService = RedisService;
 exports.RedisService = RedisService = __decorate([

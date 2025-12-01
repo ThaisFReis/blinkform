@@ -25,4 +25,8 @@ export class RedisService {
     }
     return this.client.set(key, value);
   }
+
+  async del(key: string) {
+    return this.client.del(key);
+  }
 }

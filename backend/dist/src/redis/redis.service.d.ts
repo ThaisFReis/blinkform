@@ -3,4 +3,5 @@ export declare class RedisService {
     constructor();
     get(key: string): Promise<any>;
     set(key: string, value: string, ttl?: number): Promise<any>;
+    del(key: string): Promise<any>;
 }
