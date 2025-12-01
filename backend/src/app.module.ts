@@ -11,7 +11,7 @@ import { SchemaParserService } from './schema-parser/schema-parser.service';
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({ envFilePath: '.env' }),
     PrismaModule,
     RedisModule,
     ActionsModule,
