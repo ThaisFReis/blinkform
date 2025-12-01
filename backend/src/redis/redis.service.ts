@@ -24,18 +24,8 @@ export class RedisService implements OnModuleInit {
       return;
     }
 
-    // Temporary: force no-op for testing
-    console.log('Forcing no-op client for testing');
-    this.client = {
-      get: async () => null,
-      set: async () => null,
-      setEx: async () => null,
-      del: async () => null,
-    } as any;
-    return;
-
     this.client = redisUrl
-      ? createClient({ url: redisUrl })
+      ? createClient({ url: redisUrl.replace('redis://', 'rediss://') })
       : createClient({
           socket: {
             host: redisHost || 'localhost',
