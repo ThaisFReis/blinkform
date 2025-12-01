@@ -1,3 +1,3 @@
-export type * from './models/Form.js';
-export type * from './models/Submission.js';
-export type * from './commonInputTypes.js';
+export type * from './models/Form';
+export type * from './models/Submission';
+export type * from './commonInputTypes';

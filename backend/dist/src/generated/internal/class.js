@@ -40,7 +40,7 @@ const config = {
     "clientVersion": "7.0.1",
     "engineVersion": "f09f2815f091dbba658cdcd2264306d88bb5bda6",
     "activeProvider": "postgresql",
-    "inlineSchema": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\n// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?\n// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init\n\ngenerator client {\n  provider = \"prisma-client\"\n  output   = \"../src/generated\"\n  runtime  = \"nodejs\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n}\n\nmodel Form {\n  id             String       @id @default(dbgenerated(\"gen_random_uuid()\")) @db.Uuid\n  creatorAddress String       @map(\"creator_address\") @db.VarChar(44)\n  title          String       @db.Text\n  description    String?      @db.Text\n  schema         Json         @db.JsonB\n  isActive       Boolean      @default(true) @map(\"is_active\")\n  createdAt      DateTime     @default(now()) @map(\"created_at\") @db.Timestamptz\n  submissions    Submission[]\n}\n\nmodel Submission {\n  id                   String   @id @default(dbgenerated(\"gen_random_uuid()\")) @db.Uuid\n  formId               String   @map(\"form_id\") @db.Uuid\n  form                 Form     @relation(fields: [formId], references: [id])\n  userAccount          String   @map(\"user_account\") @db.VarChar(44)\n  answers              Json     @db.JsonB\n  transactionSignature String?  @map(\"transaction_signature\") @db.VarChar(88)\n  completedAt          DateTime @default(now()) @map(\"completed_at\") @db.Timestamptz\n}\n",
+    "inlineSchema": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\n// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?\n// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init\n\ngenerator client {\n  provider = \"prisma-client\"\n  output   = \"../src/generated\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n}\n\nmodel Form {\n  id             String       @id @default(dbgenerated(\"gen_random_uuid()\")) @db.Uuid\n  creatorAddress String       @map(\"creator_address\") @db.VarChar(44)\n  title          String       @db.Text\n  description    String?      @db.Text\n  schema         Json         @db.JsonB\n  isActive       Boolean      @default(true) @map(\"is_active\")\n  createdAt      DateTime     @default(now()) @map(\"created_at\") @db.Timestamptz\n  submissions    Submission[]\n}\n\nmodel Submission {\n  id                   String   @id @default(dbgenerated(\"gen_random_uuid()\")) @db.Uuid\n  formId               String   @map(\"form_id\") @db.Uuid\n  form                 Form     @relation(fields: [formId], references: [id])\n  userAccount          String   @map(\"user_account\") @db.VarChar(44)\n  answers              Json     @db.JsonB\n  transactionSignature String?  @map(\"transaction_signature\") @db.VarChar(88)\n  completedAt          DateTime @default(now()) @map(\"completed_at\") @db.Timestamptz\n}\n",
     "runtimeDataModel": {
         "models": {},
         "enums": {},
@@ -54,9 +54,9 @@ async function decodeBase64AsWasm(wasmBase64) {
     return new WebAssembly.Module(wasmArray);
 }
 config.compilerWasm = {
-    getRuntime: async () => await Promise.resolve().then(() => __importStar(require("@prisma/client/runtime/query_compiler_bg.postgresql.mjs"))),
+    getRuntime: async () => await Promise.resolve().then(() => __importStar(require("@prisma/client/runtime/query_compiler_bg.postgresql.js"))),
     getQueryCompilerWasmModule: async () => {
-        const { wasm } = await Promise.resolve().then(() => __importStar(require("@prisma/client/runtime/query_compiler_bg.postgresql.wasm-base64.mjs")));
+        const { wasm } = await Promise.resolve().then(() => __importStar(require("@prisma/client/runtime/query_compiler_bg.postgresql.wasm-base64.js")));
         return await decodeBase64AsWasm(wasm);
     }
 };
