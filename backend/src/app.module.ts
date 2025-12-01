@@ -13,7 +13,7 @@ import { SchemaParserService } from './schema-parser/schema-parser.service';
   imports: [
     ConfigModule.forRoot({ envFilePath: '.env' }),
     PrismaModule,
-    RedisModule,
+    // RedisModule, // Temporarily disabled
     ActionsModule,
   ],
   controllers: [AppController, FormsController],

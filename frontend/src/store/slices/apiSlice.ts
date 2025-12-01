@@ -20,6 +20,7 @@ export interface ApiSlice {
   exportSchema: () => FormSchema;
   validateSchema: () => ValidationError[];
   autoSaveToLocalStorage: () => void;
+  publishToTwitter: () => void;
 }
 
 // Debounce helper
@@ -161,13 +162,10 @@ export const createApiSlice = (set: any, get: any, api: any): ApiSlice => ({
     try {
       const schema = state.exportSchema();
       const payload: SaveFormPayload = {
-        metadata: {
-          id: state.formId || undefined,
-          title: state.title,
-          description: state.description,
-          creatorAddress: state.creatorAddress || undefined,
-        },
+        title: state.title,
+        description: state.description,
         schema,
+        creatorAddress: state.creatorAddress || undefined,
       };
 
       const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
@@ -227,6 +225,23 @@ export const createApiSlice = (set: any, get: any, api: any): ApiSlice => ({
     } catch (error) {
       set({ isLoading: false });
       throw error;
+    }
+  },
+
+  publishToTwitter: () => {
+    const state = get();
+    if (!state.formId) {
+      throw new Error('Form must be saved before publishing');
+    }
+
+    const baseUrl = typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000';
+    const formUrl = `${baseUrl}/form/${state.formId}`;
+    const tweetText = `Check out this interactive Solana form: ${state.title}`;
+    const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}&url=${encodeURIComponent(formUrl)}`;
+
+    // Open Twitter compose window
+    if (typeof window !== 'undefined') {
+      window.open(twitterUrl, '_blank', 'width=550,height=420');
     }
   },
 });

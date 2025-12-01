@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect } from 'react';
 import { LeftSidebar } from '@/components/sidebars/LeftSidebar';
 import { RightSidebar } from '@/components/sidebars/RightSidebar';
 import { MobileSidebarOverlay } from '@/components/sidebars/MobileSidebarOverlay';
@@ -14,6 +15,20 @@ export default function BuilderPage() {
   const isRightSidebarVisible = useFormBuilderStore((state) => state.isRightSidebarVisible);
   const toggleLeftSidebar = useFormBuilderStore((state) => state.toggleLeftSidebar);
   const toggleRightSidebar = useFormBuilderStore((state) => state.toggleRightSidebar);
+
+  // Set initial sidebar visibility based on screen size on client mount
+  useEffect(() => {
+    const leftVisible = window.innerWidth >= 1024;
+    const rightVisible = window.innerWidth >= 1280;
+
+    // Only update if different from current state
+    if (leftVisible !== isLeftSidebarVisible) {
+      toggleLeftSidebar();
+    }
+    if (rightVisible !== isRightSidebarVisible) {
+      toggleRightSidebar();
+    }
+  }, []);
 
   return (
     <div className="flex flex-col h-screen w-screen overflow-hidden">

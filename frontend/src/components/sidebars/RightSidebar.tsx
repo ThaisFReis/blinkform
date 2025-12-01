@@ -27,6 +27,7 @@ export const RightSidebar = () => {
         setCollectionSettings,
         saveForm,
         isSaving,
+        publishToTwitter,
         toggleRightSidebar,
         selectedNodeId,
         nodes,
@@ -905,6 +906,16 @@ export const RightSidebar = () => {
                         >
                             {isSaving ? 'Saving...' : 'Save'}
                         </button>
+
+                        {formId && (
+                            <button
+                                onClick={publishToTwitter}
+                                className="px-3 py-1.5 bg-sky-500 hover:bg-sky-600 text-white text-sm font-medium rounded-lg transition-colors"
+                                title="Share on Twitter"
+                            >
+                                Publish
+                            </button>
+                        )}
 
                         {/* Close button */}
                         <button

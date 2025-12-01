@@ -43,8 +43,10 @@ export interface FormSchema {
 
 // Payload for saving form to backend
 export interface SaveFormPayload {
-  metadata: FormMetadata;
+  title: string;
+  description?: string;
   schema: FormSchema;
+  creatorAddress?: string;
 }
 
 // Validation error

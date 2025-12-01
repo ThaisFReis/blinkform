@@ -21,10 +21,29 @@ export class RedisService implements OnModuleInit {
 
   async onModuleInit() {
     try {
-      await this.client.connect();
+      // Add timeout to prevent hanging
+      const connectPromise = this.client.connect();
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('Redis connection timeout')), 5000)
+      );
+
+      await Promise.race([connectPromise, timeoutPromise]);
+      console.log('Redis connected successfully');
     } catch (error) {
       console.error('Failed to connect to Redis:', error);
-      // Continue without Redis
+      // Disconnect the client to stop retry attempts
+      try {
+        await this.client.disconnect();
+      } catch (e) {
+        // Ignore disconnect errors
+      }
+      // Continue without Redis - make client a no-op
+      this.client = {
+        get: async () => null,
+        set: async () => null,
+        setEx: async () => null,
+        del: async () => null,
+      } as any;
     }
   }
 

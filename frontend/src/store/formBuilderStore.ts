@@ -47,10 +47,10 @@ const initialState = {
   creatorAddress: null,
   collectionSettings: null,
 
-  // UI - Default to closed on mobile, open on desktop
+  // UI - Default to closed on all devices to avoid hydration mismatch, will be set on client mount
   isMobilePreviewVisible: false,
-  isLeftSidebarVisible: typeof window !== 'undefined' ? window.innerWidth >= 1024 : true,
-  isRightSidebarVisible: typeof window !== 'undefined' ? window.innerWidth >= 1280 : true,
+  isLeftSidebarVisible: false,
+  isRightSidebarVisible: false,
 
   // Mobile preview state
   mobilePreview: {
@@ -80,8 +80,8 @@ export const useFormBuilderStore = create<FormBuilderStore>()(
           ...createApiSlice(set, get, api),
 
           isMobilePreviewVisible: false,
-          isLeftSidebarVisible: typeof window !== 'undefined' ? window.innerWidth >= 1024 : true,
-          isRightSidebarVisible: typeof window !== 'undefined' ? window.innerWidth >= 1280 : true,
+          isLeftSidebarVisible: false,
+          isRightSidebarVisible: false,
 
           toggleMobilePreview: () => {
             set((state: any) => ({
@@ -174,9 +174,10 @@ export const useFormBuilderStore = create<FormBuilderStore>()(
             // Don't persist nodes and edges to keep canvas clean
             // nodes: state.nodes,
             // edges: state.edges,
-            isLeftSidebarVisible: state.isLeftSidebarVisible,
-            isRightSidebarVisible: state.isRightSidebarVisible,
-            isMobilePreviewVisible: state.isMobilePreviewVisible,
+            // Don't persist UI state that depends on screen size to avoid hydration mismatches
+            // isLeftSidebarVisible: state.isLeftSidebarVisible,
+            // isRightSidebarVisible: state.isRightSidebarVisible,
+            // isMobilePreviewVisible: state.isMobilePreviewVisible,
             // Don't persist mobile preview state - should reset on page reload
           }),
         }
