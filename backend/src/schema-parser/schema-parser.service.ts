@@ -120,16 +120,10 @@ export class SchemaParserService {
           break;
 
         case 'choice':
-          // For multiple choice, we need to encode the selected value somehow
-          // Use POST body with a parameter for the choice
+          // For multiple choice buttons, encode the selection in href
           baseResponse.links.actions = (currentNode.data.options || []).map((option: any) => ({
             label: option.label,
-            href: `${baseUrl}/api/actions/${formId}`,
-            parameters: [{
-              name: 'choice',
-              type: 'hidden',
-              value: option.value
-            }]
+            href: `${baseUrl}/api/actions/${formId}/${option.value}`
           }));
           break;
 
