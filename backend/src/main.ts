@@ -4,12 +4,22 @@ import { AppModule } from './app.module';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  // Enable CORS for frontend - simplified for Railway
+  // Enable CORS for frontend - Railway deployment fix
   app.enableCors({
-    origin: true, // Allow all origins for now to debug
+    origin: [
+      'http://localhost:3000',
+      'http://localhost:3001',
+      'https://blinkform-8fnj3xztv-thaisfreis-projects.vercel.app',
+      'https://blinkform.vercel.app',
+      /\.vercel\.app$/,
+      '*' // Allow all for debugging
+    ],
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'Origin', 'X-Requested-With'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'Origin', 'X-Requested-With', 'Access-Control-Request-Method', 'Access-Control-Request-Headers'],
+    exposedHeaders: ['Content-Range', 'X-Content-Range'],
     credentials: true,
+    preflightContinue: false,
+    optionsSuccessStatus: 200,
   });
 
   // Set global API prefix
