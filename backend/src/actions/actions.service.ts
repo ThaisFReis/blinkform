@@ -54,7 +54,8 @@ export class ActionsService {
     return this.schemaParser.generateActionResponse(
       form.title,
       currentNode,
-      nextNode?.id
+      nextNode?.id,
+      formId
     );
   }
 
@@ -124,7 +125,8 @@ export class ActionsService {
         return this.schemaParser.generateActionResponse(
           form.title,
           nextNode,
-          nextNextNode?.id
+          nextNextNode?.id,
+          formId
         );
       }
     }

@@ -76,8 +76,10 @@ export class SchemaParserService {
   generateActionResponse(
     formTitle: string,
     currentNode: FormNode,
-    nextNodeId?: string
+    nextNodeId?: string,
+    formId?: string
   ): ActionResponse {
+    const baseUrl = process.env.BASE_URL || 'https://blinkform-production.up.railway.app';
     const baseResponse: ActionResponse = {
       type: 'action',
       icon: 'https://via.placeholder.com/600x400/4F46E5/FFFFFF?text=BlinkForm',
@@ -94,7 +96,7 @@ export class SchemaParserService {
       case 'input':
         baseResponse.links.actions = [{
           label: currentNode.data.questionText || 'Enter your response',
-          href: `/api/actions/${currentNode.id}?node=${currentNode.id}`,
+          href: `${baseUrl}/api/actions/${formId}?node=${currentNode.id}`,
           parameters: [{
             name: 'input',
             label: currentNode.data.questionText,
@@ -106,7 +108,7 @@ export class SchemaParserService {
       case 'choice':
         baseResponse.links.actions = (currentNode.data.options || []).map((option: any) => ({
           label: option.label,
-          href: `/api/actions/${currentNode.id}?choice=${option.value}&next=${nextNodeId || 'end'}`
+          href: `${baseUrl}/api/actions/${formId}?choice=${option.value}&next=${nextNodeId || 'end'}`
         }));
         break;
 
@@ -116,14 +118,14 @@ export class SchemaParserService {
         baseResponse.label = 'Complete';
         baseResponse.links.actions = [{
           label: 'Finish',
-          href: `/api/actions/complete`
+          href: `${baseUrl}/api/actions/complete`
         }];
         break;
 
       default:
         baseResponse.links.actions = [{
           label: 'Continue',
-          href: `/api/actions/${currentNode.id}?next=${nextNodeId || 'end'}`
+          href: `${baseUrl}/api/actions/${formId}?next=${nextNodeId || 'end'}`
         }];
     }
 

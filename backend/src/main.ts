@@ -13,7 +13,7 @@ async function bootstrap() {
   });
 
   // Set global API prefix
-  app.setGlobalPrefix('api', { exclude: ['health'] });
+  app.setGlobalPrefix('api', { exclude: ['health', 'actions.json'] });
 
   await app.listen(process.env.PORT ?? 3001);
 }
