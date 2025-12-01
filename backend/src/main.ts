@@ -10,6 +10,7 @@ async function bootstrap() {
       'http://localhost:3000',
       'http://localhost:3001',
       'https://blinkform-8fnj3xztv-thaisfreis-projects.vercel.app',
+      'https://frontend-kappa-woad-89.vercel.app/builder',
       'https://blinkform.vercel.app',
       /\.vercel\.app$/,
       '*' // Allow all for debugging
