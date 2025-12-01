@@ -5,6 +5,7 @@ import { AppService } from './app.service';
 import { PrismaModule } from './prisma/prisma.module';
 import { RedisModule } from './redis/redis.module';
 import { ActionsModule } from './actions/actions.module';
+import { RootModule } from './root/root.module';
 import { FormsController } from './forms/forms.controller';
 import { FormsService } from './forms/forms.service';
 import { SchemaParserService } from './schema-parser/schema-parser.service';
@@ -15,6 +16,7 @@ import { SchemaParserService } from './schema-parser/schema-parser.service';
     PrismaModule,
     // RedisModule, // Temporarily disabled
     ActionsModule,
+    RootModule,
   ],
   controllers: [AppController, FormsController],
   providers: [AppService, FormsService, SchemaParserService],

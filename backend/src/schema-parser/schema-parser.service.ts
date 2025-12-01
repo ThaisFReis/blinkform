@@ -18,15 +18,25 @@ export interface FormSchema {
 }
 
 export interface ActionResponse {
+  type?: string;
   icon: string;
   title: string;
   description: string;
   label: string;
+  disabled?: boolean;
   links: {
     actions: Array<{
       label: string;
       href: string;
+      parameters?: Array<{
+        name: string;
+        label?: string;
+        required?: boolean;
+      }>;
     }>;
+  };
+  error?: {
+    message: string;
   };
 }
 
@@ -69,6 +79,7 @@ export class SchemaParserService {
     nextNodeId?: string
   ): ActionResponse {
     const baseResponse: ActionResponse = {
+      type: 'action',
       icon: 'https://via.placeholder.com/600x400/4F46E5/FFFFFF?text=BlinkForm',
       title: formTitle,
       description: `Question: ${currentNode.data.questionText || 'Complete the form'}`,
@@ -83,7 +94,12 @@ export class SchemaParserService {
       case 'input':
         baseResponse.links.actions = [{
           label: currentNode.data.questionText || 'Enter your response',
-          href: `/api/actions/${currentNode.id}?node=${currentNode.id}`
+          href: `/api/actions/${currentNode.id}?node=${currentNode.id}`,
+          parameters: [{
+            name: 'input',
+            label: currentNode.data.questionText,
+            required: currentNode.data.required || false
+          }]
         }];
         break;
 
