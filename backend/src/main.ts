@@ -20,6 +20,7 @@ async function bootstrap() {
     credentials: true,
     preflightContinue: false,
     optionsSuccessStatus: 200,
+    'Access-Control-Allow-Origin': '*',
   });
 
   // Set global API prefix
