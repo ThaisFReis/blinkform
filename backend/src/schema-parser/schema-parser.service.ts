@@ -122,9 +122,9 @@ export class SchemaParserService {
 
     switch (node.type) {
       case 'input':
-        return input && input.trim().length > 0;
+        return !!(input && input.trim().length > 0);
       case 'choice':
-        return input && node.data.options?.some((opt: any) => opt.value === input);
+        return !!(input && node.data.options?.some((opt: any) => opt.value === input));
       default:
         return true;
     }

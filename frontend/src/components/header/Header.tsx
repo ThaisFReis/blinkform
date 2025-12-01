@@ -16,6 +16,17 @@ export const Header = () => {
   const isRightSidebarVisible = useFormBuilderStore((state) => state.isRightSidebarVisible);
   const toggleLeftSidebar = useFormBuilderStore((state) => state.toggleLeftSidebar);
   const toggleRightSidebar = useFormBuilderStore((state) => state.toggleRightSidebar);
+  const saveForm = useFormBuilderStore((state) => state.saveForm);
+  const isSaving = useFormBuilderStore((state) => state.isSaving);
+
+  const handlePublish = async () => {
+    try {
+      await saveForm();
+      alert('Form published successfully!');
+    } catch (error: any) {
+      alert(`Failed to publish: ${error.message}`);
+    }
+  };
 
   return (
     <header className="flex items-center justify-between bg-sidebar px-3 sm:px-4 lg:px-6 py-3 w-full border-b border-border">
@@ -88,8 +99,12 @@ export const Header = () => {
         </button>
 
         {/* Publish button - Smaller on mobile */}
-        <button className="px-3 sm:px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors font-medium whitespace-nowrap text-sm sm:text-base">
-          Publish
+        <button
+          onClick={handlePublish}
+          disabled={isSaving}
+          className="px-3 sm:px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors font-medium whitespace-nowrap text-sm sm:text-base disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {isSaving ? 'Publishing...' : 'Publish'}
         </button>
       </div>
     </header>
