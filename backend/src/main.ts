@@ -10,7 +10,7 @@ async function bootstrap() {
       'http://localhost:3000',
       'http://localhost:3001',
       'https://blinkform-8fnj3xztv-thaisfreis-projects.vercel.app',
-      'https://frontend-kappa-woad-89.vercel.app/builder',
+      'https://frontend-kappa-woad-89.vercel.app',
       'https://blinkform.vercel.app',
       /\.vercel\.app$/,
       '*' // Allow all for debugging
@@ -18,10 +18,9 @@ async function bootstrap() {
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
     allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'Origin', 'X-Requested-With', 'Access-Control-Request-Method', 'Access-Control-Request-Headers'],
     exposedHeaders: ['Content-Range', 'X-Content-Range'],
-    credentials: true,
+    credentials: false,
     preflightContinue: false,
     optionsSuccessStatus: 200,
-    'Access-Control-Allow-Origin': '*',
   });
 
   // Set global API prefix
