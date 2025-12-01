@@ -50,14 +50,16 @@ export class SchemaParserService {
   }
 
   /**
-   * Get the starting node (first node in the schema)
+   * Get the starting node (node with no incoming edges)
    */
   getStartNode(schema: FormSchema): FormNode | null {
     if (schema.nodes.length === 0) return null;
 
-    // For now, assume the first node is the start
-    // In a more complex implementation, we might have a dedicated start node
-    return schema.nodes[0];
+    // Find all nodes that are targets of edges
+    const targetIds = new Set(schema.edges.map(edge => edge.target));
+
+    // Find the first node that is not a target (has no incoming edges)
+    return schema.nodes.find(node => !targetIds.has(node.id)) || null;
   }
 
   /**
@@ -91,44 +93,45 @@ export class SchemaParserService {
       }
     };
 
-    // Generate actions based on node data questionType
-    const questionType = currentNode.data?.questionType;
+    // Generate actions based on node type
+    if (currentNode.type === 'end') {
+      baseResponse.title = formTitle;
+      baseResponse.description = currentNode.data.message || 'Thank you for your response!';
+      baseResponse.label = 'Complete';
+      baseResponse.links.actions = [{
+        label: 'Finish',
+        href: `${baseUrl}/api/actions/complete`
+      }];
+    } else {
+      // Handle question nodes
+      const questionType = currentNode.data?.questionType;
 
-    switch (questionType) {
-      case 'input':
-        baseResponse.links.actions = [{
-          label: currentNode.data.questionText || 'Enter your response',
-          href: `${baseUrl}/api/actions/${formId}?node=${currentNode.id}`,
-          parameters: [{
-            name: 'input',
-            label: currentNode.data.questionText,
-            required: currentNode.data.required || false
-          }]
-        }];
-        break;
+      switch (questionType) {
+        case 'input':
+          baseResponse.links.actions = [{
+            label: currentNode.data.questionText || 'Enter your response',
+            href: `${baseUrl}/api/actions/${formId}?node=${currentNode.id}`,
+            parameters: [{
+              name: 'input',
+              label: currentNode.data.questionText,
+              required: currentNode.data.validation?.required || false
+            }]
+          }];
+          break;
 
-      case 'choice':
-        baseResponse.links.actions = (currentNode.data.options || []).map((option: any) => ({
-          label: option.label,
-          href: `${baseUrl}/api/actions/${formId}?choice=${option.value}&next=${nextNodeId || 'end'}`
-        }));
-        break;
+        case 'choice':
+          baseResponse.links.actions = (currentNode.data.options || []).map((option: any) => ({
+            label: option.label,
+            href: `${baseUrl}/api/actions/${formId}?choice=${option.value}&next=${nextNodeId || 'end'}`
+          }));
+          break;
 
-      case 'end':
-        baseResponse.title = formTitle;
-        baseResponse.description = currentNode.data.message || 'Thank you for your response!';
-        baseResponse.label = 'Complete';
-        baseResponse.links.actions = [{
-          label: 'Finish',
-          href: `${baseUrl}/api/actions/complete`
-        }];
-        break;
-
-      default:
-        baseResponse.links.actions = [{
-          label: 'Continue',
-          href: `${baseUrl}/api/actions/${formId}?next=${nextNodeId || 'end'}`
-        }];
+        default:
+          baseResponse.links.actions = [{
+            label: 'Continue',
+            href: `${baseUrl}/api/actions/${formId}?next=${nextNodeId || 'end'}`
+          }];
+      }
     }
 
     return baseResponse;

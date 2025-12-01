@@ -61,7 +61,7 @@ describe('SchemaParserService', () => {
   });
 
   describe('getStartNode', () => {
-    it('should return the first node as start node', () => {
+    it('should return the node with no incoming edges as start node', () => {
       const result = service.getStartNode(mockSchema);
 
       expect(result).toEqual(mockSchema.nodes[0]);
