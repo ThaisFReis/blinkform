@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 
 export interface CreateFormDto {
-  creatorAddress: string;
+  creatorAddress?: string;
   title: string;
   description?: string;
   schema: any;
@@ -22,7 +22,7 @@ export class FormsService {
   async create(createFormDto: CreateFormDto) {
     const form = await this.prisma.form.create({
       data: {
-        creatorAddress: createFormDto.creatorAddress,
+        creatorAddress: createFormDto.creatorAddress || 'test-creator-address',
         title: createFormDto.title,
         description: createFormDto.description,
         schema: createFormDto.schema,

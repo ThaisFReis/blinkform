@@ -20,7 +20,7 @@ let FormsService = class FormsService {
     async create(createFormDto) {
         const form = await this.prisma.form.create({
             data: {
-                creatorAddress: createFormDto.creatorAddress,
+                creatorAddress: createFormDto.creatorAddress || 'test-creator-address',
                 title: createFormDto.title,
                 description: createFormDto.description,
                 schema: createFormDto.schema,

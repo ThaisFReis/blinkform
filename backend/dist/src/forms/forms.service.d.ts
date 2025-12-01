@@ -1,6 +1,6 @@
 import { PrismaService } from '../prisma/prisma.service';
 export interface CreateFormDto {
-    creatorAddress: string;
+    creatorAddress?: string;
     title: string;
     description?: string;
     schema: any;
