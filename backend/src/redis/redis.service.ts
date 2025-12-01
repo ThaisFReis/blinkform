@@ -8,11 +8,37 @@ export class RedisService implements OnModuleInit {
   constructor() {
     // Support both REDIS_URL (cloud) and host/port (local)
     const redisUrl = process.env.REDIS_URL;
+    const redisHost = process.env.REDIS_HOST;
+
+    console.log('Redis config - URL:', redisUrl, 'Host:', redisHost);
+
+    // If no Redis configuration provided, use no-op client
+    if (!redisUrl && !redisHost) {
+      console.log('No Redis configuration found, using no-op client');
+      this.client = {
+        get: async () => null,
+        set: async () => null,
+        setEx: async () => null,
+        del: async () => null,
+      } as any;
+      return;
+    }
+
+    // Temporary: force no-op for testing
+    console.log('Forcing no-op client for testing');
+    this.client = {
+      get: async () => null,
+      set: async () => null,
+      setEx: async () => null,
+      del: async () => null,
+    } as any;
+    return;
+
     this.client = redisUrl
       ? createClient({ url: redisUrl })
       : createClient({
           socket: {
-            host: process.env.REDIS_HOST || 'localhost',
+            host: redisHost || 'localhost',
             port: parseInt(process.env.REDIS_PORT || '6379'),
           },
         });
@@ -20,6 +46,12 @@ export class RedisService implements OnModuleInit {
   }
 
   async onModuleInit() {
+    // Skip if using no-op client
+    if (!this.client.connect) {
+      console.log('Using no-op Redis client, skipping connection');
+      return;
+    }
+
     try {
       // Add timeout to prevent hanging
       const connectPromise = this.client.connect();
