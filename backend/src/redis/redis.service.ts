@@ -6,12 +6,16 @@ export class RedisService {
   private client;
 
   constructor() {
-    this.client = createClient({
-      socket: {
-        host: process.env.REDIS_HOST,
-        port: parseInt(process.env.REDIS_PORT || '6379'),
-      },
-    });
+    // Support both REDIS_URL (cloud) and host/port (local)
+    const redisUrl = process.env.REDIS_URL;
+    this.client = redisUrl
+      ? createClient({ url: redisUrl })
+      : createClient({
+          socket: {
+            host: process.env.REDIS_HOST || 'localhost',
+            port: parseInt(process.env.REDIS_PORT || '6379'),
+          },
+        });
     this.client.connect();
   }
 

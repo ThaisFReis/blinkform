@@ -69,7 +69,7 @@ export class SchemaParserService {
     nextNodeId?: string
   ): ActionResponse {
     const baseResponse: ActionResponse = {
-      icon: 'https://blinkform.xyz/og/start.png',
+      icon: 'https://via.placeholder.com/600x400/4F46E5/FFFFFF?text=BlinkForm',
       title: formTitle,
       description: `Question: ${currentNode.data.questionText || 'Complete the form'}`,
       label: 'Continue',

@@ -144,7 +144,7 @@ export class ActionsService {
     // Return completion response
     return {
       type: 'completed',
-      icon: 'https://blinkform.xyz/og/complete.png',
+      icon: 'https://via.placeholder.com/600x400/10B981/FFFFFF?text=Complete',
       title: form.title,
       description: 'Thank you for completing the form!',
       label: 'Completed',
