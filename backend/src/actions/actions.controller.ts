@@ -10,6 +10,8 @@ export class ActionsController {
   @Header('Access-Control-Allow-Origin', '*')
   @Header('Access-Control-Allow-Methods', 'GET,POST,PUT,OPTIONS')
   @Header('Access-Control-Allow-Headers', 'Content-Type,Authorization,Content-Encoding,Accept-Encoding')
+  @Header('X-Action-Version', '2.0')
+  @Header('X-Blockchain-Ids', 'solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp')
   async getAction(
     @Param('formId') formId: string,
     @Query('account') account?: string,
@@ -22,6 +24,8 @@ export class ActionsController {
   @Header('Access-Control-Allow-Origin', '*')
   @Header('Access-Control-Allow-Methods', 'GET,POST,PUT,OPTIONS')
   @Header('Access-Control-Allow-Headers', 'Content-Type,Authorization,Content-Encoding,Accept-Encoding')
+  @Header('X-Action-Version', '2.0')
+  @Header('X-Blockchain-Ids', 'solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp')
   async postAction(
     @Param('formId') formId: string,
     @Query('account') account: string,
