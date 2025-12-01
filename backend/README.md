@@ -59,6 +59,59 @@ $ npm run test:cov
 
 ## Deployment
 
+### Railway Deployment
+
+This application is configured for deployment on [Railway](https://railway.app).
+
+#### Prerequisites
+- Railway account
+- Supabase project (for database)
+
+#### Environment Variables
+Copy `.env.example` to `.env` and configure the following variables in your Railway project:
+
+- `DATABASE_URL`: Your Supabase PostgreSQL connection string
+- `SUPABASE_URL`: Your Supabase project URL
+- `SUPABASE_ANON_KEY`: Your Supabase anon key
+- `REDIS_HOST`: Redis host (if using Railway Redis)
+- `REDIS_PORT`: Redis port (if using Railway Redis)
+- `SOLANA_RPC_URL`: Solana RPC endpoint
+- `PORT`: Port for the application (usually 3000)
+
+#### Deployment Steps
+
+1. **Connect to Railway**:
+   ```bash
+   # Install Railway CLI
+   npm install -g @railway/cli
+
+   # Login to Railway
+   railway login
+   ```
+
+2. **Deploy**:
+   ```bash
+   # Link your project
+   railway link
+
+   # Deploy
+   railway up
+   ```
+
+3. **Database Setup**:
+   Railway will automatically run the `railway:setup` script which:
+   - Generates Prisma client
+   - Pushes database schema to Supabase
+
+#### Manual Deployment
+If you prefer manual deployment through the Railway dashboard:
+
+1. Connect your GitHub repository to Railway
+2. Set environment variables in Railway dashboard
+3. Railway will automatically build and deploy using the `railway.json` configuration
+
+### Other Deployment Options
+
 When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
 
 If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
