@@ -15,6 +15,11 @@ export interface UpdateFormDto {
   isActive?: boolean;
 }
 
+export interface SubmitFormDto {
+  responses: Record<string, any>;
+  userAccount?: string;
+}
+
 @Injectable()
 export class FormsService {
   constructor(private prisma: PrismaService) {}
@@ -56,5 +61,25 @@ export class FormsService {
       where: { creatorAddress },
       orderBy: { createdAt: 'desc' },
     });
+  }
+
+  async submit(formId: string, submitFormDto: SubmitFormDto) {
+    const form = await this.prisma.form.findUnique({
+      where: { id: formId },
+    });
+
+    if (!form) {
+      throw new Error('Form not found');
+    }
+
+    const submission = await this.prisma.submission.create({
+      data: {
+        formId: form.id,
+        userAccount: submitFormDto.userAccount || 'anonymous',
+        answers: submitFormDto.responses,
+      },
+    });
+
+    return { id: submission.id, message: 'Form submitted successfully' };
   }
 }

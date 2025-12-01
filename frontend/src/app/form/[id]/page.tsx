@@ -2,13 +2,15 @@
 
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
+import { FormRenderer } from '@/components/FormRenderer';
+import { BlinkFormNode } from '@/types/nodes';
 
 interface FormData {
   id: string;
   title: string;
   description?: string;
   schema: {
-    nodes: any[];
+    nodes: BlinkFormNode[];
     edges: any[];
   };
 }
@@ -44,6 +46,35 @@ export default function FormPage() {
     }
   }, [formId]);
 
+  const handleFormSubmit = async (responses: Record<string, any>) => {
+    try {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+      const response = await fetch(`${apiUrl}/api/forms/${formId}/submit`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          responses,
+          // In a real implementation, you'd get the user account from wallet
+          userAccount: 'test-user-account',
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to submit form');
+      }
+
+      const result = await response.json();
+      console.log('Form submitted successfully:', result);
+      // You could show a success message or redirect here
+      alert('Form submitted successfully!');
+    } catch (err) {
+      console.error('Form submission error:', err);
+      alert('Failed to submit form. Please try again.');
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -67,24 +98,12 @@ export default function FormPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12 px-4">
-      <div className="max-w-2xl mx-auto bg-white rounded-lg shadow-lg p-8">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">{form.title}</h1>
-          {form.description && (
-            <p className="text-gray-600">{form.description}</p>
-          )}
-        </div>
-
-        <div className="space-y-6">
-          {/* Form fields would be rendered here based on the schema */}
-          <div className="text-center text-gray-500">
-            <p>Form rendering not yet implemented</p>
-            <p className="text-sm mt-2">Form ID: {form.id}</p>
-            <p className="text-sm">Nodes: {form.schema.nodes.length}</p>
-          </div>
-        </div>
-      </div>
-    </div>
+    <FormRenderer
+      nodes={form.schema.nodes}
+      edges={form.schema.edges}
+      title={form.title}
+      description={form.description}
+      onSubmit={handleFormSubmit}
+    />
   );
 }
