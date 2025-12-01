@@ -109,8 +109,8 @@ export class SchemaParserService {
       switch (questionType) {
         case 'input':
           baseResponse.links.actions = [{
-            label: currentNode.data.questionText || 'Enter your response',
-            href: `${baseUrl}/api/actions/${formId}?node=${currentNode.id}`,
+            label: 'Submit',
+            href: `${baseUrl}/api/actions/${formId}`,
             parameters: [{
               name: 'input',
               label: currentNode.data.questionText,
@@ -120,16 +120,23 @@ export class SchemaParserService {
           break;
 
         case 'choice':
+          // For multiple choice, we need to encode the selected value somehow
+          // Use POST body with a parameter for the choice
           baseResponse.links.actions = (currentNode.data.options || []).map((option: any) => ({
             label: option.label,
-            href: `${baseUrl}/api/actions/${formId}?choice=${option.value}&next=${nextNodeId || 'end'}`
+            href: `${baseUrl}/api/actions/${formId}`,
+            parameters: [{
+              name: 'choice',
+              type: 'hidden',
+              value: option.value
+            }]
           }));
           break;
 
         default:
           baseResponse.links.actions = [{
             label: 'Continue',
-            href: `${baseUrl}/api/actions/${formId}?next=${nextNodeId || 'end'}`
+            href: `${baseUrl}/api/actions/${formId}`
           }];
       }
     }

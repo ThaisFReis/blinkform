@@ -28,9 +28,10 @@ export class ActionsController {
   @Header('X-Blockchain-Ids', 'solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp')
   async postAction(
     @Param('formId') formId: string,
-    @Query('account') account: string,
     @Body() body: any,
   ) {
+    // Account comes from the body in Solana Actions
+    const account = body.account || body.data?.account;
     return this.actionsService.postAction(formId, account, body);
   }
 }
