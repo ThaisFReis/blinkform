@@ -918,6 +918,115 @@ export const RightSidebar = () => {
                 </div>
             </div>
             <div className="flex-1 p-4 overflow-y-auto">
+                {/* Form Properties - Always Visible */}
+                <div className="mb-6 pb-4 border-b border-sidebar-border">
+                    <div className="space-y-6">
+                        {/* Form ID */}
+                        <div>
+                            <h4 className="text-sm font-medium text-sidebar-foreground mb-3">Form ID</h4>
+                            <div className="px-3 py-2 bg-muted rounded-md text-sm text-sidebar-foreground/70 font-mono">
+                                {formId || 'Not saved yet'}
+                            </div>
+                        </div>
+
+                        {/* Basic Form Settings */}
+                        <div>
+                            <h4 className="text-sm font-medium text-sidebar-foreground mb-3">Basic Settings</h4>
+                            <div className="space-y-4 lg:space-y-3">
+                                <div>
+                                    <label className="block text-xs font-medium text-sidebar-foreground mb-1">Form Title</label>
+                                    <input
+                                        type="text"
+                                        value={title}
+                                        onChange={(e) => handleTitleChange(e.target.value)}
+                                        className="w-full px-3 py-3 lg:py-2 text-base lg:text-sm min-h-[44px] border border-input bg-background rounded-md text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
+                                        placeholder="Untitled Form"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-xs font-medium text-sidebar-foreground mb-1">Description</label>
+                                    <textarea
+                                        value={description}
+                                        onChange={(e) => handleDescriptionChange(e.target.value)}
+                                        className="w-full px-3 py-2 border border-input bg-background rounded-md text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent resize-none"
+                                        rows={3}
+                                        placeholder="Form description..."
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-xs font-medium text-sidebar-foreground mb-1">Creator Address</label>
+                                    <input
+                                        type="text"
+                                        value={creatorAddress || ''}
+                                        onChange={(e) => handleCreatorAddressChange(e.target.value)}
+                                        className="w-full px-3 py-2 border border-input bg-background rounded-md text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent font-mono"
+                                        placeholder="Solana address..."
+                                    />
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Collection Settings */}
+                        <div>
+                            <h4 className="text-sm font-medium text-sidebar-foreground mb-3">Collection Settings</h4>
+                            <div className="space-y-4 lg:space-y-3">
+                                <div>
+                                    <label className="block text-xs font-medium text-sidebar-foreground mb-1">Collection Name</label>
+                                    <input
+                                        type="text"
+                                        value={collectionSettings?.collectionName || ''}
+                                        onChange={(e) => handleCollectionNameChange(e.target.value)}
+                                        className="w-full px-3 py-3 lg:py-2 text-base lg:text-sm min-h-[44px] border border-input bg-background rounded-md text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
+                                        placeholder="My NFT Collection"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-xs font-medium text-sidebar-foreground mb-1">Collection Address</label>
+                                    <input
+                                        type="text"
+                                        value={collectionSettings?.collectionAddress || ''}
+                                        onChange={(e) => handleCollectionAddressChange(e.target.value)}
+                                        className="w-full px-3 py-2 border border-input bg-background rounded-md text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent font-mono"
+                                        placeholder="Collection mint address..."
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-xs font-medium text-sidebar-foreground mb-1">Royalties (%)</label>
+                                    <input
+                                        type="number"
+                                        min="0"
+                                        max="100"
+                                        step="0.1"
+                                        value={collectionSettings?.royalties || 0}
+                                        onChange={(e) => handleRoyaltiesChange(e.target.value)}
+                                        className="w-full px-3 py-3 lg:py-2 text-base lg:text-sm min-h-[44px] border border-input bg-background rounded-md text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
+                                        placeholder="5.0"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-xs font-medium text-sidebar-foreground mb-1">Collection Description</label>
+                                    <textarea
+                                        value={collectionSettings?.collectionDescription || ''}
+                                        onChange={(e) => handleCollectionDescriptionChange(e.target.value)}
+                                        className="w-full px-3 py-2 border border-input bg-background rounded-md text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent resize-none"
+                                        rows={2}
+                                        placeholder="Collection description..."
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Node Properties - Only when a node is selected */}
+                {selectedNode && (
+                    <div className="space-y-4">
+                        <div className="text-sm font-medium text-sidebar-foreground border-b border-sidebar-border pb-2">
+                            Node Properties
+                        </div>
+                    </div>
+                )}
+
                 {selectedNode && isValidationNode(selectedNode) ? (
                     /* Validation Node Configuration */
                     <div className="space-y-6">
@@ -2290,105 +2399,9 @@ export const RightSidebar = () => {
                             </div>
                         </div>
                     </div>
-                ) : (
-                    /* Form Configuration */
-                    <div className="space-y-6">
-                        {/* Form ID */}
-                        <div>
-                            <h4 className="text-sm font-medium text-sidebar-foreground mb-3">Form ID</h4>
-                            <div className="px-3 py-2 bg-muted rounded-md text-sm text-sidebar-foreground/70 font-mono">
-                                {formId || 'Not saved yet'}
-                            </div>
-                        </div>
-
-                        {/* Basic Form Settings */}
-                        <div>
-                            <h4 className="text-sm font-medium text-sidebar-foreground mb-3">Basic Settings</h4>
-                            <div className="space-y-4 lg:space-y-3">
-                                <div>
-                                    <label className="block text-xs font-medium text-sidebar-foreground mb-1">Form Title</label>
-                                    <input
-                                        type="text"
-                                        value={title}
-                                        onChange={(e) => handleTitleChange(e.target.value)}
-                                        className="w-full px-3 py-3 lg:py-2 text-base lg:text-sm min-h-[44px] border border-input bg-background rounded-md text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
-                                        placeholder="Untitled Form"
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-xs font-medium text-sidebar-foreground mb-1">Description</label>
-                                    <textarea
-                                        value={description}
-                                        onChange={(e) => handleDescriptionChange(e.target.value)}
-                                        className="w-full px-3 py-2 border border-input bg-background rounded-md text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent resize-none"
-                                        rows={3}
-                                        placeholder="Form description..."
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-xs font-medium text-sidebar-foreground mb-1">Creator Address</label>
-                                    <input
-                                        type="text"
-                                        value={creatorAddress || ''}
-                                        onChange={(e) => handleCreatorAddressChange(e.target.value)}
-                                        className="w-full px-3 py-2 border border-input bg-background rounded-md text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent font-mono"
-                                        placeholder="Solana address..."
-                                    />
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Collection Settings */}
-                        <div>
-                            <h4 className="text-sm font-medium text-sidebar-foreground mb-3">Collection Settings</h4>
-                            <div className="space-y-4 lg:space-y-3">
-                                <div>
-                                    <label className="block text-xs font-medium text-sidebar-foreground mb-1">Collection Name</label>
-                                    <input
-                                        type="text"
-                                        value={collectionSettings?.collectionName || ''}
-                                        onChange={(e) => handleCollectionNameChange(e.target.value)}
-                                        className="w-full px-3 py-3 lg:py-2 text-base lg:text-sm min-h-[44px] border border-input bg-background rounded-md text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
-                                        placeholder="My NFT Collection"
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-xs font-medium text-sidebar-foreground mb-1">Collection Address</label>
-                                    <input
-                                        type="text"
-                                        value={collectionSettings?.collectionAddress || ''}
-                                        onChange={(e) => handleCollectionAddressChange(e.target.value)}
-                                        className="w-full px-3 py-2 border border-input bg-background rounded-md text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent font-mono"
-                                        placeholder="Collection mint address..."
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-xs font-medium text-sidebar-foreground mb-1">Royalties (%)</label>
-                                    <input
-                                        type="number"
-                                        min="0"
-                                        max="100"
-                                        step="0.1"
-                                        value={collectionSettings?.royalties || 0}
-                                        onChange={(e) => handleRoyaltiesChange(e.target.value)}
-                                        className="w-full px-3 py-3 lg:py-2 text-base lg:text-sm min-h-[44px] border border-input bg-background rounded-md text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
-                                        placeholder="5.0"
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-xs font-medium text-sidebar-foreground mb-1">Collection Description</label>
-                                    <textarea
-                                        value={collectionSettings?.collectionDescription || ''}
-                                        onChange={(e) => handleCollectionDescriptionChange(e.target.value)}
-                                        className="w-full px-3 py-2 border border-input bg-background rounded-md text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent resize-none"
-                                        rows={2}
-                                        placeholder="Collection description..."
-                                    />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                 )}
+                {/* Empty fallback for when no specific node type matches */}
+                {selectedNode && <div className="text-sm text-muted-foreground">Node configuration not available</div>}
             </div>
         </div>
     )
