@@ -110,7 +110,7 @@ export class SchemaParserService {
         case 'input':
           baseResponse.links.actions = [{
             label: 'Submit',
-            href: `${baseUrl}/api/actions/${formId}`,
+            href: `${baseUrl}/api/actions/${formId}?input={input}`,
             parameters: [{
               name: 'input',
               label: currentNode.data.questionText,

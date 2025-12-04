@@ -28,10 +28,31 @@ export class ActionsController {
   @Header('X-Blockchain-Ids', 'solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp')
   async postAction(
     @Param('formId') formId: string,
+    @Query() query: Record<string, any>,
     @Body() body: any,
   ) {
     // Account comes from the body in Solana Actions
     const account = body.account || body.data?.account;
-    return this.actionsService.postAction(formId, account, body);
+    return this.actionsService.postAction(formId, account, body, query);
+  }
+
+  @Post(':formId/:choice')
+  @Header('Content-Type', 'application/json')
+  @Header('Access-Control-Allow-Origin', '*')
+  @Header('Access-Control-Allow-Methods', 'GET,POST,PUT,OPTIONS')
+  @Header('Access-Control-Allow-Headers', 'Content-Type,Authorization,Content-Encoding,Accept-Encoding')
+  @Header('X-Action-Version', '2.0')
+  @Header('X-Blockchain-Ids', 'solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp')
+  async postActionWithChoice(
+    @Param('formId') formId: string,
+    @Param('choice') choice: string,
+    @Query() query: Record<string, any>,
+    @Body() body: any,
+  ) {
+    // Account comes from the body in Solana Actions
+    const account = body.account || body.data?.account;
+    // Merge choice into query for unified handling
+    const enrichedQuery = { ...query, choice };
+    return this.actionsService.postAction(formId, account, body, enrichedQuery);
   }
 }

@@ -11,6 +11,35 @@ export class ActionsService {
     private schemaParser: SchemaParserService,
   ) {}
 
+  /**
+   * Dual Extraction Strategy for Solana Actions parameters
+   * Extracts parameter value from query params, body.data, or body root
+   * Priority: query params > body.data > body root
+   *
+   * @param paramName - Parameter name to extract (e.g., 'input', 'choice')
+   * @param query - Query parameters from request
+   * @param body - Request body
+   * @returns Extracted value or undefined
+   */
+  private extractParameter(paramName: string, query: any, body: any): any {
+    // Priority 1: Query parameters (classic approach with {input} placeholder)
+    if (query?.[paramName] !== undefined && query[paramName] !== null) {
+      return query[paramName];
+    }
+
+    // Priority 2: body.data (sRFC 29 compliant)
+    if (body?.data?.[paramName] !== undefined && body.data[paramName] !== null) {
+      return body.data[paramName];
+    }
+
+    // Priority 3: Root body (backward compatibility)
+    if (body?.[paramName] !== undefined && body[paramName] !== null) {
+      return body[paramName];
+    }
+
+    return undefined;
+  }
+
   async getAction(formId: string, account?: string) {
     // Fetch form
     const form = await this.prisma.form.findUnique({
@@ -59,7 +88,7 @@ export class ActionsService {
     );
   }
 
-  async postAction(formId: string, account: string, body: any) {
+  async postAction(formId: string, account: string, body: any, query?: Record<string, any>) {
     // Fetch form
     const form = await this.prisma.form.findUnique({
       where: { id: formId },
@@ -91,19 +120,28 @@ export class ActionsService {
       throw new Error('No valid node found in form schema');
     }
 
-    // Process user input
-    const userInput = body.input || body.choice || body;
+    // Process user input using dual extraction strategy
+    const userInput = this.extractParameter('input', query, body)
+                   || this.extractParameter('choice', query, body)
+                   || body;  // Keep body as ultimate fallback for backward compatibility
     const result = this.schemaParser.processUserInput(schema, currentNodeId, userInput);
 
     if (!result.isValid) {
-      // Return error response
+      // Return Solana Actions compliant error response
+      const baseUrl = process.env.BASE_URL || 'https://blinkform-production.up.railway.app';
       return {
         type: 'error',
-        message: result.error || 'Invalid input',
+        icon: 'https://via.placeholder.com/600x400/EF4444/FFFFFF?text=Error',
+        title: form.title,
+        description: result.error || 'Invalid input',
+        label: 'Try Again',
+        error: {
+          message: result.error || 'Invalid input'
+        },
         links: {
           actions: [{
             label: 'Try Again',
-            href: `/api/actions/${formId}?account=${account}`
+            href: `${baseUrl}/api/actions/${formId}`
           }]
         }
       };
