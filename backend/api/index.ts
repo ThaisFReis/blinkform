@@ -11,8 +11,7 @@ async function bootstrap() {
 
     cachedApp = await NestFactory.create(
       AppModule,
-      expressAdapter,
-      { cors: true }
+      expressAdapter
     );
 
     // Enable CORS with Solana Actions-specific headers
@@ -30,6 +29,15 @@ async function bootstrap() {
 }
 
 export default async (req: any, res: any) => {
+  // Handle OPTIONS preflight requests
+  if (req.method === 'OPTIONS') {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization,Content-Encoding,Accept-Encoding');
+    res.status(200).end();
+    return;
+  }
+
   // Strip /api prefix from the URL before passing to NestJS
   if (req.url.startsWith('/api')) {
     req.url = req.url.replace('/api', '');
