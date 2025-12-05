@@ -25,15 +25,40 @@ export class FormsService {
   constructor(private prisma: PrismaService) {}
 
   async create(createFormDto: CreateFormDto) {
-    const form = await this.prisma.form.create({
-      data: {
-        creatorAddress: createFormDto.creatorAddress || 'test-creator-address',
-        title: createFormDto.title,
-        description: createFormDto.description,
-        schema: createFormDto.schema,
-      },
-    });
-    return { id: form.id };
+    try {
+      // Validate required fields
+      if (!createFormDto.title || createFormDto.title.trim() === '') {
+        throw new Error('Title is required');
+      }
+
+      if (!createFormDto.schema) {
+        throw new Error('Schema is required');
+      }
+
+      // Validate creatorAddress length (Solana addresses are 44 chars)
+      const creatorAddress = createFormDto.creatorAddress || 'test-creator-address';
+      if (creatorAddress.length > 44) {
+        throw new Error('Creator address is too long');
+      }
+
+      // Validate schema is valid JSON
+      if (typeof createFormDto.schema !== 'object') {
+        throw new Error('Schema must be a valid object');
+      }
+
+      const form = await this.prisma.form.create({
+        data: {
+          creatorAddress,
+          title: createFormDto.title.trim(),
+          description: createFormDto.description?.trim(),
+          schema: createFormDto.schema,
+        },
+      });
+      return { id: form.id };
+    } catch (error) {
+      console.error('Error creating form:', error);
+      throw new Error(`Failed to create form: ${error.message}`);
+    }
   }
 
   async findOne(id: string) {
