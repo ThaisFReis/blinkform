@@ -23,8 +23,6 @@ async function bootstrap() {
       credentials: false,
     });
 
-    // Don't set global prefix here - routes already come with /api from Vercel rewrite
-
     await cachedApp.init();
   }
 
@@ -32,6 +30,14 @@ async function bootstrap() {
 }
 
 export default async (req: any, res: any) => {
+  // Strip /api prefix from the URL before passing to NestJS
+  if (req.url.startsWith('/api')) {
+    req.url = req.url.replace('/api', '');
+    if (req.url === '') {
+      req.url = '/';
+    }
+  }
+
   const app = await bootstrap();
   const instance = app.getHttpAdapter().getInstance();
   return instance(req, res);
