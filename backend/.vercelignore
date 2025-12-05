@@ -6,3 +6,4 @@ coverage
 *.spec.ts
 *.test.ts
 .git
+dist
