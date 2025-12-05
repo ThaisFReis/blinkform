@@ -1,17 +1,25 @@
 import { NestFactory } from '@nestjs/core';
+import { ExpressAdapter } from '@nestjs/platform-express';
 import { AppModule } from '../src/app.module';
+import { INestApplication } from '@nestjs/common';
 
-let cachedApp: any;
+let cachedApp: INestApplication;
 
 async function bootstrap() {
   if (!cachedApp) {
-    cachedApp = await NestFactory.create(AppModule, { cors: true });
+    const expressAdapter = new ExpressAdapter();
+
+    cachedApp = await NestFactory.create(
+      AppModule,
+      expressAdapter,
+      { cors: true }
+    );
 
     // Enable CORS with Solana Actions-specific headers
     cachedApp.enableCors({
       origin: '*',
-      methods: 'GET,POST,PUT,OPTIONS',
-      allowedHeaders: 'Content-Type,Authorization,Content-Encoding,Accept-Encoding',
+      methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+      allowedHeaders: ['Content-Type', 'Authorization', 'Content-Encoding', 'Accept-Encoding'],
       credentials: false,
     });
 
@@ -26,6 +34,6 @@ async function bootstrap() {
 
 export default async (req: any, res: any) => {
   const app = await bootstrap();
-  const expressApp = app.getHttpAdapter().getInstance();
-  return expressApp(req, res);
+  const instance = app.getHttpAdapter().getInstance();
+  return instance(req, res);
 };
