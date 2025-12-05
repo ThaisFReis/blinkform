@@ -23,8 +23,7 @@ async function bootstrap() {
       credentials: false,
     });
 
-    // Set global API prefix
-    cachedApp.setGlobalPrefix('api', { exclude: ['health', 'actions.json'] });
+    // Don't set global prefix here - routes already come with /api from Vercel rewrite
 
     await cachedApp.init();
   }
