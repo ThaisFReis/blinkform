@@ -100,7 +100,7 @@ export class SchemaParserService {
       baseResponse.label = 'Complete';
       baseResponse.links.actions = [{
         label: 'Finish',
-        href: `${baseUrl}/api/actions/complete`
+        href: `${baseUrl}/api/forms/complete`
       }];
     } else {
       // Handle question nodes
@@ -110,7 +110,7 @@ export class SchemaParserService {
         case 'input':
           baseResponse.links.actions = [{
             label: 'Submit',
-            href: `${baseUrl}/api/actions/${formId}?input={input}`,
+            href: `${baseUrl}/api/forms/${formId}?input={input}`,
             parameters: [{
               name: 'input',
               label: currentNode.data.questionText,
@@ -123,14 +123,14 @@ export class SchemaParserService {
           // For multiple choice buttons, encode the selection in href
           baseResponse.links.actions = (currentNode.data.options || []).map((option: any) => ({
             label: option.label,
-            href: `${baseUrl}/api/actions/${formId}/${option.value}`
+            href: `${baseUrl}/api/forms/${formId}/${option.value}`
           }));
           break;
 
         default:
           baseResponse.links.actions = [{
             label: 'Continue',
-            href: `${baseUrl}/api/actions/${formId}`
+            href: `${baseUrl}/api/forms/${formId}`
           }];
       }
     }

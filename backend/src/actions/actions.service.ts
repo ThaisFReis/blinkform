@@ -141,7 +141,7 @@ export class ActionsService {
         links: {
           actions: [{
             label: 'Try Again',
-            href: `${baseUrl}/api/actions/${formId}`
+            href: `${baseUrl}/api/forms/${formId}`
           }]
         }
       };

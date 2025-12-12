@@ -9,5 +9,6 @@ import { SchemaParserModule } from '../schema-parser/schema-parser.module';
   imports: [PrismaModule, RedisModule, SchemaParserModule],
   controllers: [ActionsController],
   providers: [ActionsService],
+  exports: [ActionsService],
 })
 export class ActionsModule {}
