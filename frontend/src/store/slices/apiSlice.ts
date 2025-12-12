@@ -168,11 +168,11 @@ export const createApiSlice = (set: any, get: any, api: any): ApiSlice => ({
         creatorAddress: state.creatorAddress || undefined,
       };
 
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
       const isUpdate = !!state.formId;
       const url = isUpdate
-        ? `${apiUrl}/api/forms/${state.formId}`
-        : `${apiUrl}/api/forms`;
+        ? `${apiUrl}/forms/${state.formId}`
+        : `${apiUrl}/forms`;
 
       const response = await fetch(url, {
         method: isUpdate ? 'PUT' : 'POST',
@@ -204,8 +204,8 @@ export const createApiSlice = (set: any, get: any, api: any): ApiSlice => ({
     set({ isLoading: true });
 
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
-      const response = await fetch(`${apiUrl}/api/forms/${formId}`);
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
+      const response = await fetch(`${apiUrl}/forms/${formId}`);
 
       if (!response.ok) {
         throw new Error('Failed to load form');

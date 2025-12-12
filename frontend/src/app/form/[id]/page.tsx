@@ -25,8 +25,8 @@ export default function FormPage() {
   useEffect(() => {
     const loadForm = async () => {
       try {
-        const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
-        const response = await fetch(`${apiUrl}/api/forms/${formId}`);
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
+        const response = await fetch(`${apiUrl}/forms/${formId}`);
 
         if (!response.ok) {
           throw new Error('Form not found');
@@ -48,8 +48,8 @@ export default function FormPage() {
 
   const handleFormSubmit = async (responses: Record<string, any>) => {
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
-      const response = await fetch(`${apiUrl}/api/forms/${formId}/submit`, {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
+      const response = await fetch(`${apiUrl}/forms/${formId}/submit`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
