@@ -21,6 +21,7 @@ export interface ApiSlice {
   validateSchema: () => ValidationError[];
   autoSaveToLocalStorage: () => void;
   publishToTwitter: () => void;
+  getActionUrl: () => string;
 }
 
 // Debounce helper
@@ -243,5 +244,15 @@ export const createApiSlice = (set: any, get: any, api: any): ApiSlice => ({
     if (typeof window !== 'undefined') {
       window.open(twitterUrl, '_blank', 'width=550,height=420');
     }
+  },
+
+  getActionUrl: () => {
+    const state = get();
+    if (!state.formId) {
+      throw new Error('Form must be saved before getting action URL');
+    }
+
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
+    return `${apiUrl}/forms/${state.formId}`;
   },
 });
