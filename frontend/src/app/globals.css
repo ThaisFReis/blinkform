@@ -27,7 +27,14 @@
   --card-foreground: 9 9 11;
   --popover: 255 255 255;
   --popover-foreground: 9 9 11;
-  --primary: 70 13 242;
+  --primary: 03:59:22.146 Running build in Washington, D.C., USA (East) – iad1
+  03:59:22.147 Build machine configuration: 2 cores, 8 GB
+  03:59:22.287 Cloning github.com/ThaisFReis/blinkform (Branch: main, Commit: 32d30ef)
+  03:59:22.826 Cloning completed: 538.000ms
+  03:59:23.097 Restored build cache from previous deployment (C8zTVncksz7RxajGfCc8HRavxyLF)
+  03:59:23.842 Running "vercel build"
+  03:59:24.252 Vercel CLI 48.12.1
+  03:59:24.975 Error: Cannot read properties of undefined (reading 'fsPath');
   --primary-foreground: 250 250 250;
   --secondary: 241 245 249;
   --secondary-foreground: 24 24 27;
