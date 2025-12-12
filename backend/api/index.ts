@@ -23,7 +23,9 @@ async function createApp() {
       credentials: false,
     });
 
-    cachedApp.setGlobalPrefix('api', { exclude: ['health', 'actions.json'] });
+    // Don't set global prefix for Vercel - routing in vercel.json already handles /api prefix
+    // This prevents double /api/api/... paths
+    // cachedApp.setGlobalPrefix('api', { exclude: ['health', 'actions.json'] });
 
     await cachedApp.init();
   }
@@ -40,6 +42,15 @@ export default async (req: any, res: any) => {
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization,Content-Encoding,Accept-Encoding');
     res.status(200).end();
     return;
+  }
+
+  // Strip /api prefix from URL since it's part of the base URL
+  // This allows using BACKEND_URL=https://...vercel.app/api
+  // without doubling the prefix
+  if (req.url.startsWith('/api/')) {
+    req.url = req.url.substring(4);  // Remove '/api'
+  } else if (req.url === '/api') {
+    req.url = '/';
   }
 
   const app = await createApp();
