@@ -1,7 +1,26 @@
+# Dependencies
 node_modules
-# Keep environment variables out of version control
-.env
 
+# Build output
+dist/
+
+# Prisma
 /generated/prisma
-.vercel
+
+# Environment variables
+.env
 .env*.local
+
+# Vercel
+.vercel
+
+# Test coverage
+coverage/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
