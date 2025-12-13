@@ -48,15 +48,21 @@ export class TransactionBuilderService {
       };
 
       // Add compute budget to optimize transaction
+      // Increased to 5000 units for better reliability
       const computeUnitLimitIx = ComputeBudgetProgram.setComputeUnitLimit({
-        units: 1000,
+        units: 5000,
+      });
+
+      // Add priority fee to ensure faster processing (1 microlamport per CU)
+      const priorityFeeIx = ComputeBudgetProgram.setComputeUnitPrice({
+        microLamports: 1,
       });
 
       // Build transaction message
       const messageV0 = new TransactionMessage({
         payerKey: userPublicKey,
         recentBlockhash: blockhash,
-        instructions: [computeUnitLimitIx, memoInstruction],
+        instructions: [computeUnitLimitIx, priorityFeeIx, memoInstruction],
       }).compileToV0Message();
 
       // Create versioned transaction
