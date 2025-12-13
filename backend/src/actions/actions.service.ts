@@ -179,9 +179,9 @@ export class ActionsService {
 
     console.log('[Actions POST] Updated answers:', JSON.stringify(sessionData.answers));
 
-    // Determine if this is the final step
+    // Determine if this is the final step (requires transaction)
     const nextNode = result.nextNodeId ? this.schemaParser.getCurrentNode(schema, result.nextNodeId) : null;
-    const isFinalStep = !nextNode || nextNode.type === 'end' || nextNode.data?.requiresTransaction === true;
+    const isFinalStep = currentNode.data?.requiresTransaction === true || (nextNode && nextNode.data?.requiresTransaction === true);
 
     console.log('[Actions POST] Is final step:', isFinalStep);
 
@@ -203,13 +203,21 @@ export class ActionsService {
           userAccount,
           transactionData.parameters
         );
-      } else {
-        // Fallback to memo transaction for end nodes
-        console.log('[Actions POST] End node detected, creating memo transaction');
-        const memoData = `FormID:${formId}|Answers:${JSON.stringify(sessionData.answers)}|Timestamp:${Date.now()}`;
-        console.log('[Actions POST] Creating memo transaction:', memoData);
-        console.log('[Actions POST] Memo size:', Buffer.from(memoData, 'utf-8').length, 'bytes');
+      } else if (nextNode && nextNode.type === 'transaction') {
+        console.log('[Actions POST] Next node is transaction, creating real transaction');
+        const transactionData = nextNode.data as any;
+        console.log('[Actions POST] Transaction type:', transactionData.transactionType);
+        console.log('[Actions POST] Transaction parameters:', transactionData.parameters);
 
+        transaction = await this.transactionBuilder.createTransaction(
+          transactionData.transactionType,
+          userAccount,
+          transactionData.parameters
+        );
+      } else {
+        // This shouldn't happen with new logic, but fallback
+        console.log('[Actions POST] Unexpected transaction creation');
+        const memoData = `FormID:${formId}|Answers:${JSON.stringify(sessionData.answers)}|Timestamp:${Date.now()}`;
         transaction = await this.transactionBuilder.createMemoTransaction(
           userAccount,
           memoData
@@ -237,6 +245,30 @@ export class ActionsService {
         transaction: transaction,
         message: 'Form completed! Please sign to submit on-chain.',
       } as TransactionResponse;
+
+    } else if (!nextNode) {
+      // END OF FORM: No transaction, just save and complete
+      console.log('[Actions POST] End of form - saving submission without transaction');
+
+      // Save submission to database
+      await this.prisma.submission.create({
+        data: {
+          formId: form.id,
+          userAccount: userAccount,
+          answers: sessionData.answers,
+        },
+      });
+
+      // Clear session
+      await this.redis.del(sessionKey);
+
+      console.log('[Actions POST] Returning PostResponse for form completion');
+
+      // Return PostResponse (no transaction, form completed)
+      return {
+        type: 'post',
+        message: 'Form completed successfully! Thank you for your response.',
+      } as PostResponse;
 
     } else {
       // INTERMEDIATE STEP: Return PostResponse (no transaction)
