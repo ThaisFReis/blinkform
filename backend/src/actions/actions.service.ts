@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { RedisService } from '../redis/redis.service';
 import { SchemaParserService } from '../schema-parser/schema-parser.service';
+import { TransactionBuilderService } from '../solana/transaction-builder.service';
 
 @Injectable()
 export class ActionsService {
@@ -9,6 +10,7 @@ export class ActionsService {
     private prisma: PrismaService,
     private redis: RedisService,
     private schemaParser: SchemaParserService,
+    private transactionBuilder: TransactionBuilderService,
   ) {}
 
   /**
@@ -171,6 +173,15 @@ export class ActionsService {
 
     console.log('[Actions POST] Updated answers:', JSON.stringify(sessionData.answers));
 
+    // Create memo transaction with current answer
+    const memoData = `FormID:${formId}|Node:${currentNodeId}|Answer:${JSON.stringify(userInput)}|Timestamp:${Date.now()}`;
+    console.log('[Actions POST] Creating memo transaction:', memoData);
+
+    const transaction = await this.transactionBuilder.createMemoTransaction(
+      userAccount,
+      memoData
+    );
+
     // Move to next node
     if (result.nextNodeId) {
       console.log('[Actions POST] Moving to next node:', result.nextNodeId);
@@ -185,13 +196,26 @@ export class ActionsService {
         const nextNextNode = this.schemaParser.getNextNode(schema, result.nextNodeId);
         console.log('[Actions POST] Next-next node:', nextNextNode ? nextNextNode.id : 'null');
 
-        const response = this.schemaParser.generateActionResponse(
+        const nextAction = this.schemaParser.generateActionResponse(
           form.title,
           nextNode,
           nextNextNode?.id,
           formId
         );
-        console.log('[Actions POST] Returning response:', JSON.stringify(response));
+
+        // Return Solana Actions compliant POST response with transaction + next action
+        const response = {
+          transaction: transaction,
+          message: 'Answer recorded! Continue to next question.',
+          links: {
+            next: {
+              type: 'inline' as const,
+              action: nextAction
+            }
+          }
+        };
+
+        console.log('[Actions POST] Returning transaction response with next action');
         return response;
       }
     }
@@ -210,19 +234,10 @@ export class ActionsService {
     // Clear session
     await this.redis.del(sessionKey);
 
-    // Return completion response
+    // Return completion response with transaction (final step)
     return {
-      type: 'completed',
-      icon: 'https://via.placeholder.com/600x400/10B981/FFFFFF?text=Complete',
-      title: form.title,
-      description: 'Thank you for completing the form!',
-      label: 'Completed',
-      links: {
-        actions: [{
-          label: 'View Results',
-          href: `/api/actions/${formId}/results`
-        }]
-      }
+      transaction: transaction,
+      message: 'Form completed! Thank you for your submission.',
     };
   }
 }
