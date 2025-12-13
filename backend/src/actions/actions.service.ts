@@ -189,16 +189,34 @@ export class ActionsService {
       // FINAL STEP: Create transaction and save submission
       console.log('[Actions POST] Final step - creating transaction and saving submission');
 
-      // Create memo transaction with all answers
-      const memoData = `FormID:${formId}|Answers:${JSON.stringify(sessionData.answers)}|Timestamp:${Date.now()}`;
-      console.log('[Actions POST] Creating memo transaction:', memoData);
-      console.log('[Actions POST] Memo size:', Buffer.from(memoData, 'utf-8').length, 'bytes');
-      console.log('[Actions POST] User account:', userAccount);
+      let transaction: string;
 
-      const transaction = await this.transactionBuilder.createMemoTransaction(
-        userAccount,
-        memoData
-      );
+      // Check if this is a transaction node
+      if (currentNode.type === 'transaction') {
+        console.log('[Actions POST] Transaction node detected, creating real transaction');
+        const transactionData = currentNode.data as any;
+        console.log('[Actions POST] Transaction type:', transactionData.transactionType);
+        console.log('[Actions POST] Transaction parameters:', transactionData.parameters);
+
+        transaction = await this.transactionBuilder.createTransaction(
+          transactionData.transactionType,
+          userAccount,
+          transactionData.parameters
+        );
+      } else {
+        // Fallback to memo transaction for end nodes
+        console.log('[Actions POST] End node detected, creating memo transaction');
+        const memoData = `FormID:${formId}|Answers:${JSON.stringify(sessionData.answers)}|Timestamp:${Date.now()}`;
+        console.log('[Actions POST] Creating memo transaction:', memoData);
+        console.log('[Actions POST] Memo size:', Buffer.from(memoData, 'utf-8').length, 'bytes');
+
+        transaction = await this.transactionBuilder.createMemoTransaction(
+          userAccount,
+          memoData
+        );
+      }
+
+      console.log('[Actions POST] User account:', userAccount);
 
       // Save submission to database
       await this.prisma.submission.create({

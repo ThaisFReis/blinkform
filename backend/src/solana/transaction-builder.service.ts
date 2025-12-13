@@ -6,7 +6,16 @@ import {
   VersionedTransaction,
   TransactionInstruction,
   Transaction,
+  SystemProgram,
+  LAMPORTS_PER_SOL,
 } from '@solana/web3.js';
+import {
+  createTransferInstruction,
+  getAssociatedTokenAddress,
+  createAssociatedTokenAccountInstruction,
+  TOKEN_PROGRAM_ID,
+  ASSOCIATED_TOKEN_PROGRAM_ID,
+} from '@solana/spl-token';
 
 @Injectable()
 export class TransactionBuilderService {
@@ -81,6 +90,165 @@ export class TransactionBuilderService {
     } catch (error) {
       this.logger.error('Failed to create memo transaction:', error);
       throw new Error(`Failed to create transaction: ${error.message}`);
+    }
+  }
+
+  /**
+   * Creates a SOL transfer transaction
+   */
+  async createSystemTransferTransaction(
+    fromAccount: string,
+    toAccount: string,
+    amount: number
+  ): Promise<string> {
+    try {
+      this.logger.log(`Creating SOL transfer transaction: ${amount} SOL from ${fromAccount} to ${toAccount}`);
+
+      const fromPublicKey = new PublicKey(fromAccount);
+      const toPublicKey = new PublicKey(toAccount);
+
+      // Convert SOL to lamports
+      const lamports = amount * LAMPORTS_PER_SOL;
+
+      // Get latest blockhash
+      const { blockhash } = await this.connection.getLatestBlockhash();
+
+      // Create transfer instruction
+      const transferInstruction = SystemProgram.transfer({
+        fromPubkey: fromPublicKey,
+        toPubkey: toPublicKey,
+        lamports,
+      });
+
+      // Build transaction
+      const transaction = new Transaction({
+        feePayer: fromPublicKey,
+        recentBlockhash: blockhash,
+      }).add(transferInstruction);
+
+      // Serialize transaction
+      const serializedTransaction = Buffer.from(transaction.serialize({ requireAllSignatures: false })).toString('base64');
+
+      this.logger.log(`SOL transfer transaction created successfully`);
+
+      return serializedTransaction;
+    } catch (error) {
+      this.logger.error('Failed to create SOL transfer transaction:', error);
+      throw new Error(`Failed to create SOL transfer: ${error.message}`);
+    }
+  }
+
+  /**
+   * Creates a SPL token transfer transaction
+   */
+  async createSplTransferTransaction(
+    fromAccount: string,
+    toAccount: string,
+    mintAddress: string,
+    amount: number,
+    decimals: number = 9
+  ): Promise<string> {
+    try {
+      this.logger.log(`Creating SPL token transfer: ${amount} tokens from ${fromAccount} to ${toAccount}`);
+
+      const fromPublicKey = new PublicKey(fromAccount);
+      const toPublicKey = new PublicKey(toAccount);
+      const mintPublicKey = new PublicKey(mintAddress);
+
+      // Get associated token accounts
+      const fromTokenAccount = await getAssociatedTokenAddress(mintPublicKey, fromPublicKey);
+      const toTokenAccount = await getAssociatedTokenAddress(mintPublicKey, toPublicKey);
+
+      // Check if recipient's associated token account exists
+      const toTokenAccountInfo = await this.connection.getAccountInfo(toTokenAccount);
+
+      // Get latest blockhash
+      const { blockhash } = await this.connection.getLatestBlockhash();
+
+      const transaction = new Transaction({
+        feePayer: fromPublicKey,
+        recentBlockhash: blockhash,
+      });
+
+      // If recipient's token account doesn't exist, create it
+      if (!toTokenAccountInfo) {
+        this.logger.log('Creating associated token account for recipient');
+        const createAtaInstruction = createAssociatedTokenAccountInstruction(
+          fromPublicKey, // payer
+          toTokenAccount, // associated token account
+          toPublicKey, // owner
+          mintPublicKey, // mint
+          TOKEN_PROGRAM_ID,
+          ASSOCIATED_TOKEN_PROGRAM_ID
+        );
+        transaction.add(createAtaInstruction);
+      }
+
+      // Convert amount to smallest unit
+      const transferAmount = Math.floor(amount * Math.pow(10, decimals));
+
+      // Create transfer instruction
+      const transferInstruction = createTransferInstruction(
+        fromTokenAccount,
+        toTokenAccount,
+        fromPublicKey,
+        transferAmount,
+        [],
+        TOKEN_PROGRAM_ID
+      );
+
+      transaction.add(transferInstruction);
+
+      // Serialize transaction
+      const serializedTransaction = Buffer.from(transaction.serialize({ requireAllSignatures: false })).toString('base64');
+
+      this.logger.log(`SPL token transfer transaction created successfully`);
+
+      return serializedTransaction;
+    } catch (error) {
+      this.logger.error('Failed to create SPL token transfer transaction:', error);
+      throw new Error(`Failed to create SPL transfer: ${error.message}`);
+    }
+  }
+
+  /**
+   * Creates a transaction based on type and parameters
+   */
+  async createTransaction(
+    transactionType: string,
+    account: string,
+    parameters: any
+  ): Promise<string> {
+    switch (transactionType) {
+      case 'SYSTEM_TRANSFER':
+        return this.createSystemTransferTransaction(
+          account,
+          parameters.recipientAddress,
+          parameters.amount
+        );
+
+      case 'SPL_TRANSFER':
+        return this.createSplTransferTransaction(
+          account,
+          parameters.recipientAddress,
+          parameters.mintAddress,
+          parameters.amount,
+          parameters.decimals || 9
+        );
+
+      case 'SPL_MINT':
+        // For now, fall back to memo - minting requires more complex setup
+        this.logger.warn('SPL_MINT not implemented yet, using memo fallback');
+        return this.createMemoTransaction(account, `Mint request: ${JSON.stringify(parameters)}`);
+
+      case 'CUSTOM_CALL':
+        // For now, fall back to memo - custom calls require program-specific logic
+        this.logger.warn('CUSTOM_CALL not implemented yet, using memo fallback');
+        return this.createMemoTransaction(account, `Custom call request: ${JSON.stringify(parameters)}`);
+
+      default:
+        this.logger.warn(`Unknown transaction type: ${transactionType}, using memo fallback`);
+        return this.createMemoTransaction(account, `Unknown transaction: ${transactionType} - ${JSON.stringify(parameters)}`);
     }
   }
 

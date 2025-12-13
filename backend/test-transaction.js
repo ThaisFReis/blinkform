@@ -1,5 +1,5 @@
 /**
- * Test script to simulate Solana memo transaction locally
+ * Test script to simulate Solana transactions locally
  * This helps debug transaction failures before sending to wallet
  */
 
@@ -12,6 +12,7 @@ const {
   TransactionInstruction,
   Transaction,
 } = require('@solana/web3.js');
+
 
 async function testMemoTransaction() {
   console.log('🔍 Testing Solana Memo Transaction...\n');
@@ -94,5 +95,82 @@ async function testMemoTransaction() {
   }
 }
 
+async function testSolTransfer() {
+  console.log('🔍 Testing SOL Transfer Transaction...\n');
+
+  // Configuration
+  const RPC_URL = 'https://api.devnet.solana.com';
+  const connection = new Connection(RPC_URL, 'confirmed');
+
+  // Use your actual wallet address here
+  const USER_WALLET = '5nWF63PbuUwqzHBDWjuafCZpF7A7gJ7v5q3eLV96i3Ka'; // Your Phantom wallet address
+  const RECIPIENT_WALLET = '11111111111111111111111111111112'; // System program as recipient for testing
+  const AMOUNT_SOL = 0.01; // Small amount for testing
+
+  console.log('📝 Configuration:');
+  console.log('  RPC URL:', RPC_URL);
+  console.log('  From:', USER_WALLET);
+  console.log('  To:', RECIPIENT_WALLET);
+  console.log('  Amount:', AMOUNT_SOL, 'SOL\n');
+
+  try {
+    // Parse public keys
+    const fromPublicKey = new PublicKey(USER_WALLET);
+    const toPublicKey = new PublicKey(RECIPIENT_WALLET);
+    console.log('✅ Wallet addresses are valid\n');
+
+    // Get latest blockhash
+    console.log('⏳ Fetching latest blockhash...');
+    const { blockhash } = await connection.getLatestBlockhash();
+    console.log('✅ Blockhash:', blockhash, '\n');
+
+    // Create transfer instruction
+    console.log('📦 Creating SOL transfer instruction...');
+    const { SystemProgram, LAMPORTS_PER_SOL } = require('@solana/web3.js');
+    const transferInstruction = SystemProgram.transfer({
+      fromPubkey: fromPublicKey,
+      toPubkey: toPublicKey,
+      lamports: Math.floor(AMOUNT_SOL * LAMPORTS_PER_SOL),
+    });
+
+    // Build transaction
+    console.log('🔨 Building transaction...');
+    const transaction = new Transaction({
+      feePayer: fromPublicKey,
+      recentBlockhash: blockhash,
+    }).add(transferInstruction);
+
+    // Get transaction size
+    const serialized = transaction.serialize({ requireAllSignatures: false });
+    console.log('✅ Transaction size:', serialized.length, 'bytes\n');
+
+    // Simulate transaction
+    console.log('🔄 Simulating transaction...\n');
+    const simulation = await connection.simulateTransaction(transaction);
+
+    if (simulation.value.err) {
+      console.log('❌ SIMULATION FAILED!\n');
+      console.log('Error:', JSON.stringify(simulation.value.err, null, 2));
+      console.log('\nLogs:');
+      simulation.value.logs?.forEach(log => console.log('  ', log));
+      process.exit(1);
+    } else {
+      console.log('✅ SIMULATION SUCCESS!\n');
+      console.log('Compute units used:', simulation.value.unitsConsumed);
+      console.log('\nLogs:');
+      simulation.value.logs?.forEach(log => console.log('  ', log));
+
+      console.log('\n✨ SOL Transfer transaction is valid and ready to sign!');
+      console.log('📤 Base64 transaction:', Buffer.from(serialized).toString('base64').substring(0, 50) + '...');
+    }
+
+  } catch (error) {
+    console.log('\n❌ ERROR:', error.message);
+    console.log('\nFull error:', error);
+    process.exit(1);
+  }
+}
+
 // Run test
-testMemoTransaction();
+// testMemoTransaction();
+testSolTransfer();
