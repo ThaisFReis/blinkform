@@ -20,7 +20,12 @@ export class ActionsController {
     return this.actionsService.getAction(formId, account);
   }
 
-  @Post(':formId')
+  /**
+   * Callback endpoint for links.next
+   * Called by Blink client after PostResponse to render next question UI
+   * IMPORTANT: Must come BEFORE :formId/:choice to avoid route collision
+   */
+  @Post(':formId/next')
   @Header('Content-Type', 'application/json')
   @Header('Access-Control-Allow-Origin', '*')
   @Header('Access-Control-Allow-Methods', 'GET,POST,PUT,OPTIONS')
@@ -28,14 +33,14 @@ export class ActionsController {
   @Header('Access-Control-Expose-Headers', 'X-Action-Version,X-Blockchain-Ids,Content-Type')
   @Header('X-Action-Version', '2.0')
   @Header('X-Blockchain-Ids', 'solana:EtWTRABZaYq6iMfeYKouRu166VU2xqa1')
-  async postAction(
+  async getNextAction(
     @Param('formId') formId: string,
-    @Query() query: Record<string, any>,
+    @Query('account') account: string,
     @Body() body: any,
   ) {
-    // Account comes from the body in Solana Actions
-    const account = body.account || body.data?.account;
-    return this.actionsService.postAction(formId, account, body, query);
+    // Account can come from query params or body
+    const userAccount = account || body.account || body.data?.account;
+    return this.actionsService.getNextAction(formId, userAccount);
   }
 
   @Post(':formId/:choice')
@@ -59,11 +64,7 @@ export class ActionsController {
     return this.actionsService.postAction(formId, account, body, enrichedQuery);
   }
 
-  /**
-   * Callback endpoint for links.next
-   * Called by Blink client after PostResponse to render next question UI
-   */
-  @Post(':formId/next')
+  @Post(':formId')
   @Header('Content-Type', 'application/json')
   @Header('Access-Control-Allow-Origin', '*')
   @Header('Access-Control-Allow-Methods', 'GET,POST,PUT,OPTIONS')
@@ -71,14 +72,14 @@ export class ActionsController {
   @Header('Access-Control-Expose-Headers', 'X-Action-Version,X-Blockchain-Ids,Content-Type')
   @Header('X-Action-Version', '2.0')
   @Header('X-Blockchain-Ids', 'solana:EtWTRABZaYq6iMfeYKouRu166VU2xqa1')
-  async getNextAction(
+  async postAction(
     @Param('formId') formId: string,
-    @Query('account') account: string,
+    @Query() query: Record<string, any>,
     @Body() body: any,
   ) {
-    // Account can come from query params or body
-    const userAccount = account || body.account || body.data?.account;
-    return this.actionsService.getNextAction(formId, userAccount);
+    // Account comes from the body in Solana Actions
+    const account = body.account || body.data?.account;
+    return this.actionsService.postAction(formId, account, body, query);
   }
 
   /**
