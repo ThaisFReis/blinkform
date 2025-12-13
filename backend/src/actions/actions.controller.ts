@@ -12,7 +12,7 @@ export class ActionsController {
   @Header('Access-Control-Allow-Headers', 'Content-Type,Authorization,Content-Encoding,Accept-Encoding')
   @Header('Access-Control-Expose-Headers', 'X-Action-Version,X-Blockchain-Ids,Content-Type')
   @Header('X-Action-Version', '2.0')
-  @Header('X-Blockchain-Ids', 'solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp')
+  @Header('X-Blockchain-Ids', 'solana:EtWTRABZaYq6iMfeYKouRu166VU2xqa1')
   async getAction(
     @Param('formId') formId: string,
     @Query('account') account?: string,
@@ -27,7 +27,7 @@ export class ActionsController {
   @Header('Access-Control-Allow-Headers', 'Content-Type,Authorization,Content-Encoding,Accept-Encoding')
   @Header('Access-Control-Expose-Headers', 'X-Action-Version,X-Blockchain-Ids,Content-Type')
   @Header('X-Action-Version', '2.0')
-  @Header('X-Blockchain-Ids', 'solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp')
+  @Header('X-Blockchain-Ids', 'solana:EtWTRABZaYq6iMfeYKouRu166VU2xqa1')
   async postAction(
     @Param('formId') formId: string,
     @Query() query: Record<string, any>,
@@ -45,7 +45,7 @@ export class ActionsController {
   @Header('Access-Control-Allow-Headers', 'Content-Type,Authorization,Content-Encoding,Accept-Encoding')
   @Header('Access-Control-Expose-Headers', 'X-Action-Version,X-Blockchain-Ids,Content-Type')
   @Header('X-Action-Version', '2.0')
-  @Header('X-Blockchain-Ids', 'solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp')
+  @Header('X-Blockchain-Ids', 'solana:EtWTRABZaYq6iMfeYKouRu166VU2xqa1')
   async postActionWithChoice(
     @Param('formId') formId: string,
     @Param('choice') choice: string,
