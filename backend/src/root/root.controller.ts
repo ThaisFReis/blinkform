@@ -5,12 +5,13 @@ export class RootController {
   @Get('actions.json')
   @Header('Content-Type', 'application/json')
   @Header('Access-Control-Allow-Origin', '*')
+  @Header('Access-Control-Expose-Headers', 'Content-Type')
   getActionsManifest() {
     return {
       rules: [
         {
           pathPattern: '/api/actions/**',
-          apiPath: 'https://blinkform-production.up.railway.app/api/actions/**'
+          apiPath: '/api/actions/**' // Relative path - works on any domain (Vercel, Railway, localhost)
         }
       ]
     };

@@ -128,7 +128,7 @@ export class ActionsService {
 
     if (!result.isValid) {
       // Return Solana Actions compliant error response
-      const baseUrl = process.env.BASE_URL || 'https://blinkform-production.up.railway.app';
+      const baseUrl = process.env.BASE_URL || 'https://blinkform-backend.vercel.app';
       return {
         type: 'error',
         icon: 'https://via.placeholder.com/600x400/EF4444/FFFFFF?text=Error',

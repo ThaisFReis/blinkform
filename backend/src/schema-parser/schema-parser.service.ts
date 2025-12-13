@@ -81,7 +81,7 @@ export class SchemaParserService {
     nextNodeId?: string,
     formId?: string
   ): ActionResponse {
-    const baseUrl = process.env.BASE_URL || 'https://blinkform-production.up.railway.app';
+    const baseUrl = process.env.BASE_URL || 'https://blinkform-backend.vercel.app';
     const baseResponse: ActionResponse = {
       type: 'action',
       icon: 'https://via.placeholder.com/600x400/4F46E5/FFFFFF?text=BlinkForm',

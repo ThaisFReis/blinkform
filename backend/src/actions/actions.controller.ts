@@ -10,6 +10,7 @@ export class ActionsController {
   @Header('Access-Control-Allow-Origin', '*')
   @Header('Access-Control-Allow-Methods', 'GET,POST,PUT,OPTIONS')
   @Header('Access-Control-Allow-Headers', 'Content-Type,Authorization,Content-Encoding,Accept-Encoding')
+  @Header('Access-Control-Expose-Headers', 'X-Action-Version,X-Blockchain-Ids,Content-Type')
   @Header('X-Action-Version', '2.0')
   @Header('X-Blockchain-Ids', 'solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp')
   async getAction(
@@ -24,6 +25,7 @@ export class ActionsController {
   @Header('Access-Control-Allow-Origin', '*')
   @Header('Access-Control-Allow-Methods', 'GET,POST,PUT,OPTIONS')
   @Header('Access-Control-Allow-Headers', 'Content-Type,Authorization,Content-Encoding,Accept-Encoding')
+  @Header('Access-Control-Expose-Headers', 'X-Action-Version,X-Blockchain-Ids,Content-Type')
   @Header('X-Action-Version', '2.0')
   @Header('X-Blockchain-Ids', 'solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp')
   async postAction(
@@ -41,6 +43,7 @@ export class ActionsController {
   @Header('Access-Control-Allow-Origin', '*')
   @Header('Access-Control-Allow-Methods', 'GET,POST,PUT,OPTIONS')
   @Header('Access-Control-Allow-Headers', 'Content-Type,Authorization,Content-Encoding,Accept-Encoding')
+  @Header('Access-Control-Expose-Headers', 'X-Action-Version,X-Blockchain-Ids,Content-Type')
   @Header('X-Action-Version', '2.0')
   @Header('X-Blockchain-Ids', 'solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp')
   async postActionWithChoice(
