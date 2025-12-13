@@ -235,10 +235,9 @@ export const createApiSlice = (set: any, get: any, api: any): ApiSlice => ({
       throw new Error('Form must be saved before publishing');
     }
 
-    const baseUrl = typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000';
-    const formUrl = `${baseUrl}/form/${state.formId}`;
+    const actionUrl = state.getActionUrl();
     const tweetText = `Check out this interactive Solana form: ${state.title}`;
-    const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}&url=${encodeURIComponent(formUrl)}`;
+    const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}&url=${encodeURIComponent(actionUrl)}`;
 
     // Open Twitter compose window
     if (typeof window !== 'undefined') {
@@ -253,6 +252,6 @@ export const createApiSlice = (set: any, get: any, api: any): ApiSlice => ({
     }
 
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
-    return `${apiUrl}/forms/${state.formId}`;
+    return `${apiUrl}/actions/${state.formId}`;
   },
 });

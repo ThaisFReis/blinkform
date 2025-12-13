@@ -108,30 +108,30 @@ export class SchemaParserService {
 
       switch (questionType) {
         case 'input':
-          baseResponse.links.actions = [{
-            label: 'Submit',
-            href: `${baseUrl}/api/forms/${formId}?input={input}`,
-            parameters: [{
-              name: 'input',
-              label: currentNode.data.questionText,
-              required: currentNode.data.validation?.required || false
-            }]
-          }];
-          break;
+        baseResponse.links.actions = [{
+          label: 'Submit',
+          href: `${baseUrl}/api/actions/${formId}?input={input}`,
+          parameters: [{
+            name: 'input',
+            label: currentNode.data.questionText,
+            required: currentNode.data.validation?.required || false
+          }]
+        }];
+        break;
 
-        case 'choice':
-          // For multiple choice buttons, encode the selection in href
-          baseResponse.links.actions = (currentNode.data.options || []).map((option: any) => ({
-            label: option.label,
-            href: `${baseUrl}/api/forms/${formId}/${option.value}`
-          }));
-          break;
+      case 'choice':
+        // For multiple choice buttons, encode the selection in href
+        baseResponse.links.actions = (currentNode.data.options || []).map((option: any) => ({
+          label: option.label,
+          href: `${baseUrl}/api/actions/${formId}/${option.value}`
+        }));
+        break;
 
-        default:
-          baseResponse.links.actions = [{
-            label: 'Continue',
-            href: `${baseUrl}/api/forms/${formId}`
-          }];
+      default:
+        baseResponse.links.actions = [{
+          label: 'Continue',
+          href: `${baseUrl}/api/actions/${formId}`
+        }];
       }
     }
 
