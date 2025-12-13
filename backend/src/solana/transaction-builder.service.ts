@@ -4,7 +4,7 @@ import {
   PublicKey,
   TransactionMessage,
   VersionedTransaction,
-  ComputeBudgetProgram,
+  TransactionInstruction,
 } from '@solana/web3.js';
 
 @Injectable()
@@ -41,24 +41,25 @@ export class TransactionBuilderService {
 
       // Create memo instruction using SPL Memo program
       // Program ID: MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr
-      const memoInstruction = {
+      // Include signer in keys array for proper simulation
+      const memoInstruction = new TransactionInstruction({
         programId: new PublicKey('MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr'),
-        keys: [],
+        keys: [
+          {
+            pubkey: userPublicKey,
+            isSigner: true,
+            isWritable: false,
+          },
+        ],
         data: Buffer.from(memo, 'utf-8'),
-      };
-
-      // Add compute budget for memo transaction
-      // Memo instructions need ~1400 compute units
-      const computeUnitLimitIx = ComputeBudgetProgram.setComputeUnitLimit({
-        units: 1400,
       });
 
       // Build transaction message
-      // Note: Priority fees removed for devnet compatibility
+      // Note: Using default compute budget (200k CUs) - custom limits were too restrictive
       const messageV0 = new TransactionMessage({
         payerKey: userPublicKey,
         recentBlockhash: blockhash,
-        instructions: [computeUnitLimitIx, memoInstruction],
+        instructions: [memoInstruction],
       }).compileToV0Message();
 
       // Create versioned transaction
