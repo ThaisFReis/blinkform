@@ -86,6 +86,33 @@ export class SchemaParserService {
         label: 'Finish',
         href: `${baseUrl}/api/forms/complete`
       }];
+    } else if (currentNode.type === 'transaction') {
+      // Handle transaction nodes
+      const transactionData = currentNode.data;
+      const transactionType = transactionData.transactionType;
+
+      let transactionDescription = 'Confirm the transaction details below';
+      switch (transactionType) {
+        case 'SYSTEM_TRANSFER':
+          transactionDescription = `Transfer ${transactionData.parameters?.amount || 0} SOL to ${transactionData.parameters?.recipientAddress || 'recipient'}`;
+          break;
+        case 'SPL_TRANSFER':
+          transactionDescription = `Transfer ${transactionData.parameters?.amount || 0} tokens to ${transactionData.parameters?.recipientAddress || 'recipient'}`;
+          break;
+        case 'SPL_MINT':
+          transactionDescription = `Mint ${transactionData.parameters?.amount || 0} tokens`;
+          break;
+        default:
+          transactionDescription = 'Execute custom transaction';
+      }
+
+      baseResponse.title = formTitle;
+      baseResponse.description = transactionDescription;
+      baseResponse.label = 'Confirm Transaction';
+      baseResponse.links.actions = [{
+        label: 'Confirm Transaction',
+        href: `${baseUrl}/api/actions/${formId}?confirm=transaction`
+      }];
     } else {
       // Handle question nodes
       const questionType = currentNode.data?.questionType;
@@ -138,12 +165,15 @@ export class SchemaParserService {
    * Validate user input for a node
    */
   validateNodeInput(node: FormNode, input: any): boolean {
-    if (!node.data.required) return true;
-
     switch (node.type) {
+      case 'transaction':
+        // For transaction nodes, we just need confirmation
+        return input === 'transaction' || input?.confirm === 'transaction';
       case 'input':
+        if (!node.data?.validation?.required) return true;
         return !!(input && input.trim().length > 0);
       case 'choice':
+        if (!node.data?.validation?.required) return true;
         return !!(input && node.data.options?.some((opt: any) => opt.value === input));
       default:
         return true;

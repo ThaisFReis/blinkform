@@ -142,8 +142,9 @@ export class ActionsService {
 
     // Process user input using dual extraction strategy
     const userInput = this.extractParameter('input', query, body)
-                   || this.extractParameter('choice', query, body)
-                   || body;  // Keep body as ultimate fallback for backward compatibility
+                    || this.extractParameter('choice', query, body)
+                    || this.extractParameter('confirm', query, body)
+                    || body;  // Keep body as ultimate fallback for backward compatibility
 
     console.log('[Actions POST] User input:', userInput);
 
@@ -181,7 +182,9 @@ export class ActionsService {
 
     // Determine if this is the final step (requires transaction)
     const nextNode = result.nextNodeId ? this.schemaParser.getCurrentNode(schema, result.nextNodeId) : null;
-    const isFinalStep = currentNode.data?.requiresTransaction === true || (nextNode && nextNode.data?.requiresTransaction === true);
+    const isFinalStep = currentNode.type === 'transaction' ||
+                       currentNode.data?.requiresTransaction === true ||
+                       (nextNode && nextNode.data?.requiresTransaction === true);
 
     console.log('[Actions POST] Is final step:', isFinalStep);
 
