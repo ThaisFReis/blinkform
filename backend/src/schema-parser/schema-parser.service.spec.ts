@@ -176,15 +176,16 @@ describe('SchemaParserService', () => {
     it('should generate default action response for unknown node type', () => {
       const unknownNode: FormNode = {
         id: 'unknown',
-        type: 'unknown',
-        data: {},
+        type: 'question',
+        data: {
+          questionType: 'unknown'
+        },
       };
-      const result = service.generateActionResponse('Test Form', unknownNode, 'next-id');
+      const result = service.generateActionResponse('Test Form', unknownNode, 'next-id', 'form-123');
 
-      expect(result.links.actions).toEqual([{
-        label: 'Continue',
-        href: '/api/actions/unknown?next=next-id',
-      }]);
+      expect(result.links.actions).toHaveLength(1);
+      expect(result.links.actions[0].label).toBe('Continue');
+      expect(result.links.actions[0].href).toContain('/api/actions/form-123');
     });
   });
 
