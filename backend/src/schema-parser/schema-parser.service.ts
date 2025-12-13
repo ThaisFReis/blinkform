@@ -1,9 +1,16 @@
 import { Injectable } from '@nestjs/common';
+import { ActionGetResponse } from '../actions/dto/action-response.dto';
 
 export interface FormNode {
   id: string;
   type: string;
   data: any;
+  /**
+   * Optional flag to force transaction creation for this node
+   * Used for mid-flow transactions (e.g., payment before continuing)
+   * If true, this step will return TransactionResponse instead of PostResponse
+   */
+  requiresTransaction?: boolean;
 }
 
 export interface FormEdge {
@@ -15,29 +22,6 @@ export interface FormEdge {
 export interface FormSchema {
   nodes: FormNode[];
   edges: FormEdge[];
-}
-
-export interface ActionResponse {
-  type?: string;
-  icon: string;
-  title: string;
-  description: string;
-  label: string;
-  disabled?: boolean;
-  links: {
-    actions: Array<{
-      label: string;
-      href: string;
-      parameters?: Array<{
-        name: string;
-        label?: string;
-        required?: boolean;
-      }>;
-    }>;
-  };
-  error?: {
-    message: string;
-  };
 }
 
 @Injectable()
@@ -73,16 +57,16 @@ export class SchemaParserService {
   }
 
   /**
-   * Generate ActionResponse for the current node
+   * Generate ActionGetResponse for the current node
    */
   generateActionResponse(
     formTitle: string,
     currentNode: FormNode,
     nextNodeId?: string,
     formId?: string
-  ): ActionResponse {
+  ): ActionGetResponse {
     const baseUrl = process.env.BASE_URL || 'https://blinkform-backend.vercel.app';
-    const baseResponse: ActionResponse = {
+    const baseResponse: ActionGetResponse = {
       type: 'action',
       icon: 'https://via.placeholder.com/600x400/4F46E5/FFFFFF?text=BlinkForm',
       title: formTitle,

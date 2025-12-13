@@ -3,6 +3,12 @@ import { PrismaService } from '../prisma/prisma.service';
 import { RedisService } from '../redis/redis.service';
 import { SchemaParserService } from '../schema-parser/schema-parser.service';
 import { TransactionBuilderService } from '../solana/transaction-builder.service';
+import {
+  ActionPostResponse,
+  PostResponse,
+  TransactionResponse,
+  ActionGetResponse,
+} from './dto/action-response.dto';
 
 @Injectable()
 export class ActionsService {
@@ -173,71 +179,141 @@ export class ActionsService {
 
     console.log('[Actions POST] Updated answers:', JSON.stringify(sessionData.answers));
 
-    // Create memo transaction with current answer
-    const memoData = `FormID:${formId}|Node:${currentNodeId}|Answer:${JSON.stringify(userInput)}|Timestamp:${Date.now()}`;
-    console.log('[Actions POST] Creating memo transaction:', memoData);
+    // Determine if this is the final step
+    const nextNode = result.nextNodeId ? this.schemaParser.getCurrentNode(schema, result.nextNodeId) : null;
+    const isFinalStep = !nextNode || nextNode.type === 'end' || nextNode.data?.requiresTransaction === true;
 
-    const transaction = await this.transactionBuilder.createMemoTransaction(
-      userAccount,
-      memoData
-    );
+    console.log('[Actions POST] Is final step:', isFinalStep);
 
-    // Move to next node
-    if (result.nextNodeId) {
-      console.log('[Actions POST] Moving to next node:', result.nextNodeId);
+    if (isFinalStep) {
+      // FINAL STEP: Create transaction and save submission
+      console.log('[Actions POST] Final step - creating transaction and saving submission');
+
+      // Create memo transaction with all answers
+      const memoData = `FormID:${formId}|Answers:${JSON.stringify(sessionData.answers)}|Timestamp:${Date.now()}`;
+      console.log('[Actions POST] Creating memo transaction:', memoData);
+
+      const transaction = await this.transactionBuilder.createMemoTransaction(
+        userAccount,
+        memoData
+      );
+
+      // Save submission to database
+      await this.prisma.submission.create({
+        data: {
+          formId: form.id,
+          userAccount: userAccount,
+          answers: sessionData.answers,
+        },
+      });
+
+      // Clear session
+      await this.redis.del(sessionKey);
+
+      console.log('[Actions POST] Returning TransactionResponse for final step');
+
+      // Return TransactionResponse (requires blockchain signature)
+      return {
+        transaction: transaction,
+        message: 'Form completed! Please sign to submit on-chain.',
+      } as TransactionResponse;
+
+    } else {
+      // INTERMEDIATE STEP: Return PostResponse (no transaction)
+      console.log('[Actions POST] Intermediate step - returning PostResponse');
+
+      // Move to next node
       sessionData.current_node_id = result.nextNodeId;
       await this.redis.set(sessionKey, JSON.stringify(sessionData), 3600); // 1 hour
 
-      // Get next node response
-      const nextNode = this.schemaParser.getCurrentNode(schema, result.nextNodeId);
-      console.log('[Actions POST] Next node found:', nextNode ? nextNode.id : 'null');
+      // Generate callback URL for next action
+      const baseUrl = process.env.BASE_URL || 'http://localhost:3000';
+      const stateParams = new URLSearchParams({
+        account: userAccount,
+        formId: formId,
+      }).toString();
 
-      if (nextNode) {
-        const nextNextNode = this.schemaParser.getNextNode(schema, result.nextNodeId);
-        console.log('[Actions POST] Next-next node:', nextNextNode ? nextNextNode.id : 'null');
+      const nextHref = `${baseUrl}/api/actions/${formId}/next?${stateParams}`;
 
-        const nextAction = this.schemaParser.generateActionResponse(
-          form.title,
-          nextNode,
-          nextNextNode?.id,
-          formId
-        );
+      console.log('[Actions POST] Callback URL:', nextHref);
 
-        // Return Solana Actions compliant POST response with transaction + next action
-        const response = {
-          transaction: transaction,
-          message: 'Answer recorded! Continue to next question.',
-          links: {
-            next: {
-              type: 'inline' as const,
-              action: nextAction
-            }
+      // Return PostResponse (advances immediately, no transaction)
+      return {
+        type: 'post',
+        message: `Answer recorded: "${userInput}"`,
+        links: {
+          next: {
+            type: 'post',
+            href: nextHref,
           }
-        };
+        }
+      } as PostResponse;
+    }
+  }
 
-        console.log('[Actions POST] Returning transaction response with next action');
-        return response;
-      }
+  /**
+   * Get next action - Called by links.next callback
+   * Retrieves current session state and returns UI for the next question
+   *
+   * @param formId - Form identifier
+   * @param account - User's Solana account address
+   * @returns ActionGetResponse with next question UI
+   */
+  async getNextAction(formId: string, account: string): Promise<ActionGetResponse> {
+    const userAccount = account || 'test-account';
+
+    console.log('[Actions GET NEXT] FormId:', formId, 'Account:', userAccount);
+
+    // Retrieve session
+    const sessionKey = `session:${formId}:${userAccount}`;
+    const sessionStr = await this.redis.get(sessionKey);
+
+    if (!sessionStr) {
+      console.error('[Actions GET NEXT] Session expired or invalid');
+      throw new Error('Session expired or invalid. Please start the form again.');
     }
 
-    console.log('[Actions POST] No next node, completing form');
+    const sessionData = JSON.parse(sessionStr);
+    const currentNodeId = sessionData.current_node_id;
 
-    // Form completed - save submission
-    await this.prisma.submission.create({
-      data: {
-        formId: form.id,
-        userAccount: userAccount,
-        answers: sessionData.answers,
-      },
-    });
+    console.log('[Actions GET NEXT] Current node ID:', currentNodeId);
 
-    // Clear session
-    await this.redis.del(sessionKey);
+    if (!currentNodeId) {
+      throw new Error('No current node in session. Please start the form again.');
+    }
 
-    // Return completion response with transaction (final step)
-    return {
-      transaction: transaction,
-      message: 'Form completed! Thank you for your submission.',
-    };
+    // Get form and schema
+    const form = await this.prisma.form.findUnique({ where: { id: formId } });
+    if (!form) {
+      console.error('[Actions GET NEXT] Form not found:', formId);
+      throw new Error('Form not found');
+    }
+
+    const schema = form.schema as any;
+    const currentNode = this.schemaParser.getCurrentNode(schema, currentNodeId);
+
+    if (!currentNode) {
+      console.error('[Actions GET NEXT] Current node not found in schema:', currentNodeId);
+      throw new Error('Current node not found in schema');
+    }
+
+    console.log('[Actions GET NEXT] Current node:', currentNode.id, 'Type:', currentNode.type);
+
+    // Get next node for action generation
+    const nextNode = this.schemaParser.getNextNode(schema, currentNodeId);
+
+    console.log('[Actions GET NEXT] Next node:', nextNode ? nextNode.id : 'none');
+
+    // Generate and return ActionGetResponse for current node
+    const actionResponse = this.schemaParser.generateActionResponse(
+      form.title,
+      currentNode,
+      nextNode?.id,
+      formId
+    );
+
+    console.log('[Actions GET NEXT] Returning action response');
+
+    return actionResponse;
   }
 }

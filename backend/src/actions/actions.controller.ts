@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Param, Query, Body, Header } from '@nestjs/common';
+import { Controller, Get, Post, Options, Param, Query, Body, Header } from '@nestjs/common';
 import { ActionsService } from './actions.service';
 
 @Controller('actions')
@@ -57,5 +57,38 @@ export class ActionsController {
     // Merge choice into query for unified handling
     const enrichedQuery = { ...query, choice };
     return this.actionsService.postAction(formId, account, body, enrichedQuery);
+  }
+
+  /**
+   * Callback endpoint for links.next
+   * Called by Blink client after PostResponse to render next question UI
+   */
+  @Post(':formId/next')
+  @Header('Content-Type', 'application/json')
+  @Header('Access-Control-Allow-Origin', '*')
+  @Header('Access-Control-Allow-Methods', 'GET,POST,PUT,OPTIONS')
+  @Header('Access-Control-Allow-Headers', 'Content-Type,Authorization,Content-Encoding,Accept-Encoding')
+  @Header('Access-Control-Expose-Headers', 'X-Action-Version,X-Blockchain-Ids,Content-Type')
+  @Header('X-Action-Version', '2.0')
+  @Header('X-Blockchain-Ids', 'solana:EtWTRABZaYq6iMfeYKouRu166VU2xqa1')
+  async getNextAction(
+    @Param('formId') formId: string,
+    @Query('account') account: string,
+    @Body() body: any,
+  ) {
+    // Account can come from query params or body
+    const userAccount = account || body.account || body.data?.account;
+    return this.actionsService.getNextAction(formId, userAccount);
+  }
+
+  /**
+   * OPTIONS handler for CORS preflight - /next endpoint
+   */
+  @Options(':formId/next')
+  @Header('Access-Control-Allow-Origin', '*')
+  @Header('Access-Control-Allow-Methods', 'GET,POST,PUT,OPTIONS')
+  @Header('Access-Control-Allow-Headers', 'Content-Type,Authorization,Content-Encoding,Accept-Encoding')
+  async optionsNext() {
+    return {};
   }
 }
