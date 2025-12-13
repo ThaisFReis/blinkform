@@ -89,23 +89,35 @@ export class ActionsService {
   }
 
   async postAction(formId: string, account: string, body: any, query?: Record<string, any>) {
+    // Use default account for testing if not provided
+    const userAccount = account || 'test-account';
+
+    console.log('[Actions POST] FormId:', formId, 'Account:', userAccount);
+    console.log('[Actions POST] Body:', JSON.stringify(body));
+    console.log('[Actions POST] Query:', JSON.stringify(query));
+
     // Fetch form
     const form = await this.prisma.form.findUnique({
       where: { id: formId },
     });
     if (!form) {
+      console.error('[Actions POST] Form not found:', formId);
       throw new Error('Form not found');
     }
 
     // Get current session
-    const sessionKey = `session:${formId}:${account}`;
+    const sessionKey = `session:${formId}:${userAccount}`;
     const session = await this.redis.get(sessionKey);
     const sessionData = session ? JSON.parse(session) : { current_node_id: null, answers: {} };
+
+    console.log('[Actions POST] Session data:', JSON.stringify(sessionData));
 
     // Get current node
     const schema = form.schema as any;
     let currentNodeId = sessionData.current_node_id;
     let currentNode = currentNodeId ? this.schemaParser.getCurrentNode(schema, currentNodeId) : null;
+
+    console.log('[Actions POST] Current node ID:', currentNodeId);
 
     // If no current node, start from beginning
     if (!currentNode) {
@@ -124,9 +136,15 @@ export class ActionsService {
     const userInput = this.extractParameter('input', query, body)
                    || this.extractParameter('choice', query, body)
                    || body;  // Keep body as ultimate fallback for backward compatibility
+
+    console.log('[Actions POST] User input:', userInput);
+
     const result = this.schemaParser.processUserInput(schema, currentNodeId, userInput);
 
+    console.log('[Actions POST] Process result:', JSON.stringify(result));
+
     if (!result.isValid) {
+      console.log('[Actions POST] Input validation failed');
       // Return Solana Actions compliant error response
       const baseUrl = process.env.BASE_URL || 'https://blinkform-backend.vercel.app';
       return {
@@ -151,29 +169,40 @@ export class ActionsService {
     sessionData.answers = sessionData.answers || {};
     sessionData.answers[currentNodeId] = userInput;
 
+    console.log('[Actions POST] Updated answers:', JSON.stringify(sessionData.answers));
+
     // Move to next node
     if (result.nextNodeId) {
+      console.log('[Actions POST] Moving to next node:', result.nextNodeId);
       sessionData.current_node_id = result.nextNodeId;
       await this.redis.set(sessionKey, JSON.stringify(sessionData), 3600); // 1 hour
 
       // Get next node response
       const nextNode = this.schemaParser.getCurrentNode(schema, result.nextNodeId);
+      console.log('[Actions POST] Next node found:', nextNode ? nextNode.id : 'null');
+
       if (nextNode) {
         const nextNextNode = this.schemaParser.getNextNode(schema, result.nextNodeId);
-        return this.schemaParser.generateActionResponse(
+        console.log('[Actions POST] Next-next node:', nextNextNode ? nextNextNode.id : 'null');
+
+        const response = this.schemaParser.generateActionResponse(
           form.title,
           nextNode,
           nextNextNode?.id,
           formId
         );
+        console.log('[Actions POST] Returning response:', JSON.stringify(response));
+        return response;
       }
     }
+
+    console.log('[Actions POST] No next node, completing form');
 
     // Form completed - save submission
     await this.prisma.submission.create({
       data: {
         formId: form.id,
-        userAccount: account,
+        userAccount: userAccount,
         answers: sessionData.answers,
       },
     });
