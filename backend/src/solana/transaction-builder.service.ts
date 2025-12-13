@@ -47,22 +47,18 @@ export class TransactionBuilderService {
         data: Buffer.from(memo, 'utf-8'),
       };
 
-      // Add compute budget to optimize transaction
-      // Increased to 5000 units for better reliability
+      // Add compute budget for memo transaction
+      // Memo instructions need ~1400 compute units
       const computeUnitLimitIx = ComputeBudgetProgram.setComputeUnitLimit({
-        units: 5000,
-      });
-
-      // Add priority fee to ensure faster processing (1 microlamport per CU)
-      const priorityFeeIx = ComputeBudgetProgram.setComputeUnitPrice({
-        microLamports: 1,
+        units: 1400,
       });
 
       // Build transaction message
+      // Note: Priority fees removed for devnet compatibility
       const messageV0 = new TransactionMessage({
         payerKey: userPublicKey,
         recentBlockhash: blockhash,
-        instructions: [computeUnitLimitIx, priorityFeeIx, memoInstruction],
+        instructions: [computeUnitLimitIx, memoInstruction],
       }).compileToV0Message();
 
       // Create versioned transaction
