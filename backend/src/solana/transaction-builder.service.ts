@@ -5,6 +5,7 @@ import {
   TransactionMessage,
   VersionedTransaction,
   TransactionInstruction,
+  Transaction,
 } from '@solana/web3.js';
 
 @Injectable()
@@ -30,8 +31,19 @@ export class TransactionBuilderService {
     memo: string
   ): Promise<string> {
     try {
-      this.logger.debug(`Creating memo transaction for account: ${account}`);
-      this.logger.debug(`Memo: ${memo}`);
+      this.logger.log(`Creating memo transaction for account: ${account}`);
+      this.logger.log(`Memo: ${memo}`);
+      const memoSize = Buffer.from(memo, 'utf-8').length;
+      this.logger.log(`Memo size: ${memoSize} bytes`);
+
+      // Check memo size limit (SPL Memo allows up to 566 bytes)
+      const MAX_MEMO_SIZE = 566;
+      let finalMemo = memo;
+      if (memoSize > MAX_MEMO_SIZE) {
+        this.logger.warn(`Memo size ${memoSize} exceeds limit ${MAX_MEMO_SIZE}, truncating`);
+        finalMemo = memo.substring(0, MAX_MEMO_SIZE - 3) + '...';
+        this.logger.log(`Truncated memo: ${finalMemo}`);
+      }
 
       // Parse user's public key
       const userPublicKey = new PublicKey(account);
@@ -51,22 +63,17 @@ export class TransactionBuilderService {
             isWritable: false,
           },
         ],
-        data: Buffer.from(memo, 'utf-8'),
+        data: Buffer.from(finalMemo, 'utf-8'),
       });
 
-      // Build transaction message
-      // Note: Using default compute budget (200k CUs) - custom limits were too restrictive
-      const messageV0 = new TransactionMessage({
-        payerKey: userPublicKey,
+      // Build legacy transaction (more compatible with wallets)
+      const transaction = new Transaction({
+        feePayer: userPublicKey,
         recentBlockhash: blockhash,
-        instructions: [memoInstruction],
-      }).compileToV0Message();
-
-      // Create versioned transaction
-      const transaction = new VersionedTransaction(messageV0);
+      }).add(memoInstruction);
 
       // Serialize transaction to base64
-      const serializedTransaction = Buffer.from(transaction.serialize()).toString('base64');
+      const serializedTransaction = Buffer.from(transaction.serialize({ requireAllSignatures: false })).toString('base64');
 
       this.logger.debug(`Transaction created successfully. Blockhash: ${blockhash}`);
 

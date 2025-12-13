@@ -192,6 +192,8 @@ export class ActionsService {
       // Create memo transaction with all answers
       const memoData = `FormID:${formId}|Answers:${JSON.stringify(sessionData.answers)}|Timestamp:${Date.now()}`;
       console.log('[Actions POST] Creating memo transaction:', memoData);
+      console.log('[Actions POST] Memo size:', Buffer.from(memoData, 'utf-8').length, 'bytes');
+      console.log('[Actions POST] User account:', userAccount);
 
       const transaction = await this.transactionBuilder.createMemoTransaction(
         userAccount,

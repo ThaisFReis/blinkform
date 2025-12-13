@@ -10,6 +10,7 @@ const {
   VersionedTransaction,
   ComputeBudgetProgram,
   TransactionInstruction,
+  Transaction,
 } = require('@solana/web3.js');
 
 async function testMemoTransaction() {
@@ -55,26 +56,20 @@ async function testMemoTransaction() {
       data: Buffer.from(memoData, 'utf-8'),
     });
 
-    // Build transaction message (without ComputeBudget - use default limit)
+    // Build legacy transaction (more compatible with wallets)
     console.log('🔨 Building transaction...');
-    const messageV0 = new TransactionMessage({
-      payerKey: userPublicKey,
+    const transaction = new Transaction({
+      feePayer: userPublicKey,
       recentBlockhash: blockhash,
-      instructions: [memoInstruction],
-    }).compileToV0Message();
-
-    // Create versioned transaction
-    const transaction = new VersionedTransaction(messageV0);
+    }).add(memoInstruction);
 
     // Get transaction size
-    const serialized = transaction.serialize();
+    const serialized = transaction.serialize({ requireAllSignatures: false });
     console.log('✅ Transaction size:', serialized.length, 'bytes\n');
 
     // Simulate transaction
     console.log('🔄 Simulating transaction...\n');
-    const simulation = await connection.simulateTransaction(transaction, {
-      sigVerify: false, // Don't verify signature (we haven't signed yet)
-    });
+    const simulation = await connection.simulateTransaction(transaction);
 
     if (simulation.value.err) {
       console.log('❌ SIMULATION FAILED!\n');
