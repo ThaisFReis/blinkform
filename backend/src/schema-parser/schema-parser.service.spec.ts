@@ -90,58 +90,87 @@ describe('SchemaParserService', () => {
   });
 
   describe('generateActionResponse', () => {
-    it('should generate action response for input node', () => {
-      const currentNode = mockSchema.nodes[0]; // input node
-      const result = service.generateActionResponse('Test Form', currentNode, 'next-id');
+    it('should generate action response for input node with nextNodeId', () => {
+      const currentNode: FormNode = {
+        id: 'input1',
+        type: 'question',
+        data: {
+          questionText: 'What is your name?',
+          questionType: 'input',
+          validation: { required: true }
+        }
+      };
+      const result = service.generateActionResponse('Test Form', currentNode, 'next-id', 'form-123');
 
-      expect(result).toEqual({
-        icon: 'https://via.placeholder.com/600x400/4F46E5/FFFFFF?text=BlinkForm',
-        title: 'Test Form',
-        description: 'Question: What is your name?',
-        label: 'Continue',
-        links: {
-          actions: [{
-            label: 'What is your name?',
-            href: '/api/actions/start?node=start',
-          }],
-        },
-      });
+      expect(result.type).toBe('action');
+      expect(result.title).toBe('Test Form');
+      expect(result.description).toBe('Question: What is your name?');
+      expect(result.label).toBe('Continue');
+      expect(result.links.actions).toHaveLength(1);
+      expect(result.links.actions[0].label).toBe('Next');
+      expect(result.links.actions[0].href).toContain('/api/actions/form-123?input={input}');
+      expect(result.links.actions[0].parameters).toEqual([{
+        name: 'input',
+        label: 'What is your name?',
+        required: true
+      }]);
+    });
+
+    it('should generate action response for input node without nextNodeId (final step)', () => {
+      const currentNode: FormNode = {
+        id: 'input-final',
+        type: 'question',
+        data: {
+          questionText: 'Final question?',
+          questionType: 'input',
+          validation: { required: false }
+        }
+      };
+      const result = service.generateActionResponse('Test Form', currentNode, undefined, 'form-123');
+
+      expect(result.type).toBe('action');
+      expect(result.links.actions).toHaveLength(1);
+      expect(result.links.actions[0].label).toBe('Submit');
+      expect(result.links.actions[0].href).toContain('/api/actions/form-123?input={input}');
     });
 
     it('should generate action response for choice node', () => {
-      const currentNode = mockSchema.nodes[1]; // choice node
-      const result = service.generateActionResponse('Test Form', currentNode, 'next-id');
+      const currentNode: FormNode = {
+        id: 'choice1',
+        type: 'question',
+        data: {
+          questionText: 'Choose an option',
+          questionType: 'choice',
+          options: [
+            { label: 'Option A', value: 'a' },
+            { label: 'Option B', value: 'b' },
+          ]
+        }
+      };
+      const result = service.generateActionResponse('Test Form', currentNode, 'next-id', 'form-123');
 
-      expect(result).toEqual({
-        icon: 'https://via.placeholder.com/600x400/4F46E5/FFFFFF?text=BlinkForm',
-        title: 'Test Form',
-        description: 'Question: Choose an option',
-        label: 'Continue',
-        links: {
-          actions: [
-            { label: 'Option A', href: '/api/actions/choice1?choice=a&next=next-id' },
-            { label: 'Option B', href: '/api/actions/choice1?choice=b&next=next-id' },
-          ],
-        },
-      });
+      expect(result.type).toBe('action');
+      expect(result.title).toBe('Test Form');
+      expect(result.description).toBe('Question: Choose an option');
+      expect(result.label).toBe('Continue');
+      expect(result.links.actions).toHaveLength(2);
+      expect(result.links.actions[0].label).toBe('Option A');
+      expect(result.links.actions[0].href).toContain('/api/actions/form-123/a');
+      expect(result.links.actions[1].label).toBe('Option B');
+      expect(result.links.actions[1].href).toContain('/api/actions/form-123/b');
     });
 
     it('should generate action response for end node', () => {
       const currentNode = mockSchema.nodes[2]; // end node
       const result = service.generateActionResponse('Test Form', currentNode, 'next-id');
 
-      expect(result).toEqual({
-        icon: 'https://via.placeholder.com/600x400/4F46E5/FFFFFF?text=BlinkForm',
-        title: 'Test Form',
-        description: 'Thank you!',
-        label: 'Complete',
-        links: {
-          actions: [{
-            label: 'Finish',
-            href: '/api/actions/complete',
-          }],
-        },
-      });
+      expect(result.type).toBe('action');
+      expect(result.title).toBe('Test Form');
+      expect(result.description).toBe('Thank you!');
+      expect(result.label).toBe('Complete');
+      expect(result.links.actions).toHaveLength(1);
+      expect(result.links.actions[0].label).toBe('Finish');
+      expect(result.links.actions[0].href).toContain('/api/forms/complete');
     });
 
     it('should generate default action response for unknown node type', () => {

@@ -109,7 +109,7 @@ export class SchemaParserService {
       switch (questionType) {
         case 'input':
         baseResponse.links.actions = [{
-          label: 'Submit',
+          label: nextNodeId ? 'Next' : 'Submit',
           href: `${baseUrl}/api/actions/${formId}?input={input}`,
           parameters: [{
             name: 'input',
@@ -125,6 +125,18 @@ export class SchemaParserService {
           label: option.label,
           href: `${baseUrl}/api/actions/${formId}/${option.value}`
         }));
+        break;
+
+      case 'date':
+        baseResponse.links.actions = [{
+          label: nextNodeId ? 'Next' : 'Submit',
+          href: `${baseUrl}/api/actions/${formId}?input={input}`,
+          parameters: [{
+            name: 'input',
+            label: currentNode.data.questionText,
+            required: currentNode.data.validation?.required || false
+          }]
+        }];
         break;
 
       default:
