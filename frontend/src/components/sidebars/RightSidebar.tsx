@@ -600,7 +600,7 @@ export const RightSidebar = () => {
                                 type="text"
                                 value={parameters.mintAddress || ''}
                                 onChange={(e) => handleTransactionParameterChange('mintAddress', e.target.value)}
-                                className="w-full px-3 py-2 border border-input bg-background rounded-md text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent font-mono"
+                                className="w-full bg-[#13131A] border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-[#460DF2] transition-colors font-mono"
                                 placeholder="Token mint address..."
                             />
                         </div>
@@ -610,7 +610,7 @@ export const RightSidebar = () => {
                                 type="text"
                                 value={parameters.recipientAddress || ''}
                                 onChange={(e) => handleTransactionParameterChange('recipientAddress', e.target.value)}
-                                className="w-full px-3 py-2 border border-input bg-background rounded-md text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent font-mono"
+                                className="w-full bg-[#13131A] border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-[#460DF2] transition-colors font-mono"
                                 placeholder="Recipient address or {{parameterName}}..."
                             />
                         </div>
@@ -622,7 +622,7 @@ export const RightSidebar = () => {
                                 step="0.000001"
                                 value={parameters.amount || ''}
                                 onChange={(e) => handleTransactionParameterChange('amount', e.target.value ? parseFloat(e.target.value) : undefined)}
-                                className="w-full px-3 py-2 border border-input bg-background rounded-md text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
+                                className="w-full bg-[#13131A] border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-[#460DF2] transition-colors"
                                 placeholder="Amount to mint..."
                             />
                         </div>
@@ -634,7 +634,7 @@ export const RightSidebar = () => {
                                 max="9"
                                 value={parameters.decimals || ''}
                                 onChange={(e) => handleTransactionParameterChange('decimals', e.target.value ? parseInt(e.target.value) : undefined)}
-                                className="w-full px-3 py-2 border border-input bg-background rounded-md text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
+                                className="w-full bg-[#13131A] border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-[#460DF2] transition-colors"
                                 placeholder="Token decimals..."
                             />
                         </div>
@@ -649,7 +649,7 @@ export const RightSidebar = () => {
                                 type="text"
                                 value={parameters.mintAddress || ''}
                                 onChange={(e) => handleTransactionParameterChange('mintAddress', e.target.value)}
-                                className="w-full px-3 py-2 border border-input bg-background rounded-md text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent font-mono"
+                                className="w-full bg-[#13131A] border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-[#460DF2] transition-colors font-mono"
                                 placeholder="Token mint address..."
                             />
                         </div>
@@ -659,7 +659,7 @@ export const RightSidebar = () => {
                                 type="text"
                                 value={parameters.recipientAddress || ''}
                                 onChange={(e) => handleTransactionParameterChange('recipientAddress', e.target.value)}
-                                className="w-full px-3 py-2 border border-input bg-background rounded-md text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent font-mono"
+                                className="w-full bg-[#13131A] border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-[#460DF2] transition-colors font-mono"
                                 placeholder="Recipient Solana address..."
                             />
                         </div>
@@ -671,7 +671,7 @@ export const RightSidebar = () => {
                                 step="0.000001"
                                 value={parameters.amount || ''}
                                 onChange={(e) => handleTransactionParameterChange('amount', e.target.value ? parseFloat(e.target.value) : undefined)}
-                                className="w-full px-3 py-2 border border-input bg-background rounded-md text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
+                                className="w-full bg-[#13131A] border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-[#460DF2] transition-colors"
                                 placeholder="Amount to transfer..."
                             />
                         </div>
@@ -683,7 +683,7 @@ export const RightSidebar = () => {
                                 max="9"
                                 value={parameters.decimals || ''}
                                 onChange={(e) => handleTransactionParameterChange('decimals', e.target.value ? parseInt(e.target.value) : undefined)}
-                                className="w-full px-3 py-2 border border-input bg-background rounded-md text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
+                                className="w-full bg-[#13131A] border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-[#460DF2] transition-colors"
                                 placeholder="Token decimals (usually 6 or 9)..."
                             />
                         </div>
@@ -698,7 +698,7 @@ export const RightSidebar = () => {
                                 type="text"
                                 value={parameters.recipientAddress || ''}
                                 onChange={(e) => handleTransactionParameterChange('recipientAddress', e.target.value)}
-                                className="w-full px-3 py-2 border border-input bg-background rounded-md text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent font-mono"
+                                className="w-full bg-[#13131A] border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-[#460DF2] transition-colors font-mono"
                                 placeholder="Recipient Solana address..."
                             />
                         </div>
@@ -710,7 +710,7 @@ export const RightSidebar = () => {
                                 step="0.000000001"
                                 value={parameters.amount || ''}
                                 onChange={(e) => handleTransactionParameterChange('amount', e.target.value ? parseFloat(e.target.value) : undefined)}
-                                className="w-full px-3 py-2 border border-input bg-background rounded-md text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
+                                className="w-full bg-[#13131A] border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-[#460DF2] transition-colors"
                                 placeholder="Amount in SOL..."
                             />
                         </div>
@@ -742,7 +742,7 @@ export const RightSidebar = () => {
                                         min="0"
                                         value={validation.minLength || ''}
                                         onChange={(e) => handleNodeValidationChange('minLength', e.target.value ? parseInt(e.target.value) : undefined)}
-                                        className="w-full px-3 py-3 lg:py-2 text-base lg:text-sm min-h-[44px] border border-input bg-background rounded-md focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
+                                        className="w-full bg-[#13131A] border border-white/10 rounded-lg px-3 py-3 lg:py-2 text-base lg:text-sm min-h-[44px] text-white focus:outline-none focus:border-[#460DF2] transition-colors"
                                         placeholder="No minimum"
                                     />
                                 </div>
@@ -753,7 +753,7 @@ export const RightSidebar = () => {
                                         min="0"
                                         value={validation.maxLength || ''}
                                         onChange={(e) => handleNodeValidationChange('maxLength', e.target.value ? parseInt(e.target.value) : undefined)}
-                                        className="w-full px-3 py-3 lg:py-2 text-base lg:text-sm min-h-[44px] border border-input bg-background rounded-md focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
+                                        className="w-full bg-[#13131A] border border-white/10 rounded-lg px-3 py-3 lg:py-2 text-base lg:text-sm min-h-[44px] text-white focus:outline-none focus:border-[#460DF2] transition-colors"
                                         placeholder="No maximum"
                                     />
                                 </div>
@@ -769,7 +769,7 @@ export const RightSidebar = () => {
                                         type="number"
                                         value={validation.min || ''}
                                         onChange={(e) => handleNodeValidationChange('min', e.target.value ? parseFloat(e.target.value) : undefined)}
-                                        className="w-full px-3 py-3 lg:py-2 text-base lg:text-sm min-h-[44px] border border-input bg-background rounded-md focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
+                                        className="w-full bg-[#13131A] border border-white/10 rounded-lg px-3 py-3 lg:py-2 text-base lg:text-sm min-h-[44px] text-white focus:outline-none focus:border-[#460DF2] transition-colors"
                                         placeholder="No minimum"
                                     />
                                 </div>
@@ -779,7 +779,7 @@ export const RightSidebar = () => {
                                         type="number"
                                         value={validation.max || ''}
                                         onChange={(e) => handleNodeValidationChange('max', e.target.value ? parseFloat(e.target.value) : undefined)}
-                                        className="w-full px-3 py-3 lg:py-2 text-base lg:text-sm min-h-[44px] border border-input bg-background rounded-md focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
+                                        className="w-full bg-[#13131A] border border-white/10 rounded-lg px-3 py-3 lg:py-2 text-base lg:text-sm min-h-[44px] text-white focus:outline-none focus:border-[#460DF2] transition-colors"
                                         placeholder="No maximum"
                                     />
                                 </div>
@@ -798,7 +798,7 @@ export const RightSidebar = () => {
                                         min="0"
                                         value={validation.minLength || ''}
                                         onChange={(e) => handleNodeValidationChange('minLength', e.target.value ? parseInt(e.target.value) : undefined)}
-                                        className="w-full px-3 py-3 lg:py-2 text-base lg:text-sm min-h-[44px] border border-input bg-background rounded-md focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
+                                        className="w-full bg-[#13131A] border border-white/10 rounded-lg px-3 py-3 lg:py-2 text-base lg:text-sm min-h-[44px] text-white focus:outline-none focus:border-[#460DF2] transition-colors"
                                         placeholder="No minimum"
                                     />
                                 </div>
@@ -809,7 +809,7 @@ export const RightSidebar = () => {
                                         min="0"
                                         value={validation.maxLength || ''}
                                         onChange={(e) => handleNodeValidationChange('maxLength', e.target.value ? parseInt(e.target.value) : undefined)}
-                                        className="w-full px-3 py-3 lg:py-2 text-base lg:text-sm min-h-[44px] border border-input bg-background rounded-md focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
+                                        className="w-full bg-[#13131A] border border-white/10 rounded-lg px-3 py-3 lg:py-2 text-base lg:text-sm min-h-[44px] text-white focus:outline-none focus:border-[#460DF2] transition-colors"
                                         placeholder="No maximum"
                                     />
                                 </div>
@@ -846,7 +846,7 @@ export const RightSidebar = () => {
                                         min="0"
                                         value={validation.maxLength || ''}
                                         onChange={(e) => handleNodeValidationChange('maxLength', e.target.value ? parseInt(e.target.value) : undefined)}
-                                        className="w-full px-3 py-3 lg:py-2 text-base lg:text-sm min-h-[44px] border border-input bg-background rounded-md focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
+                                        className="w-full bg-[#13131A] border border-white/10 rounded-lg px-3 py-3 lg:py-2 text-base lg:text-sm min-h-[44px] text-white focus:outline-none focus:border-[#460DF2] transition-colors"
                                         placeholder="No maximum"
                                     />
                                 </div>
@@ -864,7 +864,7 @@ export const RightSidebar = () => {
                                 type="date"
                                 value={validation.min || ''}
                                 onChange={(e) => handleNodeValidationChange('min', e.target.value)}
-                                className="w-full px-3 py-2 border border-input bg-background rounded-md text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
+                                className="w-full bg-[#13131A] border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-[#460DF2] transition-colors"
                             />
                         </div>
                         <div>
@@ -873,7 +873,7 @@ export const RightSidebar = () => {
                                 type="date"
                                 value={validation.max || ''}
                                 onChange={(e) => handleNodeValidationChange('max', e.target.value)}
-                                className="w-full px-3 py-2 border border-input bg-background rounded-md text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
+                                className="w-full bg-[#13131A] border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-[#460DF2] transition-colors"
                             />
                         </div>
                     </>
@@ -890,7 +890,7 @@ export const RightSidebar = () => {
                                     min="0"
                                     value={validation.min || ''}
                                     onChange={(e) => handleNodeValidationChange('min', e.target.value ? parseInt(e.target.value) : undefined)}
-                                    className="w-full px-3 py-2 border border-input bg-background rounded-md text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
+                                    className="w-full bg-[#13131A] border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-[#460DF2] transition-colors"
                                     placeholder="No minimum"
                                 />
                             </div>
@@ -901,7 +901,7 @@ export const RightSidebar = () => {
                                     min="0"
                                     value={validation.max || ''}
                                     onChange={(e) => handleNodeValidationChange('max', e.target.value ? parseInt(e.target.value) : undefined)}
-                                    className="w-full px-3 py-2 border border-input bg-background rounded-md text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
+                                    className="w-full bg-[#13131A] border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-[#460DF2] transition-colors"
                                     placeholder="No maximum"
                                 />
                             </div>
@@ -928,12 +928,12 @@ export const RightSidebar = () => {
                     </button>
                 </div>
             ) : (
-                <div className="p-4 border-b border-white/5 flex items-center justify-between bg-[#460DF2]/5">
+                <div className="p-4 border-b border-white/5 flex items-center justify-between bg-white/[0.02] backdrop-blur-sm">
                     <div>
                         <h2 className="text-white font-semibold">Form Properties</h2>
                         <p className="text-xs text-gray-500">Global configuration</p>
                     </div>
-                    <div className="bg-[#460DF2] text-white text-[10px] px-2 py-0.5 rounded-full font-bold">
+                    <div className="bg-[#460DF2] text-white text-[10px] px-2 py-0.5 rounded-full font-bold shadow-[0_0_10px_-2px_#460DF2]">
                         AUTO-SAVED
                     </div>
                 </div>
@@ -1001,7 +1001,7 @@ export const RightSidebar = () => {
                                         type="text"
                                         value={collectionSettings?.collectionName || ''}
                                         onChange={(e) => handleCollectionNameChange(e.target.value)}
-                                        className="w-full bg-black/20 border border-white/5 rounded px-2 py-1.5 text-xs text-white"
+                                        className="w-full bg-[#13131A] border border-white/10 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-[#460DF2] transition-colors"
                                         placeholder="My Collection"
                                     />
                                 </div>
@@ -1009,7 +1009,7 @@ export const RightSidebar = () => {
                                     <label className="text-[10px] font-medium text-gray-500">Symbol</label>
                                     <input
                                         type="text"
-                                        className="w-full bg-black/20 border border-white/5 rounded px-2 py-1.5 text-xs text-white"
+                                        className="w-full bg-[#13131A] border border-white/10 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-[#460DF2] transition-colors"
                                         placeholder="RWRD"
                                     />
                                 </div>
@@ -1032,12 +1032,12 @@ export const RightSidebar = () => {
                     <div className="space-y-6">
                         {/* Node Type Header */}
                         <div className="flex items-center gap-2 pb-2 border-b border-white/5">
-                            <div className="w-8 h-8 bg-blue-400/10 rounded-lg flex items-center justify-center">
+                            <div className="w-6 h-6 bg-blue-400/10 rounded-lg flex items-center justify-center">
                                 {validationNodeInfo?.icon}
                             </div>
                             <div>
                                 <h4 className="text-sm font-medium text-white">{validationNodeInfo?.title}</h4>
-                                <p className="text-xs text-gray-500">Node type: {validationNodeInfo?.type}</p>
+                                <p className="text-xs text-gray-400">Node type: {validationNodeInfo?.type}</p>
                             </div>
                         </div>
 
@@ -1050,7 +1050,7 @@ export const RightSidebar = () => {
                                     id="blockOnFailure"
                                     checked={selectedNode.data.blockOnFailure !== false}
                                     onChange={(e) => handleLogicNodeUpdate('blockOnFailure', e.target.checked)}
-                                    className="rounded border-white/10 bg-[#13131A]"
+                                    className="rounded border-white/10 bg-[#13131A] text-[#460DF2] focus:outline-none focus:ring-2 focus:ring-[#460DF2]/20 focus:border-[#460DF2] transition-colors cursor-pointer hover:border-[#460DF2]/50"
                                 />
                                 <label htmlFor="blockOnFailure" className="text-sm text-gray-200">
                                     Block progression if validation fails
@@ -1285,12 +1285,12 @@ export const RightSidebar = () => {
                     <div className="space-y-6">
                         {/* Node Type Header */}
                         <div className="flex items-center gap-2 pb-2 border-b border-white/5">
-                            <div className="w-8 h-8 bg-purple-400/10 rounded-lg flex items-center justify-center">
+                            <div className="w-6 h-6 bg-purple-400/10 rounded-lg flex items-center justify-center">
                                 {calculationNodeInfo?.icon}
                             </div>
                             <div>
                                 <h4 className="text-sm font-medium text-white">{calculationNodeInfo?.title}</h4>
-                                <p className="text-xs text-gray-500">Node type: {calculationNodeInfo?.type}</p>
+                                <p className="text-xs text-gray-400">Node type: {calculationNodeInfo?.type}</p>
                             </div>
                         </div>
 
@@ -1405,7 +1405,7 @@ export const RightSidebar = () => {
                                                         const newOperands = [...(operation.operands || []), ''];
                                                         handleCalculationOperationUpdate(index, 'operands', newOperands);
                                                     }}
-                                                    className="w-full px-2 py-1 border border-dashed border-input bg-background hover:bg-accent rounded text-xs text-muted-foreground"
+                                                    className="w-full px-2 py-1.5 border border-dashed border-white/10 bg-white/5 hover:bg-white/10 rounded-lg text-xs text-gray-400 hover:text-white transition-all hover:border-[#460DF2]/30"
                                                 >
                                                     + Add Operand
                                                 </button>
@@ -1415,7 +1415,7 @@ export const RightSidebar = () => {
                                         {/* Delete Operation Button */}
                                         <button
                                             onClick={() => handleDeleteCalculationOperation(index)}
-                                            className="w-full px-2 py-1 text-xs text-destructive hover:bg-destructive/10 rounded"
+                                            className="w-full px-2 py-1.5 text-xs text-red-400 hover:bg-red-500/10 hover:text-red-300 rounded-lg border border-red-500/20 hover:border-red-500/40 transition-all"
                                         >
                                             Delete Operation
                                         </button>
@@ -1425,7 +1425,7 @@ export const RightSidebar = () => {
                                 {/* Add Operation Button */}
                                 <button
                                     onClick={handleAddCalculationOperation}
-                                    className="w-full px-3 py-2 border border-dashed border-input bg-background hover:bg-accent rounded-md text-muted-foreground hover:text-foreground transition-colors"
+                                    className="w-full px-3 py-2 border border-dashed border-white/10 bg-white/5 hover:bg-white/10 rounded-lg text-gray-400 hover:text-white transition-all hover:border-[#460DF2]/30"
                                 >
                                     + Add Calculation Operation
                                 </button>
@@ -1435,8 +1435,8 @@ export const RightSidebar = () => {
                         {/* Calculation Preview */}
                         <div>
                             <h4 className="text-sm font-medium text-sidebar-foreground mb-3">Calculation Preview</h4>
-                            <div className="p-3 bg-muted rounded-md">
-                                <div className="text-xs text-muted-foreground">
+                            <div className="p-3 bg-[#13131A] border border-white/5 rounded-lg backdrop-blur-sm">
+                                <div className="text-xs text-gray-400">
                                     {renderCalculationPreview(selectedNode.data)}
                                 </div>
                             </div>
@@ -1466,7 +1466,7 @@ export const RightSidebar = () => {
                                         type="text"
                                         value={selectedNode.data.label}
                                         onChange={(e) => handleLogicNodeUpdate('label', e.target.value)}
-                                        className="w-full px-3 py-2 border border-input bg-background rounded-md text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
+                                        className="w-full bg-[#13131A] border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-[#460DF2] transition-colors"
                                         placeholder="Form Complete"
                                     />
                                 </div>
@@ -1475,7 +1475,7 @@ export const RightSidebar = () => {
                                     <textarea
                                         value={selectedNode.data.message || ''}
                                         onChange={(e) => handleLogicNodeUpdate('message', e.target.value)}
-                                        className="w-full px-3 py-2 border border-input bg-background rounded-md text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent resize-none"
+                                        className="w-full bg-[#13131A] border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-[#460DF2] transition-colors resize-none"
                                         rows={3}
                                         placeholder="Thank you for completing this form..."
                                     />
@@ -1498,7 +1498,7 @@ export const RightSidebar = () => {
                                                 type="checkbox"
                                                 checked={action.enabled}
                                                 onChange={(e) => handleSuccessActionUpdate(index, 'enabled', e.target.checked)}
-                                                className="rounded border-input"
+                                                className="rounded border-white/10 bg-[#13131A] text-[#460DF2] focus:outline-none focus:ring-2 focus:ring-[#460DF2]/20 focus:border-[#460DF2] transition-colors cursor-pointer hover:border-[#460DF2]/50"
                                             />
                                             <span className="text-sm font-medium text-sidebar-foreground flex-1">
                                                 {action.description}
@@ -1631,7 +1631,7 @@ export const RightSidebar = () => {
                                 {/* Add Action Button */}
                                 <button
                                     onClick={handleAddSuccessAction}
-                                    className="w-full px-3 py-2 border border-dashed border-input bg-background hover:bg-accent rounded-md text-muted-foreground hover:text-foreground transition-colors"
+                                    className="w-full px-3 py-2 border border-dashed border-white/10 bg-white/5 hover:bg-white/10 rounded-lg text-gray-400 hover:text-white transition-all hover:border-[#460DF2]/30"
                                 >
                                     + Add Success Action
                                 </button>
@@ -1641,8 +1641,8 @@ export const RightSidebar = () => {
                         {/* Preview */}
                         <div>
                             <h4 className="text-sm font-medium text-sidebar-foreground mb-3">Completion Preview</h4>
-                            <div className="p-3 bg-muted rounded-md">
-                                <div className="text-xs text-muted-foreground">
+                            <div className="p-3 bg-[#13131A] border border-white/5 rounded-lg backdrop-blur-sm">
+                                <div className="text-xs text-gray-400">
                                     <strong>Message:</strong> {selectedNode.data.message || 'No message configured'}<br />
                                     {renderSuccessActionsPreview(selectedNode.data)}
                                 </div>
@@ -1668,7 +1668,7 @@ export const RightSidebar = () => {
                             <select
                                 value={selectedNode.data.mode || 'switch'}
                                 onChange={(e) => handleLogicNodeUpdate('mode', e.target.value)}
-                                className="w-full px-3 py-2 border border-input bg-background rounded-md text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
+                                className="w-full bg-[#13131A] border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-[#460DF2] transition-colors"
                             >
                                 <option value="switch">Switch (One question → Multiple branches)</option>
                                 <option value="multi-condition">Multi-Condition (Complex AND/OR logic)</option>
@@ -1690,7 +1690,7 @@ export const RightSidebar = () => {
                                     <select
                                         value={selectedNode.data.switchQuestionId || ''}
                                         onChange={(e) => handleLogicNodeUpdate('switchQuestionId', e.target.value)}
-                                        className="w-full px-3 py-2 border border-input bg-background rounded-md text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
+                                        className="w-full bg-[#13131A] border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-[#460DF2] transition-colors"
                                     >
                                         <option value="">Select a question...</option>
                                         {getAvailableQuestionNodes().map(question => (
@@ -1781,7 +1781,7 @@ export const RightSidebar = () => {
                                                                 const newMatchValues = [...(branch.matchValues || []), ''];
                                                                 handleBranchUpdate(index, 'matchValues', newMatchValues);
                                                             }}
-                                                            className="w-full px-2 py-1 border border-dashed border-input bg-background hover:bg-accent rounded text-xs text-muted-foreground"
+                                                            className="w-full px-2 py-1.5 border border-dashed border-white/10 bg-white/5 hover:bg-white/10 rounded-lg text-xs text-gray-400 hover:text-white transition-all hover:border-[#460DF2]/30"
                                                         >
                                                             + Add Value
                                                         </button>
@@ -1791,7 +1791,7 @@ export const RightSidebar = () => {
                                                 {/* Delete Branch Button */}
                                                 <button
                                                     onClick={() => handleDeleteBranch(index)}
-                                                    className="w-full px-2 py-1 text-xs text-destructive hover:bg-destructive/10 rounded"
+                                                    className="w-full px-2 py-1.5 text-xs text-red-400 hover:bg-red-500/10 hover:text-red-300 rounded-lg border border-red-500/20 hover:border-red-500/40 transition-all"
                                                 >
                                                     Delete Branch
                                                 </button>
@@ -1801,7 +1801,7 @@ export const RightSidebar = () => {
                                         {/* Add Branch Button */}
                                         <button
                                             onClick={handleAddBranch}
-                                            className="w-full px-3 py-2 border border-dashed border-input bg-background hover:bg-accent rounded-md text-muted-foreground hover:text-foreground transition-colors"
+                                            className="w-full px-3 py-2 border border-dashed border-white/10 bg-white/5 hover:bg-white/10 rounded-lg text-gray-400 hover:text-white transition-all hover:border-[#460DF2]/30"
                                         >
                                             + Add Branch
                                         </button>
@@ -1902,7 +1902,7 @@ export const RightSidebar = () => {
 
                                                             <button
                                                                 onClick={() => handleDeleteCondition(branchIndex, condIndex)}
-                                                                className="text-xs text-destructive hover:bg-destructive/10 px-2 py-0.5 rounded"
+                                                                className="text-xs text-red-400 hover:bg-red-500/10 hover:text-red-300 px-2 py-1 rounded-lg border border-red-500/20 hover:border-red-500/40 transition-all"
                                                             >
                                                                 Remove condition
                                                             </button>
@@ -1911,7 +1911,7 @@ export const RightSidebar = () => {
 
                                                     <button
                                                         onClick={() => handleAddCondition(branchIndex)}
-                                                        className="w-full px-2 py-1 border border-dashed border-input bg-background hover:bg-accent rounded text-xs text-muted-foreground"
+                                                        className="w-full px-2 py-1.5 border border-dashed border-white/10 bg-white/5 hover:bg-white/10 rounded-lg text-xs text-gray-400 hover:text-white transition-all hover:border-[#460DF2]/30"
                                                     >
                                                         + Add Condition
                                                     </button>
@@ -1921,7 +1921,7 @@ export const RightSidebar = () => {
 
                                         <button
                                             onClick={handleAddBranch}
-                                            className="w-full px-3 py-2 border border-dashed border-input bg-background hover:bg-accent rounded-md text-muted-foreground hover:text-foreground transition-colors"
+                                            className="w-full px-3 py-2 border border-dashed border-white/10 bg-white/5 hover:bg-white/10 rounded-lg text-gray-400 hover:text-white transition-all hover:border-[#460DF2]/30"
                                         >
                                             + Add Branch
                                         </button>
@@ -1933,8 +1933,8 @@ export const RightSidebar = () => {
                         {/* Preview Section */}
                         <div>
                             <h4 className="text-sm font-medium text-sidebar-foreground mb-3">Logic Preview</h4>
-                            <div className="p-3 bg-muted rounded-md">
-                                <div className="text-xs text-muted-foreground">
+                            <div className="p-3 bg-[#13131A] border border-white/5 rounded-lg backdrop-blur-sm">
+                                <div className="text-xs text-gray-400">
                                     {renderLogicPreview(selectedNode.data)}
                                 </div>
                             </div>
@@ -1964,7 +1964,7 @@ export const RightSidebar = () => {
                                         type="text"
                                         value={(selectedNode.data.parameters as any)?.name || ''}
                                         onChange={(e) => handleTransactionParameterChange('name', e.target.value)}
-                                        className="w-full px-3 py-2 border border-input bg-background rounded-md text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
+                                        className="w-full bg-[#13131A] border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-[#460DF2] transition-colors"
                                         placeholder="My Awesome NFT"
                                     />
                                 </div>
@@ -1974,7 +1974,7 @@ export const RightSidebar = () => {
                                         type="text"
                                         value={(selectedNode.data.parameters as any)?.symbol || ''}
                                         onChange={(e) => handleTransactionParameterChange('symbol', e.target.value)}
-                                        className="w-full px-3 py-2 border border-input bg-background rounded-md text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
+                                        className="w-full bg-[#13131A] border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-[#460DF2] transition-colors"
                                         placeholder="NFT"
                                     />
                                 </div>
@@ -1984,7 +1984,7 @@ export const RightSidebar = () => {
                                         type="url"
                                         value={(selectedNode.data.parameters as any)?.uri || ''}
                                         onChange={(e) => handleTransactionParameterChange('uri', e.target.value)}
-                                        className="w-full px-3 py-2 border border-input bg-background rounded-md text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent font-mono"
+                                        className="w-full bg-[#13131A] border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-[#460DF2] transition-colors font-mono"
                                         placeholder="https://arweave.net/..."
                                     />
                                 </div>
@@ -1995,7 +1995,7 @@ export const RightSidebar = () => {
                                         min="1"
                                         value={(selectedNode.data.parameters as any)?.amount || 1}
                                         onChange={(e) => handleTransactionParameterChange('amount', e.target.value ? parseInt(e.target.value) : 1)}
-                                        className="w-full px-3 py-2 border border-input bg-background rounded-md text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
+                                        className="w-full bg-[#13131A] border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-[#460DF2] transition-colors"
                                         placeholder="1"
                                     />
                                 </div>
@@ -2023,7 +2023,7 @@ export const RightSidebar = () => {
                                             type="text"
                                             value={(selectedNode.data.parameters as any)?.collectionAddress || ''}
                                             onChange={(e) => handleTransactionParameterChange('collectionAddress', e.target.value)}
-                                            className="w-full px-3 py-2 border border-input bg-background rounded-md text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent font-mono"
+                                            className="w-full bg-[#13131A] border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-[#460DF2] transition-colors font-mono"
                                             placeholder="Collection mint address..."
                                         />
                                     </div>
@@ -2034,8 +2034,8 @@ export const RightSidebar = () => {
                         {/* NFT Preview */}
                         <div>
                             <h4 className="text-sm font-medium text-sidebar-foreground mb-3">NFT Preview</h4>
-                            <div className="p-3 bg-muted rounded-md">
-                                <div className="text-xs text-muted-foreground">
+                            <div className="p-3 bg-[#13131A] border border-white/5 rounded-lg backdrop-blur-sm">
+                                <div className="text-xs text-gray-400">
                                     <strong>{(selectedNode.data.parameters as any)?.name || 'NFT Name'}</strong><br />
                                     Symbol: {(selectedNode.data.parameters as any)?.symbol || 'NFT'}<br />
                                     Amount: {(selectedNode.data.parameters as any)?.amount || 1}<br />
@@ -2068,7 +2068,7 @@ export const RightSidebar = () => {
                                         type="text"
                                         value={(selectedNode.data.parameters as any)?.programId || ''}
                                         onChange={(e) => handleTransactionParameterChange('programId', e.target.value)}
-                                        className="w-full px-3 py-2 border border-input bg-background rounded-md text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent font-mono"
+                                        className="w-full bg-[#13131A] border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-[#460DF2] transition-colors font-mono"
                                         placeholder="Program public key..."
                                     />
                                 </div>
@@ -2118,7 +2118,7 @@ export const RightSidebar = () => {
                                                     newAccounts[index] = { ...newAccounts[index], isSigner: e.target.checked };
                                                     handleTransactionParameterChange('accounts', newAccounts);
                                                 }}
-                                                className="rounded border-input"
+                                                className="rounded border-white/10 bg-[#13131A] text-[#460DF2] focus:outline-none focus:ring-2 focus:ring-[#460DF2]/20 focus:border-[#460DF2] transition-colors cursor-pointer hover:border-[#460DF2]/50"
                                             />
                                             <label className="text-xs text-sidebar-foreground">Signer</label>
                                         </div>
@@ -2131,7 +2131,7 @@ export const RightSidebar = () => {
                                                     newAccounts[index] = { ...newAccounts[index], isWritable: e.target.checked };
                                                     handleTransactionParameterChange('accounts', newAccounts);
                                                 }}
-                                                className="rounded border-input"
+                                                className="rounded border-white/10 bg-[#13131A] text-[#460DF2] focus:outline-none focus:ring-2 focus:ring-[#460DF2]/20 focus:border-[#460DF2] transition-colors cursor-pointer hover:border-[#460DF2]/50"
                                             />
                                             <label className="text-xs text-sidebar-foreground">Writable</label>
                                         </div>
@@ -2152,7 +2152,7 @@ export const RightSidebar = () => {
                                         const newAccounts = [...((selectedNode.data.parameters as any)?.accounts || []), { pubkey: '', isSigner: false, isWritable: false }];
                                         handleTransactionParameterChange('accounts', newAccounts);
                                     }}
-                                    className="w-full px-3 py-2 border border-dashed border-input bg-background hover:bg-accent rounded-md text-muted-foreground hover:text-foreground transition-colors"
+                                    className="w-full px-3 py-2 border border-dashed border-white/10 bg-white/5 hover:bg-white/10 rounded-lg text-gray-400 hover:text-white transition-all hover:border-[#460DF2]/30"
                                 >
                                     + Add Account
                                 </button>
@@ -2177,8 +2177,8 @@ export const RightSidebar = () => {
                         {/* Contract Call Preview */}
                         <div>
                             <h4 className="text-sm font-medium text-sidebar-foreground mb-3">Contract Call Preview</h4>
-                            <div className="p-3 bg-muted rounded-md">
-                                <div className="text-xs text-muted-foreground">
+                            <div className="p-3 bg-[#13131A] border border-white/5 rounded-lg backdrop-blur-sm">
+                                <div className="text-xs text-gray-400">
                                     <strong>Program:</strong> {(selectedNode.data.parameters as any)?.programId ? (selectedNode.data.parameters as any).programId.slice(0, 16) + '...' : 'Not set'}<br />
                                     <strong>Instruction:</strong> {(selectedNode.data.parameters as any)?.instructionData ? (selectedNode.data.parameters as any).instructionData.slice(0, 16) + '...' : 'Not set'}<br />
                                     <strong>Accounts:</strong> {((selectedNode.data.parameters as any)?.accounts || []).length}
@@ -2209,7 +2209,7 @@ export const RightSidebar = () => {
                                     <select
                                         value={selectedNode.data.transactionType}
                                         onChange={(e) => handleTransactionTypeChange(e.target.value as TransactionType)}
-                                        className="w-full px-3 py-2 border border-input bg-background rounded-md text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
+                                        className="w-full bg-[#13131A] border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-[#460DF2] transition-colors"
                                     >
                                         <option value="SYSTEM_TRANSFER">Transfer SOL</option>
                                         <option value="SPL_TRANSFER">Transfer Token</option>
@@ -2224,8 +2224,8 @@ export const RightSidebar = () => {
                         {/* Transaction Preview */}
                         <div>
                             <h4 className="text-sm font-medium text-sidebar-foreground mb-3">Transaction Preview</h4>
-                            <div className="p-3 bg-muted rounded-md">
-                                <div className="text-xs text-muted-foreground">
+                            <div className="p-3 bg-[#13131A] border border-white/5 rounded-lg backdrop-blur-sm">
+                                <div className="text-xs text-gray-400">
                                     {selectedNode.data.transactionType === 'SYSTEM_TRANSFER' && (
                                         <div>
                                             <strong>Transfer SOL:</strong><br />
@@ -2259,7 +2259,7 @@ export const RightSidebar = () => {
                     <div className="space-y-6">
                         {/* Node Type Header */}
                         <div className="flex items-center gap-2 pb-2 border-b border-white/5">
-                            <div className="w-8 h-8 bg-indigo-400/10 rounded-lg flex items-center justify-center">
+                            <div className="w-6 h-6 bg-indigo-400/10 rounded-lg flex items-center justify-center">
                                 {startNodeInfo?.icon}
                             </div>
                             <div>
@@ -2457,7 +2457,7 @@ export const RightSidebar = () => {
                                                 updateNode(selectedNodeId, { options: newOptions });
                                             }
                                         }}
-                                        className="w-full px-3 py-3 lg:py-2 text-base lg:text-sm min-h-[44px] border border-dashed border-input bg-background hover:bg-accent rounded-md text-muted-foreground hover:text-foreground transition-colors"
+                                        className="w-full px-3 py-3 lg:py-2 text-base lg:text-sm min-h-[44px] border border-dashed border-white/10 bg-white/5 hover:bg-white/10 rounded-lg text-gray-400 hover:text-white transition-all hover:border-[#460DF2]/30"
                                     >
                                         + Add Option
                                     </button>
