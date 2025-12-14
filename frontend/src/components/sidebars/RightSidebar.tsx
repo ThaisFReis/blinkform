@@ -659,6 +659,18 @@ export const RightSidebar = () => {
                                 placeholder="Amount to transfer..."
                             />
                         </div>
+                        <div>
+                            <label className="block text-xs font-medium text-sidebar-foreground mb-1">Decimals</label>
+                            <input
+                                type="number"
+                                min="0"
+                                max="9"
+                                value={parameters.decimals || ''}
+                                onChange={(e) => handleTransactionParameterChange('decimals', e.target.value ? parseInt(e.target.value) : undefined)}
+                                className="w-full px-3 py-2 border border-input bg-background rounded-md text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
+                                placeholder="Token decimals (usually 6 or 9)..."
+                            />
+                        </div>
                     </>
                 );
             case 'SYSTEM_TRANSFER':
