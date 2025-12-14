@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect } from 'react';
 import { useFormBuilderStore } from '@/store/formBuilderStore';
 import { X, Type, Hash, Calendar, Circle, CheckCircle, CreditCard, Image, Code, GitBranch, Shield, Calculator, Save, Info } from 'lucide-react';
 import { isQuestionNode, isTransactionNode, isLogicNode, isValidationNode, isCalculationNode, isEndNode, isStartNode, TransactionType, ConditionOperator, BRANCH_COLORS, ConditionalBranch, Condition, ValidationRule, CalculationOperation, CalculationOperator, SuccessAction, SuccessActionType } from '@/types/nodes';
@@ -31,7 +32,9 @@ export const RightSidebar = () => {
         toggleRightSidebar,
         selectedNodeId,
         nodes,
-        updateNode
+        updateNode,
+        rightSidebarActiveTab,
+        setRightSidebarActiveTab
     } = useFormBuilderStore();
 
     const handleTitleChange = (value: string) => {
@@ -67,6 +70,15 @@ export const RightSidebar = () => {
 
     // Get selected node
     const selectedNode = selectedNodeId ? nodes.find(node => node.id === selectedNodeId) : null;
+
+    // Auto-switch to node tab when a node is selected, form tab when deselected
+    useEffect(() => {
+        if (selectedNodeId) {
+            setRightSidebarActiveTab('node');
+        } else {
+            setRightSidebarActiveTab('form');
+        }
+    }, [selectedNodeId, setRightSidebarActiveTab]);
 
     // Get transaction node info
     const getTransactionNodeInfo = (transactionType: TransactionType) => {
@@ -917,31 +929,57 @@ export const RightSidebar = () => {
     return (
         <div className="h-full flex flex-col w-80 bg-[#0C0C12]">
             {/* Header */}
-            {selectedNode ? (
-                <div className="p-4 border-b border-white/5 flex items-center justify-between bg-white/[0.02]">
+            <div className="p-4 border-b border-white/5 bg-white/[0.02]">
+                <div className="flex items-center justify-between mb-3">
                     <div>
-                        <h2 className="text-white font-semibold">Node Settings</h2>
-                        <p className="text-xs text-gray-500">Configure node properties</p>
+                        <h2 className="text-white font-semibold">
+                            {rightSidebarActiveTab === 'form' ? 'Form Properties' : 'Node Settings'}
+                        </h2>
+                        <p className="text-xs text-gray-500">
+                            {rightSidebarActiveTab === 'form' ? 'Global configuration' : 'Configure node properties'}
+                        </p>
                     </div>
                     <button onClick={toggleRightSidebar} className="text-gray-500 hover:text-white">
                         <X className="w-4 h-4" />
                     </button>
                 </div>
-            ) : (
-                <div className="p-4 border-b border-white/5 flex items-center justify-between bg-white/[0.02] backdrop-blur-sm">
-                    <div>
-                        <h2 className="text-white font-semibold">Form Properties</h2>
-                        <p className="text-xs text-gray-500">Global configuration</p>
-                    </div>
-                    <div className="bg-[#460DF2] text-white text-[10px] px-2 py-0.5 rounded-full font-bold shadow-[0_0_10px_-2px_#460DF2]">
+
+                {/* Tabs */}
+                <div className="flex gap-1">
+                    <button
+                        onClick={() => setRightSidebarActiveTab('form')}
+                        className={`flex-1 px-3 py-2 text-xs font-medium rounded-lg transition-all ${
+                            rightSidebarActiveTab === 'form'
+                                ? 'bg-[#460DF2] text-white shadow-[0_0_10px_-2px_#460DF2]'
+                                : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white'
+                        }`}
+                    >
+                        Form
+                    </button>
+                    <button
+                        onClick={() => setRightSidebarActiveTab('node')}
+                        className={`flex-1 px-3 py-2 text-xs font-medium rounded-lg transition-all ${
+                            rightSidebarActiveTab === 'node'
+                                ? 'bg-[#460DF2] text-white shadow-[0_0_10px_-2px_#460DF2]'
+                                : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white'
+                        }`}
+                        disabled={!selectedNode}
+                    >
+                        Node
+                    </button>
+                </div>
+
+                {/* Auto-saved indicator for form tab */}
+                {rightSidebarActiveTab === 'form' && (
+                    <div className="mt-2 bg-[#460DF2] text-white text-[10px] px-2 py-0.5 rounded-full font-bold shadow-[0_0_10px_-2px_#460DF2] w-fit">
                         AUTO-SAVED
                     </div>
-                </div>
-            )}
+                )}
+            </div>
 
             <div className="flex-1 p-4 overflow-y-auto space-y-6">
-                {/* Form Properties - Always Visible */}
-                {!selectedNode && (
+                {/* Form Properties */}
+                {rightSidebarActiveTab === 'form' && (
                     <>
                         {/* Form ID */}
                         <div className="space-y-1">
@@ -1018,8 +1056,8 @@ export const RightSidebar = () => {
                     </>
                 )}
 
-                {/* Node Properties - Only when a node is selected */}
-                {selectedNode && (
+                {/* Node Properties */}
+                {rightSidebarActiveTab === 'node' && selectedNode && (
                     <div className="space-y-4">
                         <div className="text-sm font-medium text-sidebar-foreground border-b border-sidebar-border pb-2">
                             Node Properties
@@ -1027,7 +1065,16 @@ export const RightSidebar = () => {
                     </div>
                 )}
 
-                {selectedNode && isValidationNode(selectedNode) ? (
+                {/* No node selected message */}
+                {rightSidebarActiveTab === 'node' && !selectedNode && (
+                    <div className="text-center py-8">
+                        <div className="text-gray-400 text-sm">
+                            Select a node to configure its properties
+                        </div>
+                    </div>
+                )}
+
+                {rightSidebarActiveTab === 'node' && selectedNode && isValidationNode(selectedNode) ? (
                     /* Validation Node Configuration */
                     <div className="space-y-6">
                         {/* Node Type Header */}
@@ -1281,7 +1328,7 @@ export const RightSidebar = () => {
                             </div>
                         </div>
                     </div>
-                ) : selectedNode && isCalculationNode(selectedNode) ? (
+                ) : rightSidebarActiveTab === 'node' && selectedNode && isCalculationNode(selectedNode) ? (
                     <div className="space-y-6">
                         {/* Node Type Header */}
                         <div className="flex items-center gap-2 pb-2 border-b border-white/5">
@@ -1442,7 +1489,7 @@ export const RightSidebar = () => {
                             </div>
                         </div>
                     </div>
-                ) : selectedNode && isEndNode(selectedNode) ? (
+                ) : rightSidebarActiveTab === 'node' && selectedNode && isEndNode(selectedNode) ? (
                     /* End Node Configuration */
                     <div className="space-y-6">
                         {/* Node Type Header */}
@@ -1649,7 +1696,7 @@ export const RightSidebar = () => {
                             </div>
                         </div>
                     </div>
-                ) : selectedNode && isLogicNode(selectedNode) ? (
+                ) : rightSidebarActiveTab === 'node' && selectedNode && isLogicNode(selectedNode) ? (
                     <div className="space-y-6">
                         {/* Node Type Header (existing) */}
                         <div className="flex items-center gap-2 pb-2 border-b border-sidebar-border">
@@ -1940,7 +1987,7 @@ export const RightSidebar = () => {
                             </div>
                         </div>
                     </div>
-                ) : selectedNode && isMintNFTNode(selectedNode) ? (
+                ) : rightSidebarActiveTab === 'node' && selectedNode && isMintNFTNode(selectedNode) ? (
                     /* Mint NFT Node Configuration */
                     <div className="space-y-6">
                         {/* Node Type Header */}
@@ -2044,7 +2091,7 @@ export const RightSidebar = () => {
                             </div>
                         </div>
                     </div>
-                ) : selectedNode && isCallContractNode(selectedNode) ? (
+                ) : rightSidebarActiveTab === 'node' && selectedNode && isCallContractNode(selectedNode) ? (
                     /* Call Contract Node Configuration */
                     <div className="space-y-6">
                         {/* Node Type Header */}
@@ -2186,7 +2233,7 @@ export const RightSidebar = () => {
                             </div>
                         </div>
                     </div>
-                ) : selectedNode && isTransactionNode(selectedNode) ? (
+                ) : rightSidebarActiveTab === 'node' && selectedNode && isTransactionNode(selectedNode) ? (
                     /* Transaction Node Configuration */
                     <div className="space-y-6">
                         {/* Node Type Header */}
@@ -2254,7 +2301,7 @@ export const RightSidebar = () => {
                             </div>
                         </div>
                     </div>
-                ) : selectedNode && isStartNode(selectedNode) ? (
+                ) : rightSidebarActiveTab === 'node' && selectedNode && isStartNode(selectedNode) ? (
                     /* Start Form Node Configuration */
                     <div className="space-y-6">
                         {/* Node Type Header */}
@@ -2323,7 +2370,7 @@ export const RightSidebar = () => {
                             </div>
                         </div>
                     </div>
-                ) : selectedNode && isQuestionNode(selectedNode) ? (
+                ) : rightSidebarActiveTab === 'node' && selectedNode && isQuestionNode(selectedNode) ? (
                     /* Question Node Configuration */
                     <div className="space-y-6">
                         {/* Node Type Header */}
@@ -2486,7 +2533,7 @@ export const RightSidebar = () => {
                     </div>
                 ) : (
                     /* Empty fallback for when no specific node type matches */
-                    selectedNode && <div className="text-sm text-muted-foreground">Node configuration not available</div>
+                    rightSidebarActiveTab === 'node' && selectedNode && <div className="text-sm text-muted-foreground">Node configuration not available</div>
                 )}
             </div>
         </div>

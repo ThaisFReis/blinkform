@@ -15,6 +15,8 @@ export type FormBuilderStore = NodesSlice & EdgesSlice & MetadataSlice & ApiSlic
   toggleLeftSidebar: () => void;
   isRightSidebarVisible: boolean;
   toggleRightSidebar: () => void;
+  rightSidebarActiveTab: 'form' | 'node';
+  setRightSidebarActiveTab: (tab: 'form' | 'node') => void;
 
   // Mobile preview state
   mobilePreview: {
@@ -51,6 +53,7 @@ const initialState = {
   isMobilePreviewVisible: false,
   isLeftSidebarVisible: false,
   isRightSidebarVisible: false,
+  rightSidebarActiveTab: 'form' as 'form' | 'node',
 
   // Mobile preview state
   mobilePreview: {
@@ -98,6 +101,13 @@ export const useFormBuilderStore = create<FormBuilderStore>()(
           toggleRightSidebar: () => {
             set((state: any) => ({
               isRightSidebarVisible: !state.isRightSidebarVisible
+            }));
+          },
+
+          rightSidebarActiveTab: 'form',
+          setRightSidebarActiveTab: (tab: 'form' | 'node') => {
+            set((state: any) => ({
+              rightSidebarActiveTab: tab
             }));
           },
 
