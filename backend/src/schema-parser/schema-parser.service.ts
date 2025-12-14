@@ -100,6 +100,7 @@ export class SchemaParserService {
           params = JSON.parse(params);
         } catch (e) {
           console.error('Failed to parse transaction parameters in schema parser:', e);
+          console.error('Raw parameters:', transactionData.parameters);
           params = {};
         }
       }

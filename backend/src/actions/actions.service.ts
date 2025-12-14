@@ -186,6 +186,9 @@ export class ActionsService {
                        currentNode.data?.requiresTransaction === true ||
                        (nextNode && nextNode.data?.requiresTransaction === true);
 
+    console.log('[Actions POST] Current node type:', currentNode.type);
+    console.log('[Actions POST] Current node data:', JSON.stringify(currentNode.data, null, 2));
+    console.log('[Actions POST] Next node:', nextNode ? nextNode.type : 'null');
     console.log('[Actions POST] Is final step:', isFinalStep);
 
     if (isFinalStep) {
@@ -236,7 +239,9 @@ export class ActionsService {
             console.log('[Actions POST] Parsed parameters:', parameters);
           } catch (e) {
             console.error('[Actions POST] Failed to parse parameters:', e);
-            throw new Error('Invalid transaction parameters format');
+            console.error('[Actions POST] Raw parameters:', transactionData.parameters);
+            // Don't throw error, use empty object as fallback
+            parameters = {};
           }
         }
 
