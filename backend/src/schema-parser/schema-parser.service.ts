@@ -95,14 +95,24 @@ export class SchemaParserService {
 
       // Ensure parameters is an object
       let params = transactionData.parameters;
+
+      // Handle different parameter formats
       if (typeof params === 'string') {
-        try {
-          params = JSON.parse(params);
-        } catch (e) {
-          console.error('Failed to parse transaction parameters in schema parser:', e);
-          console.error('Raw parameters:', transactionData.parameters);
-          params = {};
+        // Try to parse as JSON
+        if (params.trim().startsWith('{') || params.trim().startsWith('[')) {
+          try {
+            params = JSON.parse(params);
+          } catch (e) {
+            console.error('Failed to parse transaction parameters in schema parser:', e);
+            console.error('Raw parameters:', transactionData.parameters);
+            params = {};
+          }
         }
+        // If not JSON, keep as string (might be used differently)
+      } else if (params && typeof params === 'object') {
+        // Already an object, use as-is
+      } else {
+        params = {};
       }
 
       switch (transactionType) {

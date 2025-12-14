@@ -233,16 +233,28 @@ export class ActionsService {
 
         // Ensure parameters is an object
         let parameters = transactionData.parameters;
+
+        // Handle different parameter formats
         if (typeof parameters === 'string') {
-          try {
-            parameters = JSON.parse(parameters);
-            console.log('[Actions POST] Parsed parameters:', parameters);
-          } catch (e) {
-            console.error('[Actions POST] Failed to parse parameters:', e);
-            console.error('[Actions POST] Raw parameters:', transactionData.parameters);
-            // Don't throw error, use empty object as fallback
-            parameters = {};
+          // Try to parse as JSON
+          if (parameters.trim().startsWith('{') || parameters.trim().startsWith('[')) {
+            try {
+              parameters = JSON.parse(parameters);
+              console.log('[Actions POST] Parsed JSON parameters:', parameters);
+            } catch (e) {
+              console.error('[Actions POST] Failed to parse JSON parameters:', e);
+              console.error('[Actions POST] Raw parameters:', transactionData.parameters);
+              parameters = {};
+            }
+          } else {
+            // Not JSON, treat as plain object
+            console.log('[Actions POST] Parameters is string but not JSON, using as-is');
           }
+        } else if (parameters && typeof parameters === 'object') {
+          console.log('[Actions POST] Parameters already object:', parameters);
+        } else {
+          console.log('[Actions POST] Parameters undefined or invalid, using empty object');
+          parameters = {};
         }
 
         transaction = await this.transactionBuilder.createTransaction(
