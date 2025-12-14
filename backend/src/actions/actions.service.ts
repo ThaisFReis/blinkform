@@ -245,105 +245,108 @@ export class ActionsService {
 
       let transaction: string;
 
-      // Check if this is a transaction node
-      if (currentNode.type === 'transaction') {
-        console.log('[Actions POST] Transaction node detected, creating real transaction');
-        const transactionData = currentNode.data as any;
-        console.log('[Actions POST] Transaction data:', JSON.stringify(transactionData, null, 2));
-        console.log('[Actions POST] Transaction type:', transactionData.transactionType);
-        console.log('[Actions POST] Transaction parameters:', transactionData.parameters);
-        console.log('[Actions POST] Parameters type:', typeof transactionData.parameters);
+      try {
+        // Check if this is a transaction node
+        if (currentNode.type === 'transaction') {
+          console.log('[Actions POST] Transaction node detected, creating real transaction');
+          const transactionData = currentNode.data as any;
+          console.log('[Actions POST] Transaction data:', JSON.stringify(transactionData, null, 2));
+          console.log('[Actions POST] Transaction type:', transactionData.transactionType);
+          console.log('[Actions POST] Transaction parameters:', transactionData.parameters);
+          console.log('[Actions POST] Parameters type:', typeof transactionData.parameters);
 
-        // Ensure parameters is an object
-        let parameters = transactionData.parameters;
-        if (typeof parameters === 'string') {
-          try {
-            parameters = JSON.parse(parameters);
-            console.log('[Actions POST] Parsed parameters:', parameters);
-          } catch (e) {
-            console.error('[Actions POST] Failed to parse parameters:', e);
-            throw new Error('Invalid transaction parameters format');
-          }
-        }
-
-        // Resolve parameter placeholders like {{parameterName}}
-        console.log('[Actions POST] Resolving parameters with answers:', sessionData.answers);
-        parameters = this.resolveParameters(parameters, sessionData.answers || {}, form.schema);
-
-        transaction = await this.transactionBuilder.createTransaction(
-          transactionData.transactionType,
-          userAccount,
-          parameters
-        );
-      } else if (nextNode && nextNode.type === 'transaction') {
-        console.log('[Actions POST] Next node is transaction, creating real transaction');
-        const transactionData = nextNode.data as any;
-        console.log('[Actions POST] Transaction data:', JSON.stringify(transactionData, null, 2));
-        console.log('[Actions POST] Transaction type:', transactionData.transactionType);
-        console.log('[Actions POST] Transaction parameters:', transactionData.parameters);
-        console.log('[Actions POST] Parameters type:', typeof transactionData.parameters);
-
-        // Ensure parameters is an object
-        let parameters = transactionData.parameters;
-
-        // Handle different parameter formats
-        if (typeof parameters === 'string') {
-          // Try to parse as JSON
-          if (parameters.trim().startsWith('{') || parameters.trim().startsWith('[')) {
+          // Ensure parameters is an object
+          let parameters = transactionData.parameters;
+          if (typeof parameters === 'string') {
             try {
               parameters = JSON.parse(parameters);
-              console.log('[Actions POST] Parsed JSON parameters:', parameters);
+              console.log('[Actions POST] Parsed parameters:', parameters);
             } catch (e) {
-              console.error('[Actions POST] Failed to parse JSON parameters:', e);
-              console.error('[Actions POST] Raw parameters:', transactionData.parameters);
-              parameters = {};
+              console.error('[Actions POST] Failed to parse parameters:', e);
+              throw new Error('Invalid transaction parameters format');
             }
-          } else {
-            // Not JSON, treat as plain object
-            console.log('[Actions POST] Parameters is string but not JSON, using as-is');
           }
-        } else if (parameters && typeof parameters === 'object') {
-          console.log('[Actions POST] Parameters already object:', parameters);
-        } else {
-          console.log('[Actions POST] Parameters undefined or invalid, using empty object');
-          parameters = {};
-        }
 
-        // Resolve parameter placeholders like {{parameterName}}
-        console.log('[Actions POST] Resolving parameters with answers:', sessionData.answers);
-        parameters = this.resolveParameters(parameters, sessionData.answers || {}, form.schema);
+          // Resolve parameter placeholders like {{parameterName}}
+          console.log('[Actions POST] Resolving parameters with answers:', sessionData.answers);
+          parameters = this.resolveParameters(parameters, sessionData.answers || {}, form.schema);
 
-        console.log('[Actions POST] Creating transaction with:', {
-          transactionType: transactionData.transactionType,
-          userAccount,
-          parameters
-        });
+          transaction = await this.transactionBuilder.createTransaction(
+            transactionData.transactionType,
+            userAccount,
+            parameters
+          );
+        } else if (nextNode && nextNode.type === 'transaction') {
+          console.log('[Actions POST] Next node is transaction, creating real transaction');
+          const transactionData = nextNode.data as any;
+          console.log('[Actions POST] Transaction data:', JSON.stringify(transactionData, null, 2));
+          console.log('[Actions POST] Transaction type:', transactionData.transactionType);
+          console.log('[Actions POST] Transaction parameters:', transactionData.parameters);
+          console.log('[Actions POST] Parameters type:', typeof transactionData.parameters);
 
-        try {
+          // Ensure parameters is an object
+          let parameters = transactionData.parameters;
+
+          // Handle different parameter formats
+          if (typeof parameters === 'string') {
+            // Try to parse as JSON
+            if (parameters.trim().startsWith('{') || parameters.trim().startsWith('[')) {
+              try {
+                parameters = JSON.parse(parameters);
+                console.log('[Actions POST] Parsed JSON parameters:', parameters);
+              } catch (e) {
+                console.error('[Actions POST] Failed to parse JSON parameters:', e);
+                console.error('[Actions POST] Raw parameters:', transactionData.parameters);
+                parameters = {};
+              }
+            } else {
+              // Not JSON, treat as plain object
+              console.log('[Actions POST] Parameters is string but not JSON, using as-is');
+            }
+          } else if (parameters && typeof parameters === 'object') {
+            console.log('[Actions POST] Parameters already object:', parameters);
+          } else {
+            console.log('[Actions POST] Parameters undefined or invalid, using empty object');
+            parameters = {};
+          }
+
+          // Resolve parameter placeholders like {{parameterName}}
+          console.log('[Actions POST] Resolving parameters with answers:', sessionData.answers);
+          parameters = this.resolveParameters(parameters, sessionData.answers || {}, form.schema);
+
+          console.log('[Actions POST] Creating transaction with:', {
+            transactionType: transactionData.transactionType,
+            userAccount,
+            parameters
+          });
+
           transaction = await this.transactionBuilder.createTransaction(
             transactionData.transactionType,
             userAccount,
             parameters
           );
           console.log('[Actions POST] Transaction created successfully');
-        } catch (error) {
-          console.error('[Actions POST] Transaction creation failed:', error);
-          console.error('[Actions POST] Error details:', {
-            message: error.message,
-            stack: error.stack,
-            transactionType: transactionData.transactionType,
-            parameters
-          });
-          throw error;
+        } else {
+          // This shouldn't happen with new logic, but fallback
+          console.log('[Actions POST] Unexpected transaction creation');
+          const memoData = `FormID:${formId}|Answers:${JSON.stringify(sessionData.answers)}|Timestamp:${Date.now()}`;
+          transaction = await this.transactionBuilder.createMemoTransaction(
+            userAccount,
+            memoData
+          );
         }
-      } else {
-        // This shouldn't happen with new logic, but fallback
-        console.log('[Actions POST] Unexpected transaction creation');
-        const memoData = `FormID:${formId}|Answers:${JSON.stringify(sessionData.answers)}|Timestamp:${Date.now()}`;
-        transaction = await this.transactionBuilder.createMemoTransaction(
+      } catch (error) {
+        console.error('[Actions POST] Transaction creation failed:', error);
+        console.error('[Actions POST] Error details:', {
+          message: error.message,
+          stack: error.stack,
+          currentNodeType: currentNode.type,
+          nextNodeType: nextNode?.type,
           userAccount,
-          memoData
-        );
+          sessionData: JSON.stringify(sessionData),
+          formId
+        });
+        throw error;
       }
 
       console.log('[Actions POST] User account:', userAccount);
