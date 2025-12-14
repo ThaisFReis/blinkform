@@ -244,7 +244,7 @@ export class ActionsService {
       console.log('[Actions POST] Returning TransactionResponse for final step');
 
       // Create detailed message based on transaction type
-      let detailedMessage = 'Form completed! Please sign to submit on-chain.\n\n';
+      let detailedMessage = '✅ Form submitted successfully!\n\n';
 
       if (currentNode.type === 'transaction') {
         const txData = currentNode.data;
@@ -258,7 +258,7 @@ export class ActionsService {
             detailedMessage += `• To: ${params.recipientAddress}\n`;
             detailedMessage += `• Network: Solana Devnet\n`;
             detailedMessage += `• Timestamp: ${new Date().toISOString()}\n\n`;
-            detailedMessage += `After signing, check the transaction on Solana Explorer.`;
+            detailedMessage += `Check the transaction on Solana Explorer.`;
             break;
 
           case 'SPL_TRANSFER':
