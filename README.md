@@ -303,11 +303,11 @@ npm run lint
 
 ### Backend Deployment
 
-The backend is configured for deployment on [Railway](https://railway.app/):
+The backend is configured for deployment on [Vercel](https://vercel.com/):
 
-1. **Environment Variables**: Set all required environment variables in Railway
-2. **Database**: Use Railway's PostgreSQL service
-3. **Redis**: Use Railway's Redis service (optional)
+1. **Environment Variables**: Set all required environment variables in Vercel
+2. **Database**: Use Vercel's PostgreSQL service or external database
+3. **Redis**: Use Vercel's Redis service or external Redis (optional)
 4. **Build Command**: `npm run build`
 5. **Start Command**: `npm run start:prod`
 
@@ -321,8 +321,8 @@ The frontend can be deployed on [Vercel](https://vercel.com/):
 
 ### Production URLs
 
-- **Production API**: https://blinkform-production.up.railway.app
-- **Actions Manifest**: https://blinkform-production.up.railway.app/actions.json
+- **Production API**: https://blinkform-backend.vercel.app
+- **Actions Manifest**: https://blinkform-backend.vercel.app/actions.json
 
 ## 🔧 Troubleshooting
 
