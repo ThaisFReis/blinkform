@@ -257,11 +257,29 @@ export class ActionsService {
           parameters = {};
         }
 
-        transaction = await this.transactionBuilder.createTransaction(
-          transactionData.transactionType,
+        console.log('[Actions POST] Creating transaction with:', {
+          transactionType: transactionData.transactionType,
           userAccount,
           parameters
-        );
+        });
+
+        try {
+          transaction = await this.transactionBuilder.createTransaction(
+            transactionData.transactionType,
+            userAccount,
+            parameters
+          );
+          console.log('[Actions POST] Transaction created successfully');
+        } catch (error) {
+          console.error('[Actions POST] Transaction creation failed:', error);
+          console.error('[Actions POST] Error details:', {
+            message: error.message,
+            stack: error.stack,
+            transactionType: transactionData.transactionType,
+            parameters
+          });
+          throw error;
+        }
       } else {
         // This shouldn't happen with new logic, but fallback
         console.log('[Actions POST] Unexpected transaction creation');

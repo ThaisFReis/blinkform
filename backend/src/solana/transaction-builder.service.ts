@@ -348,6 +348,16 @@ export class TransactionBuilderService {
         );
 
       case 'SPL_TRANSFER':
+        this.logger.log('SPL_TRANSFER requested with parameters:', parameters);
+        if (!parameters.recipientAddress) {
+          throw new Error('SPL_TRANSFER requires recipientAddress parameter');
+        }
+        if (!parameters.mintAddress) {
+          throw new Error('SPL_TRANSFER requires mintAddress parameter');
+        }
+        if (parameters.amount === undefined || parameters.amount === null) {
+          throw new Error('SPL_TRANSFER requires amount parameter');
+        }
         return this.createSplTransferTransaction(
           account,
           parameters.recipientAddress,
@@ -357,6 +367,16 @@ export class TransactionBuilderService {
         );
 
       case 'SPL_MINT':
+        this.logger.log('SPL_MINT requested with parameters:', parameters);
+        if (!parameters.mintAddress) {
+          throw new Error('SPL_MINT requires mintAddress parameter');
+        }
+        if (!parameters.recipientAddress) {
+          throw new Error('SPL_MINT requires recipientAddress parameter');
+        }
+        if (parameters.amount === undefined || parameters.amount === null) {
+          throw new Error('SPL_MINT requires amount parameter');
+        }
         return this.createSplMintTransaction(
           account, // mint authority
           parameters.mintAddress,
