@@ -7,6 +7,21 @@ A no-code visual builder for creating Solana Blinks (Actions) with an intuitive 
 ![Next.js](https://img.shields.io/badge/Next.js-000000?logo=next.js&logoColor=white)
 ![NestJS](https://img.shields.io/badge/NestJS-E0234E?logo=nestjs&logoColor=white)
 
+## Table of Contents
+
+- [Features](#-features)
+- [Tech Stack](#️-tech-stack)
+- [Project Structure](#-project-structure)
+- [Getting Started](#-getting-started)
+- [Usage](#-usage)
+- [API Reference](#-api-reference)
+- [Development](#️-development)
+- [Deployment](#-deployment)
+- [Contributing](#-contributing)
+- [License](#-license)
+- [Acknowledgments](#-acknowledgments)
+- [Support](#-support)
+
 ## 🚀 Features
 
 - **Visual Flow Builder**: Drag-and-drop interface for creating complex transaction flows
@@ -17,6 +32,10 @@ A no-code visual builder for creating Solana Blinks (Actions) with an intuitive 
 - **Node-Based Architecture**: Modular components for inputs, transactions, NFTs, and more
 - **Form Management**: Create, update, and manage forms with persistent storage
 - **Transaction Support**: Handle Solana transactions with signature validation
+
+## 📸 Screenshots
+
+*Coming soon - Screenshots of the visual builder interface and mobile preview*
 
 ## 🛠️ Tech Stack
 
@@ -180,6 +199,26 @@ Forms can be submitted through:
 - **Solana Actions**: Integration with Solana wallets and dApps
 - **API**: Programmatic submission via REST API
 
+### API Usage Example
+
+Create a new form via API:
+
+```bash
+curl -X POST http://localhost:3001/api/forms \
+  -H "Content-Type: application/json" \
+  -d '{
+    "title": "Sample Form",
+    "description": "A test form",
+    "schema": {
+      "type": "object",
+      "properties": {
+        "name": {"type": "string"},
+        "email": {"type": "string", "format": "email"}
+      }
+    }
+  }'
+```
+
 ## 🔌 API Reference
 
 ### Base URL
@@ -286,6 +325,18 @@ The frontend can be deployed on [Vercel](https://vercel.com/):
 - **Production API**: https://blinkform-production.up.railway.app
 - **Actions Manifest**: https://blinkform-production.up.railway.app/actions.json
 
+## 🔧 Troubleshooting
+
+### Common Issues
+
+- **Database Connection Failed**: Ensure PostgreSQL is running and `DATABASE_URL` is correct.
+- **Redis Connection Error**: Check Redis host/port or disable Redis if not needed.
+- **Solana RPC Errors**: Verify `SOLANA_RPC_URL` is accessible.
+- **Build Failures**: Run `npm install` in both backend and frontend directories.
+- **Port Conflicts**: Change `PORT` in backend `.env` if 3001 is in use.
+
+For more help, check the [Testing Guide](TESTING_GUIDE.md) or create an issue.
+
 ## 🤝 Contributing
 
 1. Fork the repository
@@ -296,11 +347,17 @@ The frontend can be deployed on [Vercel](https://vercel.com/):
 
 ### Development Guidelines
 
-- Follow TypeScript best practices
-- Write tests for new features
-- Update documentation for API changes
-- Ensure mobile responsiveness
-- Test on multiple Solana networks
+- **Code Style**: Follow TypeScript best practices and ESLint rules
+- **Testing**: Write unit and integration tests for new features; aim for 80%+ coverage
+- **Documentation**: Update README and API docs for changes; add JSDoc comments
+- **Mobile First**: Ensure all features work on mobile devices
+- **Solana Testing**: Test on devnet before mainnet deployments
+- **Commits**: Use conventional commits (e.g., `feat: add new node type`)
+- **PR Reviews**: All PRs require review; address feedback promptly
+
+### Code of Conduct
+
+This project follows a code of conduct to ensure a welcoming environment for all contributors.
 
 ## 📄 License
 
