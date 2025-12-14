@@ -59,6 +59,20 @@ const config: Config = {
           border: "rgb(var(--sidebar-border) / <alpha-value>)",
           ring: "rgb(var(--sidebar-ring) / <alpha-value>)",
         },
+        // New design-specific colors
+        'node-bg': '#13131A',
+        'sidebar-bg': '#0C0C12',
+        'canvas-bg': '#08080C',
+        'main-bg': '#0A0A0F',
+        component: {
+          blue: '#60A5FA',    // blue-400
+          purple: '#A78BFA',  // purple-400
+          pink: '#F472B6',    // pink-400
+          cyan: '#00D9FF',    // cyan-400
+          emerald: '#34D399', // emerald-400
+          orange: '#FB923C',  // orange-400
+          yellow: '#FBBF24',  // yellow-400
+        },
       },
       fontFamily: {
         sans: ["var(--font-sans)"],

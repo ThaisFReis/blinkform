@@ -21,58 +21,64 @@
 }
 
 :root {
-  --background: 255 255 255;
-  --foreground: 9 9 11;
-  --card: 255 255 255;
-  --card-foreground: 9 9 11;
-  --popover: 255 255 255;
-  --popover-foreground: 9 9 11;
-  --primary: 03:59:22.146;
-  --primary-foreground: 250 250 250;
-  --secondary: 241 245 249;
-  --secondary-foreground: 24 24 27;
-  --muted: 241 245 249;
-  --muted-foreground: 113 113 122;
-  --accent: 237 231 254;
-  --accent-foreground: 28 5 97;
+  /* Dark backgrounds - new design */
+  --background: 10 10 15;           /* #0A0A0F */
+  --foreground: 229 229 231;        /* gray-200 */
+  --card: 19 19 26;                 /* #13131A */
+  --card-foreground: 229 229 231;   /* gray-200 */
+  --popover: 19 19 26;              /* #13131A */
+  --popover-foreground: 229 229 231;
+  /* Primary purple gradient colors */
+  --primary: 70 13 242;             /* #460DF2 */
+  --primary-foreground: 255 255 255;
+  --secondary: 39 39 42;            /* Dark gray */
+  --secondary-foreground: 229 229 231;
+  --muted: 39 39 42;
+  --muted-foreground: 156 163 175;  /* gray-400 */
+  --accent: 12 12 18;               /* #0C0C12 */
+  --accent-foreground: 156 163 175;
   --destructive: 239 68 68;
   --destructive-foreground: 250 250 250;
-  --border: 226 232 240;
-  --input: 226 232 240;
+  /* Borders with opacity */
+  --border: 255 255 255 / 0.1;
+  --input: 19 19 26;                /* #13131A */
   --ring: 70 13 242;
   --chart-1: 70 13 242;
   --chart-2: 23 207 176;
   --chart-3: 244 157 37;
   --chart-4: 235 71 153;
   --chart-5: 48 140 232;
-  --sidebar: 250 250 250;
-  --sidebar-foreground: 9 9 11;
+  /* Sidebar colors */
+  --sidebar: 12 12 18;              /* #0C0C12 */
+  --sidebar-foreground: 229 229 231;
   --sidebar-primary: 70 13 242;
-  --sidebar-primary-foreground: 250 250 250;
-  --sidebar-accent: 237 231 254;
-  --sidebar-accent-foreground: 28 5 97;
-  --sidebar-border: 226 232 240;
+  --sidebar-primary-foreground: 255 255 255;
+  --sidebar-accent: 12 12 18;
+  --sidebar-accent-foreground: 156 163 175;
+  --sidebar-border: 255 255 255 / 0.05;
   --sidebar-ring: 70 13 242;
+  /* Fonts */
   --font-sans: 'Outfit', sans-serif;
   --font-serif: 'Fraunces', serif;
   --font-mono: 'JetBrains Mono', monospace;
   --font-gluten: 'Gluten', cursive;
   --font-signature: 'League Script', cursive;
-  --radius: 0.5rem;
+  --radius: 0.75rem;
+  /* Shadows with purple glow */
   --shadow-x: 0px;
-  --shadow-y: 4px;
-  --shadow-blur: 10px;
-  --shadow-spread: 0px;
-  --shadow-opacity: 0.05;
-  --shadow-color: 0 0% 0%;
-  --shadow-2xs: 0px 4px 10px 0px hsl(0 0% 0% / 0.03);
-  --shadow-xs: 0px 4px 10px 0px hsl(0 0% 0% / 0.03);
-  --shadow-sm: 0px 4px 10px 0px hsl(0 0% 0% / 0.05), 0px 1px 2px -1px hsl(0 0% 0% / 0.05);
-  --shadow: 0px 4px 10px 0px hsl(0 0% 0% / 0.05), 0px 1px 2px -1px hsl(0 0% 0% / 0.05);
-  --shadow-md: 0px 4px 10px 0px hsl(0 0% 0% / 0.05), 0px 2px 4px -1px hsl(0 0% 0% / 0.05);
-  --shadow-lg: 0px 4px 10px 0px hsl(0 0% 0% / 0.05), 0px 4px 6px -1px hsl(0 0% 0% / 0.05);
-  --shadow-xl: 0px 4px 10px 0px hsl(0 0% 0% / 0.05), 0px 8px 10px -1px hsl(0 0% 0% / 0.05);
-  --shadow-2xl: 0px 4px 10px 0px hsl(0 0% 0% / 0.13);
+  --shadow-y: 0px;
+  --shadow-blur: 20px;
+  --shadow-spread: -5px;
+  --shadow-opacity: 0.3;
+  --shadow-color: 70 13 242;
+  --shadow-2xs: 0px 0px 10px -5px rgba(70, 13, 242, 0.1);
+  --shadow-xs: 0px 0px 15px -5px rgba(70, 13, 242, 0.15);
+  --shadow-sm: 0px 0px 20px -5px rgba(70, 13, 242, 0.2);
+  --shadow: 0px 0px 20px -5px rgba(70, 13, 242, 0.25);
+  --shadow-md: 0px 0px 20px -5px rgba(70, 13, 242, 0.3);
+  --shadow-lg: 0px 0px 25px -5px rgba(70, 13, 242, 0.35);
+  --shadow-xl: 0px 0px 30px -5px rgba(70, 13, 242, 0.4);
+  --shadow-2xl: 0px 0px 40px -5px rgba(70, 13, 242, 0.5);
   --tracking-normal: 0em;
   --spacing: 0.25rem;
 }
@@ -316,4 +322,93 @@ body {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+/* Glassmorphic UI Patterns */
+.glass-panel {
+  background: rgba(19, 19, 26, 0.5);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.glass-input {
+  background: rgba(19, 19, 26, 1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.glass-input:focus {
+  border-color: rgba(70, 13, 242, 1);
+  outline: none;
+}
+
+/* Canvas grid pattern - matches new design */
+.canvas-grid {
+  background-color: #08080C;
+  background-image: radial-gradient(circle, #2a2a35 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+/* Purple gradient backgrounds */
+.bg-purple-gradient {
+  background: linear-gradient(to right, #460DF2, #7C3AED);
+}
+
+/* Hover glow effect */
+.hover-glow {
+  transition: box-shadow 0.3s ease;
+}
+
+.hover-glow:hover {
+  box-shadow: 0 0 20px -5px rgba(70, 13, 242, 0.3);
+}
+
+/* Focus states for accessibility */
+*:focus-visible {
+  outline: 2px solid rgba(70, 13, 242, 0.5);
+  outline-offset: 2px;
+}
+
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 2px solid rgba(70, 13, 242, 0.8);
+  outline-offset: 2px;
+}
+
+/* Smooth transitions */
+.transition-smooth {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ReactFlow custom styling for dark theme */
+.react-flow__edge.selected path {
+  stroke: #460DF2 !important;
+  stroke-width: 2.5 !important;
+}
+
+.react-flow__edge:hover path {
+  stroke: #7C3AED !important;
+}
+
+.react-flow__controls {
+  button {
+    background: rgba(19, 19, 26, 1) !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
+    color: rgb(229, 229, 231) !important;
+  }
+
+  button:hover {
+    background: rgba(255, 255, 255, 0.1) !important;
+  }
+
+  button svg {
+    fill: rgb(229, 229, 231) !important;
+  }
+}
+
+.react-flow__attribution {
+  background: rgba(19, 19, 26, 0.8) !important;
+  color: rgb(156, 163, 175) !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
 }

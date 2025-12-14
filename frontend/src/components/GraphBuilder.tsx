@@ -22,9 +22,10 @@ import { ConditionalNode } from '@/components/nodes/ConditionalNode';
 import { ValidationNode } from '@/components/nodes/ValidationNode';
 import { CalculationNode } from '@/components/nodes/CalculationNode';
 import { EndNode } from '@/components/nodes/EndNode';
+import { StartNode } from '@/components/nodes/StartNode';
 import { ContextMenu } from '@/components/ui/ContextMenu';
 import { MenuItemType } from '@/types/ui';
-import { TrashIcon, DotsNineIcon } from '@phosphor-icons/react';
+import { Trash2, Grid3x3 } from 'lucide-react';
 
 const GraphBuilder = () => {
   // Selective subscriptions for performance
@@ -241,13 +242,20 @@ const GraphBuilder = () => {
   // Edge context menu items
   const edgeContextMenuItems: MenuItemType[] = [
     {
-      icon: <TrashIcon className="w-4 h-4" />,
+      icon: <Trash2 className="w-4 h-4" />,
       label: 'Delete Connection',
       shortcut: 'Del',
       onClick: handleDeleteEdge,
       variant: 'destructive',
     },
   ];
+
+  // Custom edge styling - gray default, purple when selected
+  const defaultEdgeOptions = {
+    type: 'smoothstep',
+    style: { stroke: '#4b5563', strokeWidth: 2 },
+    animated: false,
+  };
 
   // Generic QuestionNode that renders the appropriate specific node
   const QuestionNode = (props: any) => {
@@ -298,6 +306,7 @@ const GraphBuilder = () => {
     transaction: TransactionNodeRenderer,
     logic: LogicNodeRenderer,
     end: EndNode,
+    start: StartNode,
   };
 
   return (
@@ -313,6 +322,7 @@ const GraphBuilder = () => {
         onDragOver={onDragOver}
         onEdgeContextMenu={onEdgeContextMenu}
         isValidConnection={isValidConnection}
+        defaultEdgeOptions={defaultEdgeOptions}
         style={{ background: 'transparent' }}
         fitView
         attributionPosition="bottom-left"
@@ -325,12 +335,17 @@ const GraphBuilder = () => {
         minZoom={0.1}
         maxZoom={2}
       >
-        <Background gap={20} />
+        <Background
+          gap={20}
+          color="#2a2a35"
+          size={1}
+          style={{ opacity: 0.5 }}
+        />
         <Controls
           showZoom={true}
           showFitView={true}
           showInteractive={true}
-          className="!bottom-24 lg:!bottom-4 !left-4"
+          className="!bottom-24 lg:!bottom-4 !left-4 !bg-[#13131A] !border-white/10 !rounded-lg"
         />
 
         {/* Custom Tidy Up Button - Hidden on mobile, shown on larger screens */}
@@ -338,10 +353,10 @@ const GraphBuilder = () => {
           <div className="absolute top-4 right-4 z-10 hidden md:block">
             <button
               onClick={tidyUpNodes}
-              className="flex items-center gap-2 px-3 py-2 bg-background border border-border rounded-md shadow-sm hover:bg-accent transition-colors"
+              className="flex items-center gap-2 px-3 py-2 bg-[#13131A] border border-white/10 rounded-lg shadow-sm hover:bg-white/10 transition-colors text-gray-200"
               title="Tidy up nodes"
             >
-              <DotsNineIcon className="w-4 h-4" />
+              <Grid3x3 className="w-4 h-4" />
               <span className="text-sm">Tidy Up</span>
             </button>
           </div>
@@ -353,10 +368,10 @@ const GraphBuilder = () => {
             {nodes.length > 0 && (
               <button
                 onClick={tidyUpNodes}
-                className="p-2 bg-background border border-border rounded-md shadow-sm hover:bg-accent transition-colors"
+                className="p-2 bg-[#13131A] border border-white/10 rounded-lg shadow-sm hover:bg-white/10 transition-colors text-gray-200"
                 title="Tidy up nodes"
               >
-                <DotsNineIcon className="w-5 h-5" />
+                <Grid3x3 className="w-5 h-5" />
               </button>
             )}
           </div>

@@ -1,6 +1,6 @@
 import React from 'react';
 import { NodeProps } from '@xyflow/react';
-import { BankIcon } from '@phosphor-icons/react';
+import { CreditCard } from 'lucide-react';
 import { TransactionNodeData, TransactionType } from '@/types/nodes';
 import { BaseNode } from './BaseNode';
 
@@ -43,16 +43,20 @@ export const TransactionNode: React.FC<TransactionNodeProps> = (props) => {
   return (
     <BaseNode
       {...props}
-      icon={<BankIcon className="w-4 h-4 text-primary" />}
+      icon={
+        <div className="w-6 h-6 rounded-lg bg-cyan-400/10 flex items-center justify-center">
+          <CreditCard className="w-4 h-4 text-cyan-400" />
+        </div>
+      }
       label="Transaction"
     >
       {/* Transaction Type */}
-      <div className="text-sm font-medium text-foreground mb-2">
+      <div className="text-sm font-medium text-white mb-2">
         {transactionType ? getTransactionTypeLabel(transactionType) : 'Select transaction type'}
       </div>
 
       {/* Parameter Preview */}
-      <div className="text-xs text-muted-foreground">
+      <div className="text-xs text-gray-500">
         {transactionType && parameters
           ? getParameterPreview(transactionType, parameters)
           : 'No parameters configured'

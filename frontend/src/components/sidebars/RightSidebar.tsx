@@ -1,7 +1,7 @@
 'use client';
 
 import { useFormBuilderStore } from '@/store/formBuilderStore';
-import { X, TextAaIcon, HashStraightIcon, CalendarDotsIcon, RadioButtonIcon, CheckCircleIcon, BankIcon, ImageIcon, CodeIcon, GitBranchIcon, ShieldCheckIcon, CalculatorIcon } from '@phosphor-icons/react';
+import { X, Type, Hash, Calendar, Circle, CheckCircle, CreditCard, Image, Code, GitBranch, Shield, Calculator, Save } from 'lucide-react';
 import { isQuestionNode, isTransactionNode, isLogicNode, isValidationNode, isCalculationNode, isEndNode, TransactionType, ConditionOperator, BRANCH_COLORS, ConditionalBranch, Condition, ValidationRule, CalculationOperation, CalculationOperator, SuccessAction, SuccessActionType } from '@/types/nodes';
 
 // Type guard for NFT minting nodes
@@ -84,7 +84,7 @@ export const RightSidebar = () => {
         };
 
         return {
-            icon: <BankIcon className="w-4 h-4 text-primary" />,
+            icon: <CreditCard className="w-4 h-4 text-primary" />,
             title: 'Transaction Node',
             type: getTransactionTypeLabel(transactionType)
         };
@@ -96,25 +96,25 @@ export const RightSidebar = () => {
             case 'input':
                 const inputTypeTitle = inputType ? inputType.charAt(0).toUpperCase() + inputType.slice(1) : 'Text';
                 return {
-                    icon: inputType === 'number' || inputType === 'currency' ? <HashStraightIcon className="w-4 h-4 text-primary" /> : <TextAaIcon className="w-4 h-4 text-primary" />,
+                    icon: inputType === 'number' || inputType === 'currency' ? <Hash className="w-4 h-4 text-primary" /> : <Type className="w-4 h-4 text-primary" />,
                     title: `${inputTypeTitle} Input Node`,
                     type: inputType || 'text'
                 };
             case 'date':
                 return {
-                    icon: <CalendarDotsIcon className="w-4 h-4 text-primary" />,
+                    icon: <Calendar className="w-4 h-4 text-primary" />,
                     title: 'Date Input Node',
                     type: 'date'
                 };
             case 'choice':
                 return {
-                    icon: multiSelect ? <CheckCircleIcon className="w-4 h-4 text-primary" /> : <RadioButtonIcon className="w-4 h-4 text-primary" />,
+                    icon: multiSelect ? <CheckCircle className="w-4 h-4 text-primary" /> : <Circle className="w-4 h-4 text-primary" />,
                     title: multiSelect ? 'Checkbox Node' : 'Choice Node',
                     type: multiSelect ? 'choice (multiple)' : 'choice (single)'
                 };
             default:
                 return {
-                    icon: <TextAaIcon className="w-4 h-4 text-primary" />,
+                    icon: <Type className="w-4 h-4 text-primary" />,
                     title: 'Input Node',
                     type: 'text'
                 };
@@ -128,37 +128,37 @@ export const RightSidebar = () => {
         getTransactionNodeInfo(selectedNode.data.transactionType) : null;
 
     const mintNFTNodeInfo = selectedNode && isMintNFTNode(selectedNode) ? {
-        icon: <ImageIcon className="w-4 h-4 text-primary" />,
+        icon: <Image className="w-4 h-4 text-primary" />,
         title: 'Mint NFT Node',
         type: 'NFT Minting'
     } : null;
 
     const callContractNodeInfo = selectedNode && isCallContractNode(selectedNode) ? {
-        icon: <CodeIcon className="w-4 h-4 text-primary" />,
+        icon: <Code className="w-4 h-4 text-primary" />,
         title: 'Call Contract Node',
         type: 'Custom Program Call'
     } : null;
 
     const logicNodeInfo = selectedNode && isLogicNode(selectedNode) ? {
-      icon: <GitBranchIcon className="w-4 h-4 text-primary" />,
+      icon: <GitBranch className="w-4 h-4 text-primary" />,
       title: 'Conditional Node',
       type: 'If/Then Logic'
     } : null;
-    
+
     const validationNodeInfo = selectedNode && isValidationNode(selectedNode) ? {
-      icon: <ShieldCheckIcon className="w-4 h-4 text-primary" />,
+      icon: <Shield className="w-4 h-4 text-primary" />,
       title: 'Validation Node',
       type: 'Cross-field Validation'
     } : null;
-    
+
     const calculationNodeInfo = selectedNode && isCalculationNode(selectedNode) ? {
-      icon: <CalculatorIcon className="w-4 h-4 text-primary" />,
+      icon: <Calculator className="w-4 h-4 text-primary" />,
       title: 'Calculation Node',
       type: 'Mathematical Operations'
     } : null;
-    
+
     const endNodeInfo = selectedNode && isEndNode(selectedNode) ? {
-      icon: <CheckCircleIcon className="w-4 h-4 text-primary" />,
+      icon: <CheckCircle className="w-4 h-4 text-primary" />,
       title: 'End Form Node',
       type: 'Form Completion'
     } : null;
@@ -909,147 +909,108 @@ export const RightSidebar = () => {
     };
 
     return (
-        <div className="h-full flex flex-col w-80">
-            <div className="p-4 border-b border-sidebar-border">
-                <div className="flex items-center justify-between mb-2">
+        <div className="h-full flex flex-col w-80 bg-[#0C0C12]">
+            {/* Header */}
+            {selectedNode ? (
+                <div className="p-4 border-b border-white/5 flex items-center justify-between bg-white/[0.02]">
                     <div>
-                        <h3 className="text-lg font-semibold text-sidebar-foreground">
-                            {selectedNode ? 'Node Properties' : 'Form Properties'}
-                        </h3>
-                        <p className="text-sm text-sidebar-foreground/70">
-                            {selectedNode ? 'Configure node settings' : 'Configure form settings'}
-                        </p>
+                        <h2 className="text-white font-semibold">Node Settings</h2>
+                        <p className="text-xs text-gray-500">Configure node properties</p>
                     </div>
-                    <div className="flex items-center gap-2">
-                        <button
-                            onClick={saveForm}
-                            disabled={isSaving}
-                            className="px-3 py-1.5 bg-blue-500 hover:bg-blue-600 disabled:bg-blue-300 text-white text-sm font-medium rounded-lg transition-colors"
-                        >
-                            {isSaving ? 'Saving...' : 'Save'}
-                        </button>
-
-                        {formId && (
-                            <button
-                                onClick={publishToTwitter}
-                                className="px-3 py-1.5 bg-sky-500 hover:bg-sky-600 text-white text-sm font-medium rounded-lg transition-colors"
-                                title="Share on Twitter"
-                            >
-                                Publish
-                            </button>
-                        )}
-
-                        {/* Close button */}
-                        <button
-                            onClick={toggleRightSidebar}
-                            className="p-1.5 rounded-md hover:bg-secondary transition-colors"
-                            title="Close sidebar"
-                        >
-                            <X className="w-4 h-4" />
-                        </button>
+                    <button onClick={toggleRightSidebar} className="text-gray-500 hover:text-white">
+                        <X className="w-4 h-4" />
+                    </button>
+                </div>
+            ) : (
+                <div className="p-4 border-b border-white/5 flex items-center justify-between bg-[#460DF2]/5">
+                    <div>
+                        <h2 className="text-white font-semibold">Form Properties</h2>
+                        <p className="text-xs text-gray-500">Global configuration</p>
+                    </div>
+                    <div className="bg-[#460DF2] text-white text-[10px] px-2 py-0.5 rounded-full font-bold">
+                        AUTO-SAVED
                     </div>
                 </div>
-            </div>
-            <div className="flex-1 p-4 overflow-y-auto">
+            )}
+
+            <div className="flex-1 p-4 overflow-y-auto space-y-6">
                 {/* Form Properties - Always Visible */}
-                <div className="mb-6 pb-4 border-b border-sidebar-border">
-                    <div className="space-y-6">
+                {!selectedNode && (
+                    <>
                         {/* Form ID */}
-                        <div>
-                            <h4 className="text-sm font-medium text-sidebar-foreground mb-3">Form ID</h4>
-                            <div className="px-3 py-2 bg-muted rounded-md text-sm text-sidebar-foreground/70 font-mono">
-                                {formId || 'Not saved yet'}
+                        <div className="space-y-1">
+                            <label className="text-xs font-medium text-gray-400">Form ID</label>
+                            <div className="w-full bg-[#13131A] border border-white/10 rounded-lg px-3 py-2 text-sm text-gray-500 font-mono">
+                                {formId || 'blk_8a92b3c...'}
                             </div>
                         </div>
 
-                        {/* Basic Form Settings */}
-                        <div>
-                            <h4 className="text-sm font-medium text-sidebar-foreground mb-3">Basic Settings</h4>
-                            <div className="space-y-4 lg:space-y-3">
-                                <div>
-                                    <label className="block text-xs font-medium text-sidebar-foreground mb-1">Form Title</label>
-                                    <input
-                                        type="text"
-                                        value={title}
-                                        onChange={(e) => handleTitleChange(e.target.value)}
-                                        className="w-full px-3 py-3 lg:py-2 text-base lg:text-sm min-h-[44px] border border-input bg-background rounded-md text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
-                                        placeholder="Untitled Form"
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-xs font-medium text-sidebar-foreground mb-1">Description</label>
-                                    <textarea
-                                        value={description}
-                                        onChange={(e) => handleDescriptionChange(e.target.value)}
-                                        className="w-full px-3 py-2 border border-input bg-background rounded-md text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent resize-none"
-                                        rows={3}
-                                        placeholder="Form description..."
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-xs font-medium text-sidebar-foreground mb-1">Creator Address</label>
-                                    <input
-                                        type="text"
-                                        value={creatorAddress || ''}
-                                        onChange={(e) => handleCreatorAddressChange(e.target.value)}
-                                        className="w-full px-3 py-2 border border-input bg-background rounded-md text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent font-mono"
-                                        placeholder="Solana address..."
-                                    />
-                                </div>
+                        {/* Form Title */}
+                        <div className="space-y-1">
+                            <label className="text-xs font-medium text-gray-400">Form Title</label>
+                            <input
+                                type="text"
+                                value={title}
+                                onChange={(e) => handleTitleChange(e.target.value)}
+                                className="w-full bg-[#13131A] border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-[#460DF2] transition-colors"
+                                placeholder="Untitled Form"
+                            />
+                        </div>
+
+                        {/* Description */}
+                        <div className="space-y-1">
+                            <label className="text-xs font-medium text-gray-400">Description</label>
+                            <textarea
+                                value={description}
+                                onChange={(e) => handleDescriptionChange(e.target.value)}
+                                rows={3}
+                                className="w-full bg-[#13131A] border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-[#460DF2] transition-colors"
+                                placeholder="Form description..."
+                            />
+                        </div>
+
+                        {/* Creator Address */}
+                        <div className="space-y-1">
+                            <label className="text-xs font-medium text-gray-400">Creator Address</label>
+                            <div className="relative">
+                                <input
+                                    type="text"
+                                    value={creatorAddress || ''}
+                                    readOnly
+                                    className="w-full bg-[#13131A] border border-white/10 rounded-lg px-3 py-2 text-sm text-gray-400 font-mono"
+                                />
+                                <CheckCircle className="absolute right-3 top-2.5 w-4 h-4 text-green-500" />
                             </div>
                         </div>
 
                         {/* Collection Settings */}
-                        <div>
-                            <h4 className="text-sm font-medium text-sidebar-foreground mb-3">Collection Settings</h4>
-                            <div className="space-y-4 lg:space-y-3">
-                                <div>
-                                    <label className="block text-xs font-medium text-sidebar-foreground mb-1">Collection Name</label>
+                        <div className="pt-4 border-t border-white/5">
+                            <div className="mb-2">
+                                <span className="text-xs font-bold text-gray-400 uppercase">Collection Settings</span>
+                            </div>
+                            <div className="p-3 bg-[#13131A] border border-white/5 rounded-lg space-y-3">
+                                <div className="space-y-1">
+                                    <label className="text-[10px] font-medium text-gray-500">Collection Name</label>
                                     <input
                                         type="text"
                                         value={collectionSettings?.collectionName || ''}
                                         onChange={(e) => handleCollectionNameChange(e.target.value)}
-                                        className="w-full px-3 py-3 lg:py-2 text-base lg:text-sm min-h-[44px] border border-input bg-background rounded-md text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
-                                        placeholder="My NFT Collection"
+                                        className="w-full bg-black/20 border border-white/5 rounded px-2 py-1.5 text-xs text-white"
+                                        placeholder="My Collection"
                                     />
                                 </div>
-                                <div>
-                                    <label className="block text-xs font-medium text-sidebar-foreground mb-1">Collection Address</label>
+                                <div className="space-y-1">
+                                    <label className="text-[10px] font-medium text-gray-500">Symbol</label>
                                     <input
                                         type="text"
-                                        value={collectionSettings?.collectionAddress || ''}
-                                        onChange={(e) => handleCollectionAddressChange(e.target.value)}
-                                        className="w-full px-3 py-2 border border-input bg-background rounded-md text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent font-mono"
-                                        placeholder="Collection mint address..."
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-xs font-medium text-sidebar-foreground mb-1">Royalties (%)</label>
-                                    <input
-                                        type="number"
-                                        min="0"
-                                        max="100"
-                                        step="0.1"
-                                        value={collectionSettings?.royalties || 0}
-                                        onChange={(e) => handleRoyaltiesChange(e.target.value)}
-                                        className="w-full px-3 py-3 lg:py-2 text-base lg:text-sm min-h-[44px] border border-input bg-background rounded-md text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
-                                        placeholder="5.0"
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-xs font-medium text-sidebar-foreground mb-1">Collection Description</label>
-                                    <textarea
-                                        value={collectionSettings?.collectionDescription || ''}
-                                        onChange={(e) => handleCollectionDescriptionChange(e.target.value)}
-                                        className="w-full px-3 py-2 border border-input bg-background rounded-md text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent resize-none"
-                                        rows={2}
-                                        placeholder="Collection description..."
+                                        className="w-full bg-black/20 border border-white/5 rounded px-2 py-1.5 text-xs text-white"
+                                        placeholder="RWRD"
                                     />
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
+                    </>
+                )}
 
                 {/* Node Properties - Only when a node is selected */}
                 {selectedNode && (
@@ -1064,54 +1025,54 @@ export const RightSidebar = () => {
                     /* Validation Node Configuration */
                     <div className="space-y-6">
                         {/* Node Type Header */}
-                        <div className="flex items-center gap-2 pb-2 border-b border-sidebar-border">
-                            <div className="w-6 h-6 bg-primary/10 rounded flex items-center justify-center">
+                        <div className="flex items-center gap-2 pb-2 border-b border-white/5">
+                            <div className="w-8 h-8 bg-blue-400/10 rounded-lg flex items-center justify-center">
                                 {validationNodeInfo?.icon}
                             </div>
                             <div>
-                                <h4 className="text-sm font-medium text-sidebar-foreground">{validationNodeInfo?.title}</h4>
-                                <p className="text-xs text-sidebar-foreground/70">Node type: {validationNodeInfo?.type}</p>
+                                <h4 className="text-sm font-medium text-white">{validationNodeInfo?.title}</h4>
+                                <p className="text-xs text-gray-500">Node type: {validationNodeInfo?.type}</p>
                             </div>
                         </div>
 
                         {/* Block on Failure Toggle */}
                         <div>
-                            <h4 className="text-sm font-medium text-sidebar-foreground mb-3">Validation Behavior</h4>
+                            <h4 className="text-sm font-medium text-white mb-3">Validation Behavior</h4>
                             <div className="flex items-center gap-2">
                                 <input
                                     type="checkbox"
                                     id="blockOnFailure"
                                     checked={selectedNode.data.blockOnFailure !== false}
                                     onChange={(e) => handleLogicNodeUpdate('blockOnFailure', e.target.checked)}
-                                    className="rounded border-input"
+                                    className="rounded border-white/10 bg-[#13131A]"
                                 />
-                                <label htmlFor="blockOnFailure" className="text-sm text-sidebar-foreground">
+                                <label htmlFor="blockOnFailure" className="text-sm text-gray-200">
                                     Block progression if validation fails
                                 </label>
                             </div>
-                            <p className="text-xs text-muted-foreground mt-1">
+                            <p className="text-xs text-gray-500 mt-1">
                                 When enabled, users cannot continue if validation rules fail
                             </p>
                         </div>
 
                         {/* Validation Rules */}
                         <div>
-                            <h4 className="text-sm font-medium text-sidebar-foreground mb-3">
+                            <h4 className="text-sm font-medium text-white mb-3">
                                 Validation Rules ({(selectedNode.data.validationRules || []).length})
                             </h4>
 
                             <div className="space-y-3">
                                 {(selectedNode.data.validationRules || []).map((rule, index) => (
-                                    <div key={rule.id} className="p-3 border border-input rounded-md bg-background">
+                                    <div key={rule.id} className="p-3 border border-white/10 rounded-lg bg-[#13131A]">
                                         {/* Rule Type Selector */}
                                         <div className="mb-2">
-                                            <label className="block text-xs font-medium text-sidebar-foreground mb-1">
+                                            <label className="block text-xs font-medium text-gray-400 mb-1">
                                                 Rule Type
                                             </label>
                                             <select
                                                 value={rule.type}
                                                 onChange={(e) => handleValidationRuleUpdate(index, 'type', e.target.value)}
-                                                className="w-full px-2 py-1 border border-input bg-background rounded text-sm"
+                                                className="w-full px-3 py-2 border border-white/10 bg-[#13131A] rounded-lg text-sm text-white focus:outline-none focus:border-[#460DF2]"
                                             >
                                                 <option value="compare">Compare Fields</option>
                                                 <option value="sum">Sum Validation</option>
@@ -1122,14 +1083,14 @@ export const RightSidebar = () => {
 
                                         {/* Rule Description */}
                                         <div className="mb-2">
-                                            <label className="block text-xs font-medium text-sidebar-foreground mb-1">
+                                            <label className="block text-xs font-medium text-gray-400 mb-1">
                                                 Description
                                             </label>
                                             <input
                                                 type="text"
                                                 value={rule.description}
                                                 onChange={(e) => handleValidationRuleUpdate(index, 'description', e.target.value)}
-                                                className="w-full px-2 py-1 border border-input bg-background rounded text-sm"
+                                                className="w-full px-3 py-2 border border-white/10 bg-[#13131A] rounded-lg text-sm text-white focus:outline-none focus:border-[#460DF2]"
                                                 placeholder="Describe what this rule validates..."
                                             />
                                         </div>
@@ -1140,7 +1101,7 @@ export const RightSidebar = () => {
                                                 <select
                                                     value={rule.fieldA || ''}
                                                     onChange={(e) => handleValidationRuleUpdate(index, 'fieldA', e.target.value)}
-                                                    className="px-2 py-1 border border-input bg-background rounded text-xs"
+                                                    className="px-2 py-1.5 border border-white/10 bg-black/20 rounded text-xs text-white focus:outline-none focus:border-[#460DF2]"
                                                 >
                                                     <option value="">Select field A...</option>
                                                     {getAvailableQuestionNodes().map(q => (
@@ -1150,7 +1111,7 @@ export const RightSidebar = () => {
                                                 <select
                                                     value={rule.operator || 'equals'}
                                                     onChange={(e) => handleValidationRuleUpdate(index, 'operator', e.target.value)}
-                                                    className="px-2 py-1 border border-input bg-background rounded text-xs"
+                                                    className="px-2 py-1.5 border border-white/10 bg-black/20 rounded text-xs text-white focus:outline-none focus:border-[#460DF2]"
                                                 >
                                                     <option value="equals">=</option>
                                                     <option value="not_equals">≠</option>
@@ -1162,7 +1123,7 @@ export const RightSidebar = () => {
                                                 <select
                                                     value={rule.fieldB || ''}
                                                     onChange={(e) => handleValidationRuleUpdate(index, 'fieldB', e.target.value)}
-                                                    className="px-2 py-1 border border-input bg-background rounded text-xs"
+                                                    className="px-2 py-1.5 border border-white/10 bg-black/20 rounded text-xs text-white focus:outline-none focus:border-[#460DF2]"
                                                 >
                                                     <option value="">Select field B...</option>
                                                     {getAvailableQuestionNodes().map(q => (
@@ -1175,7 +1136,7 @@ export const RightSidebar = () => {
                                         {rule.type === 'sum' && (
                                             <div className="space-y-2 mb-2">
                                                 <div>
-                                                    <label className="block text-xs text-sidebar-foreground mb-1">Fields to Sum</label>
+                                                    <label className="block text-xs text-gray-400 mb-1">Fields to Sum</label>
                                                     <div className="space-y-1">
                                                         {(rule.sumFields || []).map((fieldId, fieldIndex) => (
                                                             <div key={fieldIndex} className="flex gap-2">
@@ -1186,7 +1147,7 @@ export const RightSidebar = () => {
                                                                         newFields[fieldIndex] = e.target.value;
                                                                         handleValidationRuleUpdate(index, 'sumFields', newFields);
                                                                     }}
-                                                                    className="flex-1 px-2 py-1 border border-input bg-background rounded text-xs"
+                                                                    className="flex-1 px-2 py-1.5 border border-white/10 bg-black/20 rounded text-xs text-white focus:outline-none focus:border-[#460DF2]"
                                                                 >
                                                                     <option value="">Select field...</option>
                                                                     {getAvailableQuestionNodes().map(q => (
@@ -1198,7 +1159,7 @@ export const RightSidebar = () => {
                                                                         const newFields = (rule.sumFields || []).filter((_, i) => i !== fieldIndex);
                                                                         handleValidationRuleUpdate(index, 'sumFields', newFields);
                                                                     }}
-                                                                    className="p-1 text-muted-foreground hover:text-destructive"
+                                                                    className="p-1 text-gray-400 hover:text-red-400"
                                                                 >
                                                                     ×
                                                                 </button>
@@ -1209,19 +1170,19 @@ export const RightSidebar = () => {
                                                                 const newFields = [...(rule.sumFields || []), ''];
                                                                 handleValidationRuleUpdate(index, 'sumFields', newFields);
                                                             }}
-                                                            className="w-full px-2 py-1 border border-dashed border-input bg-background hover:bg-accent rounded text-xs text-muted-foreground"
+                                                            className="w-full px-2 py-1.5 border border-dashed border-white/10 bg-black/20 hover:bg-white/5 rounded text-xs text-gray-400"
                                                         >
                                                             + Add Field
                                                         </button>
                                                     </div>
                                                 </div>
                                                 <div>
-                                                    <label className="block text-xs text-sidebar-foreground mb-1">Expected Sum</label>
+                                                    <label className="block text-xs text-gray-400 mb-1">Expected Sum</label>
                                                     <input
                                                         type="number"
                                                         value={rule.expectedSum || ''}
                                                         onChange={(e) => handleValidationRuleUpdate(index, 'expectedSum', e.target.value ? parseFloat(e.target.value) : undefined)}
-                                                        className="w-full px-2 py-1 border border-input bg-background rounded text-sm"
+                                                        className="w-full px-3 py-2 border border-white/10 bg-[#13131A] rounded-lg text-sm text-white focus:outline-none focus:border-[#460DF2]"
                                                         placeholder="Expected total..."
                                                     />
                                                 </div>
@@ -1233,7 +1194,7 @@ export const RightSidebar = () => {
                                                 <select
                                                     value={rule.rangeField || ''}
                                                     onChange={(e) => handleValidationRuleUpdate(index, 'rangeField', e.target.value)}
-                                                    className="px-2 py-1 border border-input bg-background rounded text-xs"
+                                                    className="px-2 py-1.5 border border-white/10 bg-black/20 rounded text-xs text-white focus:outline-none focus:border-[#460DF2]"
                                                 >
                                                     <option value="">Select field...</option>
                                                     {getAvailableQuestionNodes().map(q => (
@@ -1244,14 +1205,14 @@ export const RightSidebar = () => {
                                                     type="number"
                                                     value={rule.minValue || ''}
                                                     onChange={(e) => handleValidationRuleUpdate(index, 'minValue', e.target.value ? parseFloat(e.target.value) : undefined)}
-                                                    className="px-2 py-1 border border-input bg-background rounded text-xs"
+                                                    className="px-2 py-1.5 border border-white/10 bg-black/20 rounded text-xs text-white focus:outline-none focus:border-[#460DF2]"
                                                     placeholder="Min"
                                                 />
                                                 <input
                                                     type="number"
                                                     value={rule.maxValue || ''}
                                                     onChange={(e) => handleValidationRuleUpdate(index, 'maxValue', e.target.value ? parseFloat(e.target.value) : undefined)}
-                                                    className="px-2 py-1 border border-input bg-background rounded text-xs"
+                                                    className="px-2 py-1.5 border border-white/10 bg-black/20 rounded text-xs text-white focus:outline-none focus:border-[#460DF2]"
                                                     placeholder="Max"
                                                 />
                                             </div>
@@ -1259,11 +1220,11 @@ export const RightSidebar = () => {
 
                                         {rule.type === 'custom' && (
                                             <div className="mb-2">
-                                                <label className="block text-xs text-sidebar-foreground mb-1">Custom Logic</label>
+                                                <label className="block text-xs text-gray-400 mb-1">Custom Logic</label>
                                                 <textarea
                                                     value={rule.customLogic || ''}
                                                     onChange={(e) => handleValidationRuleUpdate(index, 'customLogic', e.target.value)}
-                                                    className="w-full px-2 py-1 border border-input bg-background rounded text-xs resize-none"
+                                                    className="w-full px-3 py-2 border border-white/10 bg-[#13131A] rounded-lg text-xs text-white resize-none focus:outline-none focus:border-[#460DF2]"
                                                     rows={2}
                                                     placeholder="Enter custom validation logic..."
                                                 />
@@ -1272,14 +1233,14 @@ export const RightSidebar = () => {
 
                                         {/* Error Message */}
                                         <div className="mb-2">
-                                            <label className="block text-xs font-medium text-sidebar-foreground mb-1">
+                                            <label className="block text-xs font-medium text-gray-400 mb-1">
                                                 Error Message
                                             </label>
                                             <input
                                                 type="text"
                                                 value={rule.errorMessage}
                                                 onChange={(e) => handleValidationRuleUpdate(index, 'errorMessage', e.target.value)}
-                                                className="w-full px-2 py-1 border border-input bg-background rounded text-sm"
+                                                className="w-full px-3 py-2 border border-white/10 bg-[#13131A] rounded-lg text-sm text-white focus:outline-none focus:border-[#460DF2]"
                                                 placeholder="Message shown when validation fails..."
                                             />
                                         </div>
@@ -1287,7 +1248,7 @@ export const RightSidebar = () => {
                                         {/* Delete Rule Button */}
                                         <button
                                             onClick={() => handleDeleteValidationRule(index)}
-                                            className="w-full px-2 py-1 text-xs text-destructive hover:bg-destructive/10 rounded"
+                                            className="w-full px-2 py-1.5 text-xs text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
                                         >
                                             Delete Rule
                                         </button>
@@ -1297,7 +1258,7 @@ export const RightSidebar = () => {
                                 {/* Add Rule Button */}
                                 <button
                                     onClick={handleAddValidationRule}
-                                    className="w-full px-3 py-2 border border-dashed border-input bg-background hover:bg-accent rounded-md text-muted-foreground hover:text-foreground transition-colors"
+                                    className="w-full px-3 py-2 border border-dashed border-white/10 bg-black/20 hover:bg-white/5 rounded-lg text-[#460DF2] hover:text-[#7C3AED] transition-colors"
                                 >
                                     + Add Validation Rule
                                 </button>
@@ -1306,74 +1267,73 @@ export const RightSidebar = () => {
 
                         {/* Validation Preview */}
                         <div>
-                            <h4 className="text-sm font-medium text-sidebar-foreground mb-3">Validation Preview</h4>
-                            <div className="p-3 bg-muted rounded-md">
-                                <div className="text-xs text-muted-foreground">
+                            <h4 className="text-sm font-medium text-white mb-3">Validation Preview</h4>
+                            <div className="p-3 bg-[#13131A] border border-white/5 rounded-lg">
+                                <div className="text-xs text-gray-400">
                                     {renderValidationPreview(selectedNode.data)}
                                 </div>
                             </div>
                         </div>
                     </div>
                 ) : selectedNode && isCalculationNode(selectedNode) ? (
-                    /* Calculation Node Configuration */
                     <div className="space-y-6">
                         {/* Node Type Header */}
-                        <div className="flex items-center gap-2 pb-2 border-b border-sidebar-border">
-                            <div className="w-6 h-6 bg-primary/10 rounded flex items-center justify-center">
+                        <div className="flex items-center gap-2 pb-2 border-b border-white/5">
+                            <div className="w-8 h-8 bg-purple-400/10 rounded-lg flex items-center justify-center">
                                 {calculationNodeInfo?.icon}
                             </div>
                             <div>
-                                <h4 className="text-sm font-medium text-sidebar-foreground">{calculationNodeInfo?.title}</h4>
-                                <p className="text-xs text-sidebar-foreground/70">Node type: {calculationNodeInfo?.type}</p>
+                                <h4 className="text-sm font-medium text-white">{calculationNodeInfo?.title}</h4>
+                                <p className="text-xs text-gray-500">Node type: {calculationNodeInfo?.type}</p>
                             </div>
                         </div>
 
                         {/* Operations Configuration */}
                         <div>
-                            <h4 className="text-sm font-medium text-sidebar-foreground mb-3">
+                            <h4 className="text-sm font-medium text-white mb-3">
                                 Calculation Operations ({(selectedNode.data.operations || []).length})
                             </h4>
 
                             <div className="space-y-3">
                                 {(selectedNode.data.operations || []).map((operation, index) => (
-                                    <div key={operation.id} className="p-3 border border-input rounded-md bg-background">
+                                    <div key={operation.id} className="p-3 border border-white/10 rounded-lg bg-[#13131A]">
                                         {/* Operation Description */}
                                         <div className="mb-2">
-                                            <label className="block text-xs font-medium text-sidebar-foreground mb-1">
+                                            <label className="block text-xs font-medium text-gray-400 mb-1">
                                                 Description
                                             </label>
                                             <input
                                                 type="text"
                                                 value={operation.description}
                                                 onChange={(e) => handleCalculationOperationUpdate(index, 'description', e.target.value)}
-                                                className="w-full px-2 py-1 border border-input bg-background rounded text-sm"
+                                                className="w-full px-3 py-2 border border-white/10 bg-[#13131A] rounded-lg text-sm text-white focus:outline-none focus:border-[#460DF2]"
                                                 placeholder="e.g., Total price calculation"
                                             />
                                         </div>
 
                                         {/* Result Variable */}
                                         <div className="mb-2">
-                                            <label className="block text-xs font-medium text-sidebar-foreground mb-1">
+                                            <label className="block text-xs font-medium text-gray-400 mb-1">
                                                 Result Variable Name
                                             </label>
                                             <input
                                                 type="text"
                                                 value={operation.resultVariable}
                                                 onChange={(e) => handleCalculationOperationUpdate(index, 'resultVariable', e.target.value)}
-                                                className="w-full px-2 py-1 border border-input bg-background rounded text-sm"
+                                                className="w-full px-3 py-2 border border-white/10 bg-[#13131A] rounded-lg text-sm text-white focus:outline-none focus:border-[#460DF2]"
                                                 placeholder="e.g., totalPrice"
                                             />
                                         </div>
 
                                         {/* Operator Selection */}
                                         <div className="mb-2">
-                                            <label className="block text-xs font-medium text-sidebar-foreground mb-1">
+                                            <label className="block text-xs font-medium text-gray-400 mb-1">
                                                 Operation
                                             </label>
                                             <select
                                                 value={operation.operator}
                                                 onChange={(e) => handleCalculationOperationUpdate(index, 'operator', e.target.value)}
-                                                className="w-full px-2 py-1 border border-input bg-background rounded text-sm"
+                                                className="w-full px-3 py-2 border border-white/10 bg-[#13131A] rounded-lg text-sm text-white focus:outline-none focus:border-[#460DF2]"
                                             >
                                                 <option value="add">Addition (+)</option>
                                                 <option value="subtract">Subtraction (-)</option>
@@ -1386,7 +1346,7 @@ export const RightSidebar = () => {
 
                                         {/* Operands */}
                                         <div className="mb-2">
-                                            <label className="block text-xs font-medium text-sidebar-foreground mb-1">
+                                            <label className="block text-xs font-medium text-gray-400 mb-1">
                                                 Operands (Fields or Numbers)
                                             </label>
                                             <div className="space-y-1">
@@ -1403,7 +1363,7 @@ export const RightSidebar = () => {
                                                                 }
                                                                 handleCalculationOperationUpdate(index, 'operands', newOperands);
                                                             }}
-                                                            className="px-2 py-1 border border-input bg-background rounded text-xs flex-1"
+                                                            className="px-2 py-1.5 border border-white/10 bg-black/20 rounded text-xs text-white flex-1 focus:outline-none focus:border-[#460DF2]"
                                                         >
                                                             <option value="literal">Literal Number</option>
                                                             {getAvailableQuestionNodes().map(q => (
@@ -1419,7 +1379,7 @@ export const RightSidebar = () => {
                                                                     newOperands[operandIndex] = e.target.value ? parseFloat(e.target.value) : '';
                                                                     handleCalculationOperationUpdate(index, 'operands', newOperands);
                                                                 }}
-                                                                className="px-2 py-1 border border-input bg-background rounded text-xs flex-1"
+                                                                className="px-2 py-1.5 border border-white/10 bg-black/20 rounded text-xs text-white flex-1 focus:outline-none focus:border-[#460DF2]"
                                                                 placeholder="Number..."
                                                             />
                                                         )}

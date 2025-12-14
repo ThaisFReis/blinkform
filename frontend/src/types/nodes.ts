@@ -1,7 +1,7 @@
 import { Node } from '@xyflow/react';
 
 // Node types
-export type NodeType = 'question' | 'transaction' | 'logic' | 'end';
+export type NodeType = 'question' | 'transaction' | 'logic' | 'end' | 'start';
 
 // Logic node types
 export type LogicType = 'conditional' | 'validation' | 'calculation';
@@ -218,8 +218,17 @@ export interface EndNodeData extends Record<string, unknown> {
   successActions?: SuccessAction[]; // Actions to perform when form is completed
 }
 
+// Start node data
+export interface StartNodeData extends Record<string, unknown> {
+  title: string;
+  description: string;
+  context: string;
+  definition: string;
+  examples: string[];
+}
+
 // Union of all node data types
-export type NodeData = QuestionNodeData | TransactionNodeData | LogicNodeData | ValidationNodeData | CalculationNodeData | EndNodeData;
+export type NodeData = QuestionNodeData | TransactionNodeData | LogicNodeData | ValidationNodeData | CalculationNodeData | EndNodeData | StartNodeData;
 
 // BlinkForm node extending React Flow's Node
 export interface BlinkFormNode extends Node {
@@ -250,4 +259,8 @@ export function isValidationNode(node: BlinkFormNode): node is BlinkFormNode & {
 
 export function isCalculationNode(node: BlinkFormNode): node is BlinkFormNode & { data: CalculationNodeData } {
   return node.type === 'logic' && node.data.logicType === 'calculation';
+}
+
+export function isStartNode(node: BlinkFormNode): node is BlinkFormNode & { data: StartNodeData } {
+  return node.type === 'start';
 }

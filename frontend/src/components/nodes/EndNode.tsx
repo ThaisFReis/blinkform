@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { NodeProps, Handle, Position } from '@xyflow/react';
-import { CheckCircleIcon, TrashIcon, CopySimpleIcon } from '@phosphor-icons/react';
+import { CheckCircle, Trash2, Copy } from 'lucide-react';
 import { EndNodeData } from '@/types/nodes';
 import { useFormBuilderStore } from '@/store/formBuilderStore';
 import { useNodeContextMenu } from '@/hooks/useNodeContextMenu';
@@ -46,7 +46,7 @@ export const EndNode: React.FC<EndNodeProps> = (props) => {
 
   const contextMenuItems: MenuItemType[] = [
     {
-      icon: <TrashIcon className="w-4 h-4" />,
+      icon: <Trash2 className="w-4 h-4" />,
       label: 'Delete',
       shortcut: 'Del',
       onClick: handleDelete,
@@ -54,7 +54,7 @@ export const EndNode: React.FC<EndNodeProps> = (props) => {
     },
     { type: 'divider' },
     {
-      icon: <CopySimpleIcon className="w-4 h-4" />,
+      icon: <Copy className="w-4 h-4" />,
       label: 'Duplicate',
       shortcut: 'Ctrl+D',
       onClick: handleDuplicate,
@@ -79,33 +79,29 @@ export const EndNode: React.FC<EndNodeProps> = (props) => {
         {/* Node Container */}
         <div
           className={`
-            relative bg-card border-2 rounded-lg shadow-sm
-            w-[200px] h-[120px] md:w-[220px] md:h-[130px]
-            ${selected ? 'border-primary' : 'border-border'}
-            transition-colors duration-200
-            ${selected ? 'ring-2 ring-primary/20' : ''}
+            relative bg-[#13131A] border-2 rounded-xl shadow-xl
+            w-[200px] h-[120px] transition-shadow
+            ${selected ? 'border-[#460DF2] shadow-[0_0_20px_-5px_rgba(70,13,242,0.3)]' : 'border-white/10 hover:border-white/20'}
           `}
         >
-          {/* Content */}
-          <div className="p-4">
-            {/* Header with Icon */}
-            <div className="flex items-center gap-2 mb-2">
-              <div className="w-7 h-7 md:w-6 md:h-6 bg-primary/10 rounded flex items-center justify-center">
-                <CheckCircleIcon className="w-5 h-5 text-primary" />
-              </div>
-              <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-                End Form
-              </span>
+          {/* Header */}
+          <div className="p-3 border-b border-white/5 flex items-center gap-2 bg-white/[0.02] rounded-t-xl">
+            <div className="w-6 h-6 rounded-lg bg-green-400/10 flex items-center justify-center">
+              <CheckCircle className="w-4 h-4 text-green-400" />
             </div>
+            <span className="text-sm font-semibold text-gray-200">End Form</span>
+          </div>
 
+          {/* Content */}
+          <div className="p-3">
             {/* Label */}
-            <div className="text-sm font-medium text-foreground mb-1">
+            <div className="text-sm font-medium text-white mb-1">
               {label || 'Form Complete'}
             </div>
 
             {/* Success Actions Count */}
             {actionCount > 0 && (
-              <div className="text-xs text-primary">
+              <div className="text-xs text-green-400">
                 {actionCount} success action{actionCount !== 1 ? 's' : ''}
               </div>
             )}
@@ -114,13 +110,13 @@ export const EndNode: React.FC<EndNodeProps> = (props) => {
           {/* Input Handle - Top */}
           <Handle
             type="target"
-            position={Position.Top}
-            className="!bg-primary !border-primary-foreground !w-6 !h-6 lg:!w-4 lg:!h-4 !border-2 touch-manipulation"
+            position={Position.Left}
+            className="!w-6 !h-6 !rounded-full !bg-[#13131A] !border-2 !border-white/20 hover:!border-cyan-400 hover:!scale-110 !transition-all !cursor-crosshair !-left-3"
           />
 
           {/* Handle Label */}
           <div className="absolute top-[-20px] left-1/2 transform -translate-x-1/2 pointer-events-none">
-            <span className="text-xs text-primary font-medium">COMPLETE</span>
+            <span className="text-xs text-green-400 font-medium">COMPLETE</span>
           </div>
         </div>
 

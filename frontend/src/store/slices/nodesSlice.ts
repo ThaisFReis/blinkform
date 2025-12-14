@@ -6,6 +6,7 @@ import {
   TransactionNodeData,
   LogicNodeData,
   EndNodeData,
+  StartNodeData,
   NodeData,
 } from '@/types';
 
@@ -114,6 +115,20 @@ const createDefaultNodeData = (type: NodeType, questionType?: string): NodeData 
         message: 'Thank you for completing this form! Your submission has been processed successfully.',
         successActions: [],
       } as EndNodeData;
+
+    case 'start':
+      return {
+        title: 'What is a Blink?',
+        description: 'A Blink is an interactive link that enables seamless blockchain transactions directly from social media, websites, or messaging apps.',
+        context: 'In BlinkForm, you build interactive forms that generate Solana Actions (Blinks) - allowing users to interact with blockchain applications without leaving their current platform.',
+        definition: 'Blinks are powered by Solana Actions, a standard for defining and rendering blockchain interactions in a cross-platform way.',
+        examples: [
+          'Mint an NFT directly from a tweet',
+          'Vote in a DAO proposal from Discord',
+          'Purchase tokens from a website link',
+          'Stake SOL from a mobile app'
+        ],
+      } as StartNodeData;
 
     default:
       throw new Error(`Unknown node type: ${type}`);

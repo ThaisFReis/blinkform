@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Handle, Position, NodeProps } from '@xyflow/react';
-import { TrashIcon, CopySimpleIcon } from '@phosphor-icons/react';
+import { Trash2, Copy } from 'lucide-react';
 import { useFormBuilderStore } from '@/store/formBuilderStore';
 import { useNodeContextMenu } from '@/hooks/useNodeContextMenu';
 import { NodeDeleteButton } from './NodeDeleteButton';
@@ -60,7 +60,7 @@ export const BaseNode: React.FC<BaseNodeProps> = ({
 
   const contextMenuItems: MenuItemType[] = [
     {
-      icon: <TrashIcon className="w-4 h-4" />,
+      icon: <Trash2 className="w-4 h-4" />,
       label: 'Delete',
       shortcut: 'Del',
       onClick: handleDelete,
@@ -68,7 +68,7 @@ export const BaseNode: React.FC<BaseNodeProps> = ({
     },
     { type: 'divider' },
     {
-      icon: <CopySimpleIcon className="w-4 h-4" />,
+      icon: <Copy className="w-4 h-4" />,
       label: 'Duplicate',
       shortcut: 'Ctrl+D',
       onClick: handleDuplicate,
@@ -77,20 +77,20 @@ export const BaseNode: React.FC<BaseNodeProps> = ({
 
   // Default content (icon + label + children)
   const defaultContent = (
-    <div className="p-3 md:p-4">
-      {/* Header with Icon */}
-      <div className="flex items-center gap-2 mb-2">
-        <div className="w-7 h-7 md:w-6 md:h-6 bg-primary/10 rounded flex items-center justify-center">
+    <>
+      {/* Header with Icon and Label */}
+      <div className="p-3 border-b border-white/5 flex items-center justify-between bg-white/[0.02] rounded-t-xl">
+        <div className="flex items-center gap-2">
           {icon}
+          <span className="text-sm font-semibold text-gray-200">{label}</span>
         </div>
-        <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-          {label}
-        </span>
       </div>
 
-      {/* Specific Content */}
-      {children}
-    </div>
+      {/* Node Body */}
+      <div className="p-3">
+        {children}
+      </div>
+    </>
   );
 
   // Container rendering - use custom or default
@@ -99,29 +99,27 @@ export const BaseNode: React.FC<BaseNodeProps> = ({
   ) : (
     <div
       className={`
-        bg-card border-2 rounded-lg shadow-sm min-w-[200px] max-w-[300px] md:min-w-[220px] md:max-w-[320px]
-        ${selected ? 'border-primary' : 'border-border'}
-        transition-colors duration-200
-        ${selected ? 'ring-2 ring-primary/20' : ''}
+        bg-[#13131A] border-2 rounded-xl shadow-xl min-w-[200px] max-w-[300px] transition-shadow
+        ${selected ? 'border-[#460DF2] shadow-[0_0_20px_-5px_rgba(70,13,242,0.3)]' : 'border-white/10 hover:border-white/20'}
       `}
     >
-      {/* Input Handle - Larger on mobile for better touch targets */}
+      {/* Input Handle */}
       {handles.input && (
         <Handle
           type="target"
-          position={Position.Top}
-          className="!bg-primary !border-primary-foreground !w-6 !h-6 lg:!w-4 lg:!h-4 !border-2 touch-manipulation"
+          position={Position.Left}
+          className="!w-6 !h-6 !rounded-full !bg-[#13131A] !border-2 !border-white/20 hover:!border-cyan-400 hover:!scale-110 !transition-all !cursor-crosshair !-left-3"
         />
       )}
 
       {defaultContent}
 
-      {/* Output Handle - Larger on mobile for better touch targets */}
+      {/* Output Handle */}
       {handles.output && (
         <Handle
           type="source"
-          position={Position.Bottom}
-          className="!bg-primary !border-primary-foreground !w-6 !h-6 lg:!w-4 lg:!h-4 !border-2 touch-manipulation"
+          position={Position.Right}
+          className="!w-6 !h-6 !rounded-full !bg-[#13131A] !border-2 !border-[#460DF2]/50 hover:!border-[#460DF2] hover:!scale-110 !transition-all !cursor-crosshair !-right-3"
         />
       )}
 

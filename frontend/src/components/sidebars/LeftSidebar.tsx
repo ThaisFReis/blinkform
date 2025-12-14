@@ -2,18 +2,19 @@
 
 import {
   X,
-  TextAaIcon,
-  HashStraightIcon,
-  CalendarDotsIcon,
-  CheckCircleIcon,
-  RadioButtonIcon,
-  BankIcon,
-  ImageIcon,
-  CodeIcon,
-  GitBranchIcon,
-  ShieldCheckIcon,
-  CalculatorIcon,
-} from "@phosphor-icons/react";
+  Type,
+  Hash,
+  Calendar,
+  CheckCircle,
+  List,
+  CreditCard,
+  Image,
+  Code,
+  GitBranch,
+  Shield,
+  Calculator,
+  Play,
+} from "lucide-react";
 import { useFormBuilderStore } from "@/store/formBuilderStore";
 
 export const LeftSidebar = () => {
@@ -37,251 +38,240 @@ export const LeftSidebar = () => {
   };
 
   return (
-    <div className="h-full flex flex-col w-80">
+    <div className="h-full flex flex-col w-80 bg-[#0C0C12]">
       {/* Header */}
-      <div className="p-4 border-b border-sidebar-border flex items-center justify-between flex-shrink-0">
-        <div>
-          <h3 className="text-lg font-semibold text-sidebar-foreground">
-            Components
-          </h3>
-          <p className="text-sm text-sidebar-foreground/70">Drag to canvas</p>
-        </div>
-
-        {/* Close button */}
-        <button
-          onClick={toggleLeftSidebar}
-          className="p-1.5 rounded-md hover:bg-secondary transition-colors"
-          title="Close sidebar"
-        >
-          <X className="w-4 h-4" />
-        </button>
+      <div className="p-4 border-b border-white/5">
+        <h2 className="text-white font-semibold mb-1">Components</h2>
+        <p className="text-xs text-gray-500">Drag to canvas to build flow</p>
       </div>
 
       {/* Content area */}
-      <div className="flex-1 p-4 overflow-y-auto">
-        {/* Core Nodes Section */}
-        <div className="mb-6">
-          <h4 className="text-sm font-medium text-sidebar-foreground mb-3">
+      <div className="flex-1 overflow-y-auto p-4 space-y-8">
+        {/* Core Components Section */}
+        <div>
+          <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">
             Core Components
-          </h4>
+          </h3>
+          <div className="space-y-2">
+            {/* Start Node */}
+            <div
+              draggable
+              onDragStart={(event) => onDragStart(event, "start")}
+              onClick={() => handleAddNode("start")}
+              className="flex items-center space-x-3 p-3 rounded-xl bg-[#13131A] border border-white/5 hover:border-indigo-500/50 hover:bg-[#1A1A24] cursor-grab active:cursor-grabbing transition-all group"
+            >
+              <div className="w-8 h-8 rounded-lg bg-indigo-400/10 flex items-center justify-center">
+                <Play className="w-4 h-4 text-indigo-400" />
+              </div>
+              <div>
+                <div className="text-sm font-medium text-gray-200 group-hover:text-white">
+                  Start Info
+                </div>
+                <div className="text-[10px] text-gray-500">Form Introduction</div>
+              </div>
+            </div>
 
-          {/* Input Node */}
-          <div
-            draggable
-            onDragStart={(event) => onDragStart(event, "question", "input")}
-            onClick={() => handleAddNode("question", "input")}
-            className="flex items-center gap-3 p-3 rounded-lg border border-sidebar-border bg-card hover:bg-accent cursor-pointer transition-colors group mb-2"
-          >
-            <div className="w-8 h-8 bg-primary/10 rounded flex items-center justify-center">
-              <TextAaIcon className="w-5 h-5 text-primary" />
-            </div>
-            <div className="flex-1">
-              <div className="text-sm font-medium text-card-foreground">
-                Input Field
+            {/* Input Node */}
+            <div
+              draggable
+              onDragStart={(event) => onDragStart(event, "question", "input")}
+              onClick={() => handleAddNode("question", "input")}
+              className="flex items-center space-x-3 p-3 rounded-xl bg-[#13131A] border border-white/5 hover:border-[#460DF2]/50 hover:bg-[#1A1A24] cursor-grab active:cursor-grabbing transition-all group"
+            >
+              <div className="w-8 h-8 rounded-lg bg-blue-400/10 flex items-center justify-center">
+                <Type className="w-4 h-4 text-blue-400" />
               </div>
-              <div className="text-xs text-muted-foreground">
-                Text, number, email, phone, CPF, currency
+              <div>
+                <div className="text-sm font-medium text-gray-200 group-hover:text-white">
+                  Input Field
+                </div>
+                <div className="text-[10px] text-gray-500">Form Element</div>
               </div>
             </div>
-          </div>
 
-          {/* Date Input Node */}
-          <div
-            draggable
-            onDragStart={(event) => onDragStart(event, "question", "date")}
-            onClick={() => handleAddNode("question", "date")}
-            className="flex items-center gap-3 p-3 rounded-lg border border-sidebar-border bg-card hover:bg-accent cursor-pointer transition-colors group mb-2"
-          >
-            <div className="w-8 h-8 bg-primary/10 rounded flex items-center justify-center">
-              <CalendarDotsIcon className="w-5 h-5 text-primary" />
-            </div>
-            <div className="flex-1">
-              <div className="text-sm font-medium text-card-foreground">
-                Date Input
+            {/* Date Input Node */}
+            <div
+              draggable
+              onDragStart={(event) => onDragStart(event, "question", "date")}
+              onClick={() => handleAddNode("question", "date")}
+              className="flex items-center space-x-3 p-3 rounded-xl bg-[#13131A] border border-white/5 hover:border-[#460DF2]/50 hover:bg-[#1A1A24] cursor-grab active:cursor-grabbing transition-all group"
+            >
+              <div className="w-8 h-8 rounded-lg bg-purple-400/10 flex items-center justify-center">
+                <Calendar className="w-4 h-4 text-purple-400" />
               </div>
-              <div className="text-xs text-muted-foreground">
-                Date picker with range validation
+              <div>
+                <div className="text-sm font-medium text-gray-200 group-hover:text-white">
+                  Date Input
+                </div>
+                <div className="text-[10px] text-gray-500">Form Element</div>
               </div>
             </div>
-          </div>
 
-          {/* Choice Node */}
-          <div
-            draggable
-            onDragStart={(event) => onDragStart(event, "question", "choice")}
-            onClick={() => handleAddNode("question", "choice")}
-            className="flex items-center gap-3 p-3 rounded-lg border border-sidebar-border bg-card hover:bg-accent cursor-{/* Core Nodes Section */}pointer transition-colors group"
-          >
-            <div className="w-8 h-8 bg-primary/10 rounded flex items-center justify-center">
-              <RadioButtonIcon className="w-5 h-5 text-primary" />
-            </div>
-            <div className="flex-1">
-              <div className="text-sm font-medium text-card-foreground">
-                Choice
+            {/* Choice Node */}
+            <div
+              draggable
+              onDragStart={(event) => onDragStart(event, "question", "choice")}
+              onClick={() => handleAddNode("question", "choice")}
+              className="flex items-center space-x-3 p-3 rounded-xl bg-[#13131A] border border-white/5 hover:border-[#460DF2]/50 hover:bg-[#1A1A24] cursor-grab active:cursor-grabbing transition-all group"
+            >
+              <div className="w-8 h-8 rounded-lg bg-pink-400/10 flex items-center justify-center">
+                <List className="w-4 h-4 text-pink-400" />
               </div>
-              <div className="text-xs text-muted-foreground">
-                Single or multiple selection from options
+              <div>
+                <div className="text-sm font-medium text-gray-200 group-hover:text-white">
+                  Choice
+                </div>
+                <div className="text-[10px] text-gray-500">Form Element</div>
               </div>
             </div>
           </div>
         </div>
 
-        {/* On-Chain Nodes Section */}
-        <div className="mb-6">
-          <h4 className="text-sm font-medium text-sidebar-foreground mb-3">
+        {/* On-Chain Actions Section */}
+        <div>
+          <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">
             On-Chain Actions
-          </h4>
+          </h3>
+          <div className="space-y-2">
+            {/* Generic Transaction Node */}
+            <div
+              draggable
+              onDragStart={(event) => onDragStart(event, "transaction")}
+              onClick={() => handleAddNode("transaction")}
+              className="flex items-center space-x-3 p-3 rounded-xl bg-[#13131A] border border-white/5 hover:border-cyan-500/50 hover:bg-[#1A1A24] cursor-grab active:cursor-grabbing transition-all group"
+            >
+              <div className="w-8 h-8 rounded-lg bg-cyan-400/10 flex items-center justify-center">
+                <CreditCard className="w-4 h-4 text-cyan-400" />
+              </div>
+              <div>
+                <div className="text-sm font-medium text-gray-200 group-hover:text-white">
+                  Transaction
+                </div>
+                <div className="text-[10px] text-gray-500">Solana Action</div>
+              </div>
+            </div>
 
-          {/* Generic Transaction Node */}
-          <div
-            draggable
-            onDragStart={(event) => onDragStart(event, "transaction")}
-            onClick={() => handleAddNode("transaction")}
-            className="flex items-center gap-3 p-3 rounded-lg border border-sidebar-border bg-card hover:bg-accent cursor-pointer transition-colors group mb-2"
-          >
-            <div className="w-8 h-8 bg-primary/10 rounded flex items-center justify-center">
-              <BankIcon className="w-5 h-5 text-primary" />
-            </div>
-            <div className="flex-1">
-              <div className="text-sm font-medium text-card-foreground">
-                Transaction
+            {/* Mint NFT Node */}
+            <div
+              draggable
+              onDragStart={(event) => onDragStart(event, "transaction", "nft")}
+              onClick={() => handleAddNode("transaction", "nft")}
+              className="flex items-center space-x-3 p-3 rounded-xl bg-[#13131A] border border-white/5 hover:border-cyan-500/50 hover:bg-[#1A1A24] cursor-grab active:cursor-grabbing transition-all group"
+            >
+              <div className="w-8 h-8 rounded-lg bg-emerald-400/10 flex items-center justify-center">
+                <Image className="w-4 h-4 text-emerald-400" />
               </div>
-              <div className="text-xs text-muted-foreground">
-                Execute on-chain operations (mint, transfer, etc.)
+              <div>
+                <div className="text-sm font-medium text-gray-200 group-hover:text-white">
+                  Mint NFT
+                </div>
+                <div className="text-[10px] text-gray-500">Solana Action</div>
               </div>
             </div>
-          </div>
 
-          {/* Mint NFT Node */}
-          <div
-            draggable
-            onDragStart={(event) => onDragStart(event, "transaction", "nft")}
-            onClick={() => handleAddNode("transaction", "nft")}
-            className="flex items-center gap-3 p-3 rounded-lg border border-sidebar-border bg-card hover:bg-accent cursor-pointer transition-colors group mb-2"
-          >
-            <div className="w-8 h-8 bg-primary/10 rounded flex items-center justify-center">
-              <ImageIcon className="w-5 h-5 text-primary" />
-            </div>
-            <div className="flex-1">
-              <div className="text-sm font-medium text-card-foreground">
-                Mint NFT
+            {/* Call Contract Node */}
+            <div
+              draggable
+              onDragStart={(event) => onDragStart(event, "transaction", "contract")}
+              onClick={() => handleAddNode("transaction", "contract")}
+              className="flex items-center space-x-3 p-3 rounded-xl bg-[#13131A] border border-white/5 hover:border-cyan-500/50 hover:bg-[#1A1A24] cursor-grab active:cursor-grabbing transition-all group"
+            >
+              <div className="w-8 h-8 rounded-lg bg-orange-400/10 flex items-center justify-center">
+                <Code className="w-4 h-4 text-orange-400" />
               </div>
-              <div className="text-xs text-muted-foreground">
-                Create and mint NFTs with metadata
-              </div>
-            </div>
-          </div>
-
-          {/* Call Contract Node */}
-          <div
-            draggable
-            onDragStart={(event) => onDragStart(event, "transaction", "contract")}
-            onClick={() => handleAddNode("transaction", "contract")}
-            className="flex items-center gap-3 p-3 rounded-lg border border-sidebar-border bg-card hover:bg-accent cursor-pointer transition-colors group"
-          >
-            <div className="w-8 h-8 bg-primary/10 rounded flex items-center justify-center">
-              <CodeIcon className="w-5 h-5 text-primary" />
-            </div>
-            <div className="flex-1">
-              <div className="text-sm font-medium text-card-foreground">
-                Call Contract
-              </div>
-              <div className="text-xs text-muted-foreground">
-                Execute custom program instructions
+              <div>
+                <div className="text-sm font-medium text-gray-200 group-hover:text-white">
+                  Call Contract
+                </div>
+                <div className="text-[10px] text-gray-500">Solana Action</div>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Logic e Utilities Nodes Section */}
-        <div className="mb-6">
-          <h4 className="text-sm font-medium text-sidebar-foreground mb-3">
-            Logic & Utilities
-          </h4>
+        {/* Logic & Utilities Section */}
+        <div>
+          <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">
+            Logic
+          </h3>
+          <div className="space-y-2">
+            {/* If/Then Conditional Node */}
+            <div
+              draggable
+              onDragStart={(event) => onDragStart(event, "logic")}
+              onClick={() => handleAddNode("logic")}
+              className="flex items-center space-x-3 p-3 rounded-xl bg-[#13131A] border border-white/5 hover:border-yellow-500/50 hover:bg-[#1A1A24] cursor-grab active:cursor-grabbing transition-all group"
+            >
+              <div className="w-8 h-8 rounded-lg bg-yellow-400/10 flex items-center justify-center">
+                <GitBranch className="w-4 h-4 text-yellow-400" />
+              </div>
+              <div>
+                <div className="text-sm font-medium text-gray-200 group-hover:text-white">
+                  Conditional
+                </div>
+                <div className="text-[10px] text-gray-500">Flow Control</div>
+              </div>
+            </div>
 
-          {/* If/Then Conditional Node */}
-          <div
-            draggable
-            onDragStart={(event) => onDragStart(event, "logic")}
-            onClick={() => handleAddNode("logic")}
-            className="flex items-center gap-3 p-3 rounded-lg border border-sidebar-border bg-card hover:bg-accent cursor-pointer transition-colors group mb-2"
-          >
-            <div className="w-8 h-8 bg-primary/10 rounded flex items-center justify-center">
-              <GitBranchIcon className="w-5 h-5 text-primary" />
-            </div>
-            <div className="flex-1">
-              <div className="text-sm font-medium text-card-foreground">
-                If/Then
+            {/* Validation Node */}
+            <div
+              draggable
+              onDragStart={(event) => onDragStart(event, "logic", "validation")}
+              onClick={() => handleAddNode("logic", "validation")}
+              className="flex items-center space-x-3 p-3 rounded-xl bg-[#13131A] border border-white/5 hover:border-yellow-500/50 hover:bg-[#1A1A24] cursor-grab active:cursor-grabbing transition-all group"
+            >
+              <div className="w-8 h-8 rounded-lg bg-blue-400/10 flex items-center justify-center">
+                <Shield className="w-4 h-4 text-blue-400" />
               </div>
-              <div className="text-xs text-muted-foreground">
-                Conditional branching logic
+              <div>
+                <div className="text-sm font-medium text-gray-200 group-hover:text-white">
+                  Validation
+                </div>
+                <div className="text-[10px] text-gray-500">Flow Control</div>
               </div>
             </div>
-          </div>
 
-          {/* Validation Node */}
-          <div
-            draggable
-            onDragStart={(event) => onDragStart(event, "logic", "validation")}
-            onClick={() => handleAddNode("logic", "validation")}
-            className="flex items-center gap-3 p-3 rounded-lg border border-sidebar-border bg-card hover:bg-accent cursor-pointer transition-colors group mb-2"
-          >
-            <div className="w-8 h-8 bg-primary/10 rounded flex items-center justify-center">
-              <ShieldCheckIcon className="w-5 h-5 text-primary" />
-            </div>
-            <div className="flex-1">
-              <div className="text-sm font-medium text-card-foreground">
-                Validation
+            {/* Calculation Node */}
+            <div
+              draggable
+              onDragStart={(event) => onDragStart(event, "logic", "calculation")}
+              onClick={() => handleAddNode("logic", "calculation")}
+              className="flex items-center space-x-3 p-3 rounded-xl bg-[#13131A] border border-white/5 hover:border-yellow-500/50 hover:bg-[#1A1A24] cursor-grab active:cursor-grabbing transition-all group"
+            >
+              <div className="w-8 h-8 rounded-lg bg-purple-400/10 flex items-center justify-center">
+                <Calculator className="w-4 h-4 text-purple-400" />
               </div>
-              <div className="text-xs text-muted-foreground">
-                Cross-field validation rules
-              </div>
-            </div>
-          </div>
-
-          {/* Calculation Node */}
-          <div
-            draggable
-            onDragStart={(event) => onDragStart(event, "logic", "calculation")}
-            onClick={() => handleAddNode("logic", "calculation")}
-            className="flex items-center gap-3 p-3 rounded-lg border border-sidebar-border bg-card hover:bg-accent cursor-pointer transition-colors group"
-          >
-            <div className="w-8 h-8 bg-primary/10 rounded flex items-center justify-center">
-              <CalculatorIcon className="w-5 h-5 text-primary" />
-            </div>
-            <div className="flex-1">
-              <div className="text-sm font-medium text-card-foreground">
-                Calculation
-              </div>
-              <div className="text-xs text-muted-foreground">
-                Perform mathematical operations
+              <div>
+                <div className="text-sm font-medium text-gray-200 group-hover:text-white">
+                  Calculation
+                </div>
+                <div className="text-[10px] text-gray-500">Flow Control</div>
               </div>
             </div>
           </div>
         </div>
 
         {/* Terminal Nodes Section */}
-        <div className="mb-6">
-          <h4 className="text-sm font-medium text-sidebar-foreground mb-3">
+        <div>
+          <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">
             Terminal Nodes
-          </h4>
-
-          {/* End Form Node */}
-          <div
-            draggable
-            onDragStart={(event) => onDragStart(event, "end")}
-            onClick={() => handleAddNode("end")}
-            className="flex items-center gap-3 p-3 rounded-lg border border-sidebar-border bg-card hover:bg-accent cursor-pointer transition-colors group"
-          >
-            <div className="w-8 h-8 bg-primary/10 rounded flex items-center justify-center">
-              <CheckCircleIcon className="w-5 h-5 text-primary" />
-            </div>
-            <div className="flex-1">
-              <div className="text-sm font-medium text-card-foreground">
-                End Form
+          </h3>
+          <div className="space-y-2">
+            {/* End Form Node */}
+            <div
+              draggable
+              onDragStart={(event) => onDragStart(event, "end")}
+              onClick={() => handleAddNode("end")}
+              className="flex items-center space-x-3 p-3 rounded-xl bg-[#13131A] border border-white/5 hover:border-green-500/50 hover:bg-[#1A1A24] cursor-grab active:cursor-grabbing transition-all group"
+            >
+              <div className="w-8 h-8 rounded-lg bg-green-400/10 flex items-center justify-center">
+                <CheckCircle className="w-4 h-4 text-green-400" />
               </div>
-              <div className="text-xs text-muted-foreground">
-                Mark form completion and trigger success actions
+              <div>
+                <div className="text-sm font-medium text-gray-200 group-hover:text-white">
+                  End Form
+                </div>
+                <div className="text-[10px] text-gray-500">Form Completion</div>
               </div>
             </div>
           </div>

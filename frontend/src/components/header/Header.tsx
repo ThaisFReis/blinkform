@@ -1,7 +1,7 @@
 'use client';
 
 import ThemeToggle from '@/components/ThemeToggle';
-import { UserCircleIcon, ShareNetworkIcon, SidebarSimple, X } from '@phosphor-icons/react';
+import { Zap, Moon, Smartphone, Share2, PanelLeft, User, X } from 'lucide-react';
 import { useState } from 'react';
 import { useFormBuilderStore } from '@/store/formBuilderStore';
 
@@ -29,80 +29,92 @@ export const Header = () => {
   };
 
   return (
-    <header className="flex items-center justify-between bg-sidebar px-3 sm:px-4 lg:px-6 py-3 w-full border-b border-border">
-      <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
-        {/* Left Sidebar Toggle - Always visible */}
+    <header className="h-16 border-b border-white/5 bg-[#0A0A0F] flex items-center justify-between px-6 z-20 shadow-md">
+      <div className="flex items-center space-x-4">
+        {/* Left Sidebar Toggle */}
         <button
           onClick={toggleLeftSidebar}
-          className="p-2 rounded-lg hover:bg-secondary transition-colors"
+          className="p-2 rounded-lg hover:bg-white/10 transition-colors"
           title="Toggle Components Sidebar"
         >
           {isLeftSidebarVisible ? (
-            <X className="w-5 h-5 text-primary" weight="bold" />
+            <X className="w-5 h-5 text-white" />
           ) : (
-            <SidebarSimple className="w-5 h-5 text-muted-foreground" weight="regular" />
+            <PanelLeft className="w-5 h-5 text-gray-400" />
           )}
         </button>
 
-        <div className="flex items-center gap-2">
-          <h1 className="text-base sm:text-lg lg:text-xl font-bold text-foreground font-gluten whitespace-nowrap">
-            BlinkForm
-          </h1>
+        {/* Logo */}
+        <div className="flex items-center space-x-2">
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#460DF2] to-[#7C3AED] flex items-center justify-center">
+            <Zap className="text-white w-5 h-5 fill-current" />
+          </div>
+          <span className="text-xl font-bold text-white tracking-tight">BlinkForm</span>
         </div>
 
-        <div className="border-l border-border h-5 hidden sm:block"></div>
-
-        <div className="min-w-0 flex-1 hidden sm:block">
-          <p className="text-xs sm:text-sm lg:text-base text-muted-foreground truncate">
-            My Projects <span className="mx-1 text-primary">›</span> <span className='font-medium text-white'>Superteam Quiz Mint</span>
-          </p>
+        {/* Breadcrumbs */}
+        <div className="hidden sm:flex items-center space-x-2">
+          <span className="text-gray-600 text-lg font-light">/</span>
+          <span className="text-gray-400 hover:text-white cursor-pointer transition-colors">My Projects</span>
+          <span className="text-gray-600 text-lg font-light">/</span>
+          <span className="text-white font-medium">Superteam Quiz Mint</span>
         </div>
       </div>
 
-      <div className="flex items-center gap-2 sm:gap-3 ml-2 sm:ml-4">
+      <div className="flex items-center space-x-4">
         {/* Active users - Hidden on small screens */}
         <div className="hidden md:flex items-center -space-x-2">
           {activeUsers.map((user) => (
             <div
               key={user.id}
-              className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full ${user.color} border-2 border-background flex items-center justify-center`}
+              className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full ${user.color} border-2 border-[#0A0A0F] flex items-center justify-center`}
               title={user.name}
             >
-              <UserCircleIcon className="w-4 h-4 sm:w-5 sm:h-5 text-white" weight="fill" />
+              <User className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
             </div>
           ))}
         </div>
 
-        {/* Share button - Hidden on very small screens */}
+        {/* Button Group with Theme Toggle and Mobile Preview */}
+        <div className="hidden sm:flex items-center space-x-1 bg-white/5 rounded-lg p-1 border border-white/5">
+          <ThemeToggle />
+          <button
+            className="p-2 hover:bg-white/10 rounded-md transition-colors"
+            aria-label="Mobile Preview"
+            title="Mobile Preview"
+          >
+            <Smartphone className="w-4 h-4 text-gray-400" />
+          </button>
+        </div>
+
+        {/* Share button */}
         <button
-          className="hidden sm:flex p-2 rounded-lg hover:bg-secondary transition-colors"
+          className="hidden sm:flex items-center space-x-2 bg-white/5 hover:bg-white/10 text-white px-4 py-2 rounded-lg border border-white/5 transition-colors"
           aria-label="Share"
           title="Share"
         >
-          <ShareNetworkIcon className="w-5 h-5 text-foreground" weight="regular" />
+          <Share2 className="w-4 h-4" />
+          <span>Share</span>
         </button>
 
-        {/* Theme toggle */}
-        <ThemeToggle />
-
-        {/* Right Sidebar Toggle - Always visible on mobile/tablet */}
+        {/* Right Sidebar Toggle */}
         <button
           onClick={toggleRightSidebar}
-          className="p-2 rounded-lg hover:bg-secondary transition-colors lg:hidden xl:flex"
+          className="p-2 rounded-lg hover:bg-white/10 transition-colors"
           title="Toggle Properties Sidebar"
         >
           {isRightSidebarVisible ? (
-            <X className="w-5 h-5 text-primary" weight="bold" />
+            <X className="w-5 h-5 text-white" />
           ) : (
-            <SidebarSimple className="w-5 h-5 text-muted-foreground" weight="regular" style={{ transform: 'scaleX(-1)' }} />
+            <PanelLeft className="w-5 h-5 text-gray-400" style={{ transform: 'scaleX(-1)' }} />
           )}
         </button>
 
-        {/* Publish button - Smaller on mobile */}
+        {/* Publish button */}
         <button
           onClick={handlePublish}
           disabled={isSaving}
-          className="px-3 sm:px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors font-medium whitespace-nowrap text-sm sm:text-base disabled:opacity-50 disabled:cursor-not-allowed"
+          className="bg-gradient-to-r from-[#460DF2] to-[#7C3AED] hover:opacity-90 text-white px-6 py-2 rounded-lg font-medium shadow-[0_0_20px_-5px_#460DF2] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isSaving ? 'Publishing...' : 'Publish'}
         </button>
