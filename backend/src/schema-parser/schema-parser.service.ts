@@ -91,11 +91,8 @@ export class SchemaParserService {
     } else if (currentNode.type === 'end') {
       baseResponse.title = formTitle;
       baseResponse.description = currentNode.data.message || 'Thank you for your response!';
-      baseResponse.label = 'Complete';
-      baseResponse.links.actions = [{
-        label: 'Finish',
-        href: `${baseUrl}/api/forms/complete`
-      }];
+      baseResponse.label = 'Completed';
+      baseResponse.links.actions = []; // No actions for end node
     } else if (currentNode.type === 'transaction') {
       // Handle transaction nodes
       const transactionData = currentNode.data;
