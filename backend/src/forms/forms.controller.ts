@@ -78,6 +78,38 @@ export class FormsController {
     return this.formsService.submit(id, submitFormDto);
   }
 
+  @Post('complete')
+  @Header('Content-Type', 'application/json')
+  @Header('Access-Control-Allow-Origin', '*')
+  @Header('Access-Control-Allow-Methods', 'GET,POST,PUT,OPTIONS')
+  @Header('Access-Control-Allow-Headers', 'Content-Type,Authorization,Content-Encoding,Accept-Encoding')
+  @Header('X-Action-Version', '2.0')
+  @Header('X-Blockchain-Ids', 'solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp')
+  async complete(@Body() body: any) {
+    // This endpoint handles form completion without transactions
+    // The form data should be passed in the body
+    const formId = body.formId;
+    const responses = body.responses || {};
+    const userAccount = body.account || 'anonymous';
+
+    console.log('[Forms Complete] Completing form:', formId, 'Account:', userAccount);
+
+    // Save the submission
+    const result = await this.formsService.submit(formId, {
+      responses,
+      userAccount,
+    });
+
+    // Return success response
+    return {
+      type: 'completed',
+      title: 'Form Completed',
+      description: 'Thank you for completing the form!',
+      icon: 'https://via.placeholder.com/600x400/10B981/FFFFFF?text=Completed',
+      label: 'Done',
+    };
+  }
+
   @Get()
   async findAllByCreator(@Query('creator') creatorAddress: string) {
     return this.formsService.findAllByCreator(creatorAddress);
