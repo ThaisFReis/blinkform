@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { PublicKey } from '@solana/web3.js';
 import { PrismaService } from '../prisma/prisma.service';
 import { RedisService } from '../redis/redis.service';
 import { SchemaParserService } from '../schema-parser/schema-parser.service';
@@ -244,6 +245,7 @@ export class ActionsService {
       console.log('[Actions POST] Final step - creating transaction and saving submission');
 
       let transaction: string;
+      let transactionCreated = false;
 
       try {
         // Check if this is a transaction node
@@ -281,6 +283,12 @@ export class ActionsService {
             if (parameters.amount === undefined || parameters.amount === null) {
               throw new Error('SYSTEM_TRANSFER requires amount parameter');
             }
+            // Validate recipient address format
+            try {
+              new PublicKey(parameters.recipientAddress);
+            } catch (e) {
+              throw new Error(`Invalid recipient address: ${parameters.recipientAddress}`);
+            }
           } else if (transactionData.transactionType === 'SPL_TRANSFER') {
             if (!parameters.recipientAddress) {
               throw new Error('SPL_TRANSFER requires recipientAddress parameter');
@@ -291,6 +299,17 @@ export class ActionsService {
             if (parameters.amount === undefined || parameters.amount === null) {
               throw new Error('SPL_TRANSFER requires amount parameter');
             }
+            // Validate addresses
+            try {
+              new PublicKey(parameters.recipientAddress);
+            } catch (e) {
+              throw new Error(`Invalid recipient address: ${parameters.recipientAddress}`);
+            }
+            try {
+              new PublicKey(parameters.mintAddress);
+            } catch (e) {
+              throw new Error(`Invalid mint address: ${parameters.mintAddress}`);
+            }
           } else if (transactionData.transactionType === 'SPL_MINT') {
             if (!parameters.mintAddress) {
               throw new Error('SPL_MINT requires mintAddress parameter');
@@ -300,6 +319,17 @@ export class ActionsService {
             }
             if (parameters.amount === undefined || parameters.amount === null) {
               throw new Error('SPL_MINT requires amount parameter');
+            }
+            // Validate addresses
+            try {
+              new PublicKey(parameters.recipientAddress);
+            } catch (e) {
+              throw new Error(`Invalid recipient address: ${parameters.recipientAddress}`);
+            }
+            try {
+              new PublicKey(parameters.mintAddress);
+            } catch (e) {
+              throw new Error(`Invalid mint address: ${parameters.mintAddress}`);
             }
           }
 
@@ -314,6 +344,8 @@ export class ActionsService {
             userAccount,
             parameters
           );
+          transactionCreated = true;
+          console.log('[Actions POST] Transaction created successfully');
         } else if (nextNode && nextNode.type === 'transaction') {
           console.log('[Actions POST] Next node is transaction, creating real transaction');
           const transactionData = nextNode.data as any;
@@ -362,6 +394,12 @@ export class ActionsService {
             if (parameters.amount === undefined || parameters.amount === null) {
               throw new Error('SYSTEM_TRANSFER requires amount parameter');
             }
+            // Validate recipient address format
+            try {
+              new PublicKey(parameters.recipientAddress);
+            } catch (e) {
+              throw new Error(`Invalid recipient address: ${parameters.recipientAddress}`);
+            }
           } else if (transactionData.transactionType === 'SPL_TRANSFER') {
             if (!parameters.recipientAddress) {
               throw new Error('SPL_TRANSFER requires recipientAddress parameter');
@@ -372,6 +410,17 @@ export class ActionsService {
             if (parameters.amount === undefined || parameters.amount === null) {
               throw new Error('SPL_TRANSFER requires amount parameter');
             }
+            // Validate addresses
+            try {
+              new PublicKey(parameters.recipientAddress);
+            } catch (e) {
+              throw new Error(`Invalid recipient address: ${parameters.recipientAddress}`);
+            }
+            try {
+              new PublicKey(parameters.mintAddress);
+            } catch (e) {
+              throw new Error(`Invalid mint address: ${parameters.mintAddress}`);
+            }
           } else if (transactionData.transactionType === 'SPL_MINT') {
             if (!parameters.mintAddress) {
               throw new Error('SPL_MINT requires mintAddress parameter');
@@ -381,6 +430,17 @@ export class ActionsService {
             }
             if (parameters.amount === undefined || parameters.amount === null) {
               throw new Error('SPL_MINT requires amount parameter');
+            }
+            // Validate addresses
+            try {
+              new PublicKey(parameters.recipientAddress);
+            } catch (e) {
+              throw new Error(`Invalid recipient address: ${parameters.recipientAddress}`);
+            }
+            try {
+              new PublicKey(parameters.mintAddress);
+            } catch (e) {
+              throw new Error(`Invalid mint address: ${parameters.mintAddress}`);
             }
           }
 
@@ -395,6 +455,7 @@ export class ActionsService {
             userAccount,
             parameters
           );
+          transactionCreated = true;
           console.log('[Actions POST] Transaction created successfully');
         } else {
           // This shouldn't happen with new logic, but fallback
@@ -404,6 +465,7 @@ export class ActionsService {
             userAccount,
             memoData
           );
+          transactionCreated = true;
         }
       } catch (error) {
         console.error('[Actions POST] Transaction creation failed:', error);
@@ -437,83 +499,90 @@ export class ActionsService {
         };
       }
 
-      console.log('[Actions POST] User account:', userAccount);
+      // Only save submission and return transaction response if transaction was created successfully
+      if (transactionCreated) {
+        console.log('[Actions POST] User account:', userAccount);
 
-      // Save submission to database
-      await this.prisma.submission.create({
-        data: {
-          formId: form.id,
-          userAccount: userAccount,
-          answers: sessionData.answers,
-        },
-      });
+        // Save submission to database
+        await this.prisma.submission.create({
+          data: {
+            formId: form.id,
+            userAccount: userAccount,
+            answers: sessionData.answers,
+          },
+        });
 
-      // Clear session
-      await this.redis.del(sessionKey);
+        // Clear session
+        await this.redis.del(sessionKey);
 
-      console.log('[Actions POST] Returning TransactionResponse for final step');
+        console.log('[Actions POST] Returning TransactionResponse for final step');
 
-      // Create detailed message based on transaction type
-      let detailedMessage = 'Form submitted successfully!';
+        // Create detailed message based on transaction type
+        let detailedMessage = 'Form submitted successfully!';
 
-      if (currentNode.type === 'transaction') {
-        const txData = currentNode.data;
-        let params = txData.parameters;
-        if (typeof params === 'string') {
-          try {
-            params = JSON.parse(params);
-          } catch (e) {
-            params = {};
+        if (currentNode.type === 'transaction') {
+          const txData = currentNode.data;
+          let params = txData.parameters;
+          if (typeof params === 'string') {
+            try {
+              params = JSON.parse(params);
+            } catch (e) {
+              params = {};
+            }
           }
+
+          switch (txData.transactionType) {
+            case 'SYSTEM_TRANSFER':
+              detailedMessage += `📤 SOL Transfer Details:\n`;
+              detailedMessage += `• Amount: ${params.amount} SOL\n`;
+              detailedMessage += `• From: ${userAccount}\n`;
+              detailedMessage += `• To: ${params.recipientAddress}\n`;
+              detailedMessage += `• Network: Solana Devnet\n`;
+              detailedMessage += `• Timestamp: ${new Date().toISOString()}\n\n`;
+              detailedMessage += `Check the transaction on Solana Explorer.`;
+              break;
+
+            case 'SPL_TRANSFER':
+              detailedMessage += `📤 Token Transfer Details:\n`;
+              detailedMessage += `• Amount: ${params.amount} tokens\n`;
+              detailedMessage += `• Token Mint: ${params.mintAddress}\n`;
+              detailedMessage += `• From: ${userAccount}\n`;
+              detailedMessage += `• To: ${params.recipientAddress}\n`;
+              detailedMessage += `• Decimals: ${params.decimals}\n`;
+              detailedMessage += `• Network: Solana Devnet\n`;
+              detailedMessage += `• Timestamp: ${new Date().toISOString()}\n\n`;
+              detailedMessage += `After signing, check the transaction on Solana Explorer.`;
+              break;
+
+            case 'SPL_MINT':
+              detailedMessage += `🪙 Token Mint Details:\n`;
+              detailedMessage += `• Amount: ${params.amount} tokens\n`;
+              detailedMessage += `• Token Mint: ${params.mintAddress}\n`;
+              detailedMessage += `• Mint Authority: ${userAccount}\n`;
+              detailedMessage += `• Recipient: ${params.recipientAddress}\n`;
+              detailedMessage += `• Decimals: ${params.decimals}\n`;
+              detailedMessage += `• Network: Solana Devnet\n`;
+              detailedMessage += `• Timestamp: ${new Date().toISOString()}\n\n`;
+              detailedMessage += `After signing, check the transaction on Solana Explorer.`;
+              break;
+
+            default:
+              detailedMessage += `Transaction ready for signing.`;
+          }
+        } else {
+          detailedMessage += `Transaction ready for signing.`;
         }
 
-        switch (txData.transactionType) {
-          case 'SYSTEM_TRANSFER':
-            detailedMessage += `📤 SOL Transfer Details:\n`;
-            detailedMessage += `• Amount: ${params.amount} SOL\n`;
-            detailedMessage += `• From: ${userAccount}\n`;
-            detailedMessage += `• To: ${params.recipientAddress}\n`;
-            detailedMessage += `• Network: Solana Devnet\n`;
-            detailedMessage += `• Timestamp: ${new Date().toISOString()}\n\n`;
-            detailedMessage += `Check the transaction on Solana Explorer.`;
-            break;
-
-          case 'SPL_TRANSFER':
-            detailedMessage += `📤 Token Transfer Details:\n`;
-            detailedMessage += `• Amount: ${params.amount} tokens\n`;
-            detailedMessage += `• Token Mint: ${params.mintAddress}\n`;
-            detailedMessage += `• From: ${userAccount}\n`;
-            detailedMessage += `• To: ${params.recipientAddress}\n`;
-            detailedMessage += `• Decimals: ${params.decimals}\n`;
-            detailedMessage += `• Network: Solana Devnet\n`;
-            detailedMessage += `• Timestamp: ${new Date().toISOString()}\n\n`;
-            detailedMessage += `After signing, check the transaction on Solana Explorer.`;
-            break;
-
-          case 'SPL_MINT':
-            detailedMessage += `🪙 Token Mint Details:\n`;
-            detailedMessage += `• Amount: ${params.amount} tokens\n`;
-            detailedMessage += `• Token Mint: ${params.mintAddress}\n`;
-            detailedMessage += `• Mint Authority: ${userAccount}\n`;
-            detailedMessage += `• Recipient: ${params.recipientAddress}\n`;
-            detailedMessage += `• Decimals: ${params.decimals}\n`;
-            detailedMessage += `• Network: Solana Devnet\n`;
-            detailedMessage += `• Timestamp: ${new Date().toISOString()}\n\n`;
-            detailedMessage += `After signing, check the transaction on Solana Explorer.`;
-            break;
-
-          default:
-            detailedMessage += `Transaction ready for signing.`;
-        }
+        // Return TransactionResponse (requires blockchain signature)
+        return {
+          transaction: transaction,
+          message: detailedMessage,
+        } as TransactionResponse;
       } else {
-        detailedMessage += `Transaction ready for signing.`;
+        // Transaction creation failed, but we already returned an error response above
+        // This shouldn't be reached, but just in case
+        throw new Error('Transaction creation failed');
       }
-
-      // Return TransactionResponse (requires blockchain signature)
-      return {
-        transaction: transaction,
-        message: detailedMessage,
-      } as TransactionResponse;
 
     } else if (!nextNode) {
       // END OF FORM: No transaction, just save and complete
