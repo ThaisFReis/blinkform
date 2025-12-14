@@ -363,7 +363,7 @@ export class ActionsService {
       console.log('[Actions POST] Returning TransactionResponse for final step');
 
       // Create detailed message based on transaction type
-      let detailedMessage = '✅ Form submitted successfully!\n\n';
+      let detailedMessage = 'Form submitted successfully!';
 
       if (currentNode.type === 'transaction') {
         const txData = currentNode.data;
