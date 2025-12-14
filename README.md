@@ -17,7 +17,6 @@ A no-code visual builder for creating Solana Blinks (Actions) with an intuitive 
 - [API Reference](#-api-reference)
 - [Development](#️-development)
 - [Deployment](#-deployment)
-- [Contributing](#-contributing)
 - [License](#-license)
 - [Acknowledgments](#-acknowledgments)
 - [Support](#-support)
@@ -337,27 +336,6 @@ The frontend can be deployed on [Vercel](https://vercel.com/):
 
 For more help, check the [Testing Guide](TESTING_GUIDE.md) or create an issue.
 
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch: `git checkout -b feature/your-feature`
-3. Commit your changes: `git commit -am 'Add some feature'`
-4. Push to the branch: `git push origin feature/your-feature`
-5. Submit a pull request
-
-### Development Guidelines
-
-- **Code Style**: Follow TypeScript best practices and ESLint rules
-- **Testing**: Write unit and integration tests for new features; aim for 80%+ coverage
-- **Documentation**: Update README and API docs for changes; add JSDoc comments
-- **Mobile First**: Ensure all features work on mobile devices
-- **Solana Testing**: Test on devnet before mainnet deployments
-- **Commits**: Use conventional commits (e.g., `feat: add new node type`)
-- **PR Reviews**: All PRs require review; address feedback promptly
-
-### Code of Conduct
-
-This project follows a code of conduct to ensure a welcoming environment for all contributors.
 
 ## 📄 License
 
