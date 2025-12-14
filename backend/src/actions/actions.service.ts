@@ -20,6 +20,54 @@ export class ActionsService {
   ) {}
 
   /**
+   * Resolve parameter placeholders like {{parameterName}} with actual values
+   * from user answers collected through the form flow
+   *
+   * @param parameters - Transaction parameters object with potential placeholders
+   * @param answers - User answers from the session (nodeId -> value mapping)
+   * @param schema - Form schema to lookup parameter names from input nodes
+   * @returns Parameters with placeholders replaced by actual values
+   */
+  private resolveParameters(parameters: any, answers: Record<string, any>, schema: any): any {
+    if (!parameters || typeof parameters !== 'object') {
+      return parameters;
+    }
+
+    const resolved = { ...parameters };
+
+    // Iterate through each parameter
+    for (const [key, value] of Object.entries(resolved)) {
+      if (typeof value === 'string' && value.startsWith('{{') && value.endsWith('}}')) {
+        // Extract parameter name from {{parameterName}}
+        const paramName = value.slice(2, -2).trim();
+        console.log(`[Parameter Resolution] Found placeholder: ${value} -> paramName: ${paramName}`);
+
+        // Find the input node that has this parameter name
+        const inputNode = schema.nodes?.find((node: any) =>
+          node.type === 'input' && node.data?.parameterName === paramName
+        );
+
+        if (inputNode) {
+          const nodeId = inputNode.id;
+          const userValue = answers[nodeId];
+
+          if (userValue !== undefined && userValue !== null) {
+            resolved[key] = userValue;
+            console.log(`[Parameter Resolution] Resolved ${key}: ${value} -> ${userValue}`);
+          } else {
+            console.warn(`[Parameter Resolution] No answer found for ${paramName} (node: ${nodeId})`);
+          }
+        } else {
+          console.warn(`[Parameter Resolution] No input node found with parameterName: ${paramName}`);
+        }
+      }
+    }
+
+    console.log('[Parameter Resolution] Final resolved parameters:', resolved);
+    return resolved;
+  }
+
+  /**
    * Dual Extraction Strategy for Solana Actions parameters
    * Extracts parameter value from query params, body.data, or body root
    * Priority: query params > body.data > body root
@@ -218,6 +266,10 @@ export class ActionsService {
           }
         }
 
+        // Resolve parameter placeholders like {{parameterName}}
+        console.log('[Actions POST] Resolving parameters with answers:', sessionData.answers);
+        parameters = this.resolveParameters(parameters, sessionData.answers || {}, form.schema);
+
         transaction = await this.transactionBuilder.createTransaction(
           transactionData.transactionType,
           userAccount,
@@ -256,6 +308,10 @@ export class ActionsService {
           console.log('[Actions POST] Parameters undefined or invalid, using empty object');
           parameters = {};
         }
+
+        // Resolve parameter placeholders like {{parameterName}}
+        console.log('[Actions POST] Resolving parameters with answers:', sessionData.answers);
+        parameters = this.resolveParameters(parameters, sessionData.answers || {}, form.schema);
 
         console.log('[Actions POST] Creating transaction with:', {
           transactionType: transactionData.transactionType,
