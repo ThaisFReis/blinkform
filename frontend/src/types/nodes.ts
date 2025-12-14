@@ -63,10 +63,10 @@ export const BRANCH_COLORS = [
 ];
 
 // Question node types
-export type QuestionType = 'input' | 'choice' | 'date';
+export type QuestionType = 'input' | 'choice';
 
 // Input types for input questions
-export type InputType = 'text' | 'number' | 'email' | 'phone' | 'cpf' | 'currency' | 'custom';
+export type InputType = 'text' | 'number' | 'email' | 'phone' | 'cpf' | 'currency' | 'date' | 'custom';
 
 // Transaction types (extensible)
 export type TransactionType = 'SPL_MINT' | 'SPL_TRANSFER' | 'SYSTEM_TRANSFER' | 'CUSTOM_CALL';

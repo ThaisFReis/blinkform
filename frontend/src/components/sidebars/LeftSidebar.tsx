@@ -4,7 +4,6 @@ import {
   X,
   Type,
   Hash,
-  Calendar,
   CheckCircle,
   List,
   CreditCard,
@@ -71,23 +70,6 @@ export const LeftSidebar = () => {
               </div>
             </div>
 
-            {/* Date Input Node */}
-            <div
-              draggable
-              onDragStart={(event) => onDragStart(event, "question", "date")}
-              onClick={() => handleAddNode("question", "date")}
-              className="flex items-center space-x-3 p-3 rounded-xl bg-[#13131A] border border-white/5 hover:border-[#460DF2]/50 hover:bg-[#1A1A24] cursor-grab active:cursor-grabbing transition-all group"
-            >
-              <div className="w-8 h-8 rounded-lg bg-purple-400/10 flex items-center justify-center">
-                <Calendar className="w-4 h-4 text-purple-400" />
-              </div>
-              <div>
-                <div className="text-sm font-medium text-gray-200 group-hover:text-white">
-                  Date Input
-                </div>
-                <div className="text-[10px] text-gray-500">Form Element</div>
-              </div>
-            </div>
 
             {/* Choice Node */}
             <div

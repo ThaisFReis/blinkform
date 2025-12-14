@@ -827,6 +827,29 @@ export const RightSidebar = () => {
                                 </div>
                             </>
                         );
+                    case 'date':
+                        return (
+                            <>
+                                <div>
+                                    <label className="block text-xs font-medium text-sidebar-foreground mb-1">Minimum Date</label>
+                                    <input
+                                        type="date"
+                                        value={validation.min || ''}
+                                        onChange={(e) => handleNodeValidationChange('min', e.target.value)}
+                                        className="w-full bg-[#13131A] border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-[#460DF2] transition-colors"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-xs font-medium text-sidebar-foreground mb-1">Maximum Date</label>
+                                    <input
+                                        type="date"
+                                        value={validation.max || ''}
+                                        onChange={(e) => handleNodeValidationChange('max', e.target.value)}
+                                        className="w-full bg-[#13131A] border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-[#460DF2] transition-colors"
+                                    />
+                                </div>
+                            </>
+                        );
                     case 'custom':
                         return (
                             <>
@@ -867,29 +890,6 @@ export const RightSidebar = () => {
                     default:
                         return null;
                 }
-            case 'date':
-                return (
-                    <>
-                        <div>
-                            <label className="block text-xs font-medium text-sidebar-foreground mb-1">Minimum Date</label>
-                            <input
-                                type="date"
-                                value={validation.min || ''}
-                                onChange={(e) => handleNodeValidationChange('min', e.target.value)}
-                                className="w-full bg-[#13131A] border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-[#460DF2] transition-colors"
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-xs font-medium text-sidebar-foreground mb-1">Maximum Date</label>
-                            <input
-                                type="date"
-                                value={validation.max || ''}
-                                onChange={(e) => handleNodeValidationChange('max', e.target.value)}
-                                className="w-full bg-[#13131A] border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-[#460DF2] transition-colors"
-                            />
-                        </div>
-                    </>
-                );
             case 'choice':
                 if (selectedNode.data.multiSelect) {
                     // Multi-select validation
@@ -2413,6 +2413,7 @@ export const RightSidebar = () => {
                                                 <option value="phone">Phone</option>
                                                 <option value="cpf">CPF (Brazilian ID)</option>
                                                 <option value="currency">Currency</option>
+                                                <option value="date">Date</option>
                                                 <option value="custom">Custom Pattern</option>
                                             </select>
                                         </div>

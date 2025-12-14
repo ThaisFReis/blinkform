@@ -1,6 +1,6 @@
 import React from 'react';
 import { NodeProps } from '@xyflow/react';
-import { Type, Hash } from 'lucide-react';
+import { Type, Hash, Calendar } from 'lucide-react';
 import { QuestionNodeData, InputType } from '@/types/nodes';
 import { BaseNode } from './BaseNode';
 
@@ -19,6 +19,12 @@ export const InputNode: React.FC<InputNodeProps> = (props) => {
         return (
           <div className="w-6 h-6 rounded-lg bg-blue-400/10 flex items-center justify-center">
             <Hash className="w-4 h-4 text-blue-400" />
+          </div>
+        );
+      case 'date':
+        return (
+          <div className="w-6 h-6 rounded-lg bg-purple-400/10 flex items-center justify-center">
+            <Calendar className="w-4 h-4 text-purple-400" />
           </div>
         );
       default:
@@ -42,6 +48,8 @@ export const InputNode: React.FC<InputNodeProps> = (props) => {
         return 'CPF Input';
       case 'currency':
         return 'Currency Input';
+      case 'date':
+        return 'Date Input';
       case 'custom':
         return 'Custom Input';
       default:
@@ -61,6 +69,8 @@ export const InputNode: React.FC<InputNodeProps> = (props) => {
         return 'R$ 1.234,56';
       case 'number':
         return '12345';
+      case 'date':
+        return 'Date picker field';
       default:
         return placeholder || 'Enter text...';
     }
@@ -85,16 +95,16 @@ export const InputNode: React.FC<InputNodeProps> = (props) => {
               Required
             </span>
           )}
-          {inputType === 'number' || inputType === 'currency' ? (
+          {inputType === 'number' || inputType === 'currency' || inputType === 'date' ? (
             <>
               {validation.min && (
-                <span className="text-xs bg-blue-500/20 text-blue-400 px-1.5 py-0.5 rounded">
-                  Min: {validation.min}
+                <span className="text-xs bg-purple-500/20 text-purple-400 px-1.5 py-0.5 rounded">
+                  Min: {inputType === 'date' ? new Date(validation.min).toLocaleDateString() : validation.min}
                 </span>
               )}
               {validation.max && (
-                <span className="text-xs bg-blue-500/20 text-blue-400 px-1.5 py-0.5 rounded">
-                  Max: {validation.max}
+                <span className="text-xs bg-purple-500/20 text-purple-400 px-1.5 py-0.5 rounded">
+                  Max: {inputType === 'date' ? new Date(validation.max).toLocaleDateString() : validation.max}
                 </span>
               )}
             </>

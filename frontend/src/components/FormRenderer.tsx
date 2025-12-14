@@ -4,7 +4,6 @@ import React, { useState, useMemo } from 'react';
 import { BlinkFormNode, isQuestionNode, isTransactionNode, isEndNode } from '@/types/nodes';
 import { MobileInputNode } from './mobile/MobileInputNode';
 import { MobileChoiceNode } from './mobile/MobileChoiceNode';
-import { MobileDateNode } from './mobile/MobileDateNode';
 import { MobileTransactionNode } from './mobile/MobileTransactionNode';
 import { MobileEndNode } from './mobile/MobileEndNode';
 
@@ -135,6 +134,16 @@ export const FormRenderer: React.FC<FormRendererProps> = ({
           return false;
         }
       }
+
+      if (node.data.inputType === 'date' && strValue) {
+        const selectedDate = new Date(strValue);
+        if (validation.min && selectedDate < new Date(validation.min)) {
+          return false;
+        }
+        if (validation.max && selectedDate > new Date(validation.max)) {
+          return false;
+        }
+      }
     }
 
     return true;
@@ -169,16 +178,6 @@ export const FormRenderer: React.FC<FormRendererProps> = ({
         case 'choice':
           return (
             <MobileChoiceNode
-              data={currentNode.data}
-              value={currentValue}
-              onChange={(value) => setResponses(prev => ({ ...prev, [currentNode.id]: value }))}
-              onNext={() => handleNodeNext(currentValue)}
-              isValid={isValid}
-            />
-          );
-        case 'date':
-          return (
-            <MobileDateNode
               data={currentNode.data}
               value={currentValue}
               onChange={(value) => setResponses(prev => ({ ...prev, [currentNode.id]: value }))}

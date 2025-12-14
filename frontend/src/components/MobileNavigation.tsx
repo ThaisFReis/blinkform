@@ -121,16 +121,6 @@ export const MobileNavigation = () => {
                 </button>
 
                 <button
-                  onClick={() => handleAddNode('question', 'date')}
-                  className="flex flex-col items-center gap-2 p-3 rounded-lg border border-border hover:bg-accent transition-colors"
-                >
-                  <div className="w-8 h-8 bg-primary/10 rounded flex items-center justify-center">
-                    <span className="text-lg">📅</span>
-                  </div>
-                  <span className="text-xs text-center">Date</span>
-                </button>
-
-                <button
                   onClick={() => setIsOpen(false)}
                   className="flex flex-col items-center gap-2 p-3 rounded-lg border border-border hover:bg-accent transition-colors"
                 >

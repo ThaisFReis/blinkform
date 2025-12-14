@@ -5,7 +5,6 @@ import { useFormBuilderStore } from '@/store/formBuilderStore';
 import { BlinkFormNode, isQuestionNode, isTransactionNode, isEndNode } from '@/types/nodes';
 import { MobileInputNode } from './MobileInputNode';
 import { MobileChoiceNode } from './MobileChoiceNode';
-import { MobileDateNode } from './MobileDateNode';
 import { MobileTransactionNode } from './MobileTransactionNode';
 import { MobileEndNode } from './MobileEndNode';
 
@@ -106,6 +105,16 @@ export const MobileFormRenderer: React.FC = () => {
           return false;
         }
       }
+
+      if (node.data.inputType === 'date' && strValue) {
+        const selectedDate = new Date(strValue);
+        if (validation.min && selectedDate < new Date(validation.min)) {
+          return false;
+        }
+        if (validation.max && selectedDate > new Date(validation.max)) {
+          return false;
+        }
+      }
     }
 
     return true;
@@ -140,16 +149,6 @@ export const MobileFormRenderer: React.FC = () => {
         case 'choice':
           return (
             <MobileChoiceNode
-              data={currentNode.data}
-              value={currentValue}
-              onChange={(value) => updateResponse(currentNode.id, value)}
-              onNext={() => handleNodeNext(currentValue)}
-              isValid={isValid}
-            />
-          );
-        case 'date':
-          return (
-            <MobileDateNode
               data={currentNode.data}
               value={currentValue}
               onChange={(value) => updateResponse(currentNode.id, value)}

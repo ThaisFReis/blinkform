@@ -13,7 +13,6 @@ import {
 import '@xyflow/react/dist/style.css';
 import { useFormBuilderStore } from '@/store/formBuilderStore';
 import { InputNode } from '@/components/nodes/InputNode';
-import { DateNode } from '@/components/nodes/DateNode';
 import { ChoiceNode } from '@/components/nodes/ChoiceNode';
 import { TransactionNode } from '@/components/nodes/TransactionNode';
 import { MintNFTNode } from '@/components/nodes/MintNFTNode';
@@ -267,8 +266,6 @@ const GraphBuilder = () => {
     switch (data.questionType) {
       case 'input':
         return <InputNode {...props} />;
-      case 'date':
-        return <DateNode {...props} />;
       case 'choice':
         return <ChoiceNode {...props} />;
       default:

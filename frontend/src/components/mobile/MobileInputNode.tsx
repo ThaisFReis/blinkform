@@ -46,6 +46,8 @@ export const MobileInputNode: React.FC<MobileInputNodeProps> = ({
         return 'email';
       case 'phone':
         return 'tel';
+      case 'date':
+        return 'date';
       default:
         return 'text';
     }
@@ -119,6 +121,8 @@ export const MobileInputNode: React.FC<MobileInputNodeProps> = ({
           }`}
           autoComplete="off"
           inputMode={getInputMode(inputType)}
+          min={inputType === 'date' && validation?.min ? new Date(validation.min).toISOString().split('T')[0] : undefined}
+          max={inputType === 'date' && validation?.max ? new Date(validation.max).toISOString().split('T')[0] : undefined}
         />
 
         {/* Validation Error */}
@@ -157,6 +161,8 @@ const getPlaceholder = (type?: InputType) => {
       return 'R$ 0,00';
     case 'number':
       return 'Enter a number';
+    case 'date':
+      return 'Select a date...';
     default:
       return 'Type your answer...';
   }
@@ -194,6 +200,16 @@ const getValidationError = (value: string, validation?: any, inputType?: InputTy
     }
     if (validation.max && num > validation.max) {
       return `Maximum value is ${validation.max}`;
+    }
+  }
+
+  if (inputType === 'date' && value) {
+    const selectedDate = new Date(value);
+    if (validation.min && selectedDate < new Date(validation.min)) {
+      return `Date must be on or after ${new Date(validation.min).toLocaleDateString()}`;
+    }
+    if (validation.max && selectedDate > new Date(validation.max)) {
+      return `Date must be on or before ${new Date(validation.max).toLocaleDateString()}`;
     }
   }
 
