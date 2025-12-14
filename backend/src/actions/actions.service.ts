@@ -198,24 +198,52 @@ export class ActionsService {
       if (currentNode.type === 'transaction') {
         console.log('[Actions POST] Transaction node detected, creating real transaction');
         const transactionData = currentNode.data as any;
+        console.log('[Actions POST] Transaction data:', JSON.stringify(transactionData, null, 2));
         console.log('[Actions POST] Transaction type:', transactionData.transactionType);
         console.log('[Actions POST] Transaction parameters:', transactionData.parameters);
+        console.log('[Actions POST] Parameters type:', typeof transactionData.parameters);
+
+        // Ensure parameters is an object
+        let parameters = transactionData.parameters;
+        if (typeof parameters === 'string') {
+          try {
+            parameters = JSON.parse(parameters);
+            console.log('[Actions POST] Parsed parameters:', parameters);
+          } catch (e) {
+            console.error('[Actions POST] Failed to parse parameters:', e);
+            throw new Error('Invalid transaction parameters format');
+          }
+        }
 
         transaction = await this.transactionBuilder.createTransaction(
           transactionData.transactionType,
           userAccount,
-          transactionData.parameters
+          parameters
         );
       } else if (nextNode && nextNode.type === 'transaction') {
         console.log('[Actions POST] Next node is transaction, creating real transaction');
         const transactionData = nextNode.data as any;
+        console.log('[Actions POST] Transaction data:', JSON.stringify(transactionData, null, 2));
         console.log('[Actions POST] Transaction type:', transactionData.transactionType);
         console.log('[Actions POST] Transaction parameters:', transactionData.parameters);
+        console.log('[Actions POST] Parameters type:', typeof transactionData.parameters);
+
+        // Ensure parameters is an object
+        let parameters = transactionData.parameters;
+        if (typeof parameters === 'string') {
+          try {
+            parameters = JSON.parse(parameters);
+            console.log('[Actions POST] Parsed parameters:', parameters);
+          } catch (e) {
+            console.error('[Actions POST] Failed to parse parameters:', e);
+            throw new Error('Invalid transaction parameters format');
+          }
+        }
 
         transaction = await this.transactionBuilder.createTransaction(
           transactionData.transactionType,
           userAccount,
-          transactionData.parameters
+          parameters
         );
       } else {
         // This shouldn't happen with new logic, but fallback
@@ -248,7 +276,14 @@ export class ActionsService {
 
       if (currentNode.type === 'transaction') {
         const txData = currentNode.data;
-        const params = txData.parameters;
+        let params = txData.parameters;
+        if (typeof params === 'string') {
+          try {
+            params = JSON.parse(params);
+          } catch (e) {
+            params = {};
+          }
+        }
 
         switch (txData.transactionType) {
           case 'SYSTEM_TRANSFER':

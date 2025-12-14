@@ -92,15 +92,27 @@ export class SchemaParserService {
       const transactionType = transactionData.transactionType;
 
       let transactionDescription = 'Confirm the transaction details below';
+
+      // Ensure parameters is an object
+      let params = transactionData.parameters;
+      if (typeof params === 'string') {
+        try {
+          params = JSON.parse(params);
+        } catch (e) {
+          console.error('Failed to parse transaction parameters in schema parser:', e);
+          params = {};
+        }
+      }
+
       switch (transactionType) {
         case 'SYSTEM_TRANSFER':
-          transactionDescription = `Transfer ${transactionData.parameters?.amount || 0} SOL to ${transactionData.parameters?.recipientAddress || 'recipient'}`;
+          transactionDescription = `Transfer ${params?.amount || 0} SOL to ${params?.recipientAddress || 'recipient'}`;
           break;
         case 'SPL_TRANSFER':
-          transactionDescription = `Transfer ${transactionData.parameters?.amount || 0} tokens to ${transactionData.parameters?.recipientAddress || 'recipient'}`;
+          transactionDescription = `Transfer ${params?.amount || 0} tokens to ${params?.recipientAddress || 'recipient'}`;
           break;
         case 'SPL_MINT':
-          transactionDescription = `Mint ${transactionData.parameters?.amount || 0} tokens`;
+          transactionDescription = `Mint ${params?.amount || 0} tokens`;
           break;
         default:
           transactionDescription = 'Execute custom transaction';
