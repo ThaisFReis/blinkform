@@ -220,12 +220,9 @@ export interface EndNodeData extends Record<string, unknown> {
 
 // Start node data
 export interface StartNodeData extends Record<string, unknown> {
-  title: string;
-  description: string;
-  imageUrl?: string;
-  context: string;
-  definition: string;
-  examples: string[];
+   title: string;
+   description: string;
+   imageUrl?: string;
 }
 
 // Union of all node data types

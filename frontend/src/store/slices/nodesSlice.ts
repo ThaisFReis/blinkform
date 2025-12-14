@@ -121,14 +121,6 @@ const createDefaultNodeData = (type: NodeType, questionType?: string): NodeData 
         title: 'Welcome to this Interactive Form',
         description: 'This is a Blink - an interactive blockchain experience that lets you complete transactions and interact with decentralized applications directly from this page.',
         imageUrl: '', // Optional image URL for the form
-        context: 'Fill out this form to participate in blockchain activities. Your responses will be used to generate secure, on-chain transactions.',
-        definition: 'Blinks make blockchain interactions simple and accessible, eliminating the need for complex wallet setups or technical knowledge.',
-        examples: [
-          'Submit a form to mint an NFT',
-          'Vote in a community proposal',
-          'Purchase tokens or digital assets',
-          'Participate in decentralized applications'
-        ],
       } as StartNodeData;
 
     default:

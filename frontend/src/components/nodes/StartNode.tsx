@@ -9,8 +9,8 @@ interface StartNodeProps extends NodeProps {
 }
 
 export const StartNode: React.FC<StartNodeProps> = (props) => {
-  const { data } = props;
-  const { title, description, imageUrl, context, definition, examples } = data;
+   const { data } = props;
+   const { title, description, imageUrl } = data;
 
   return (
     <BaseNode
@@ -64,35 +64,6 @@ export const StartNode: React.FC<StartNodeProps> = (props) => {
       {/* Description */}
       <div className="text-sm text-gray-300 mb-4 leading-relaxed">
         {description}
-      </div>
-
-      {/* Context */}
-      <div className="mb-3 p-3 bg-indigo-500/10 rounded-lg border border-indigo-500/20">
-        <div className="text-xs font-medium text-indigo-300 mb-1">What you'll do</div>
-        <div className="text-xs text-gray-400 leading-relaxed">
-          {context}
-        </div>
-      </div>
-
-      {/* Definition */}
-      <div className="mb-3">
-        <div className="text-xs font-medium text-indigo-300 mb-1">About Blinks</div>
-        <div className="text-xs text-gray-400 leading-relaxed">
-          {definition}
-        </div>
-      </div>
-
-      {/* Examples */}
-      <div>
-        <div className="text-xs font-medium text-indigo-300 mb-2">What you can do</div>
-        <div className="space-y-1">
-          {examples.map((example, index) => (
-            <div key={index} className="text-xs text-gray-400 flex items-start gap-2">
-              <span className="text-indigo-400 mt-0.5">•</span>
-              <span>{example}</span>
-            </div>
-          ))}
-        </div>
       </div>
     </BaseNode>
   );
