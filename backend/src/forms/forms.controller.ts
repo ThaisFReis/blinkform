@@ -86,15 +86,10 @@ export class FormsController {
   @Header('X-Action-Version', '2.0')
   @Header('X-Blockchain-Ids', 'solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp')
   async complete(@Body() body: any, @Query('formId') formIdQuery: string) {
-    console.log('[Forms Complete] Received body:', JSON.stringify(body));
-    console.log('[Forms Complete] Received formId query:', formIdQuery);
-
     // This endpoint handles form completion without transactions
     // Submission is already saved in the actions service, this just returns completion response
     const formId = body.formId || formIdQuery;
     const userAccount = body.account || 'anonymous';
-
-    console.log('[Forms Complete] Completing form:', formId, 'Account:', userAccount);
 
     // Return success response (submission already saved)
     return {

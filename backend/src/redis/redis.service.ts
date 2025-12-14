@@ -10,11 +10,8 @@ export class RedisService implements OnModuleInit {
     const redisUrl = process.env.REDIS_URL;
     const redisHost = process.env.REDIS_HOST;
 
-    console.log('Redis config - URL:', redisUrl, 'Host:', redisHost);
-
     // If no Redis configuration provided, use no-op client
     if (!redisUrl && !redisHost) {
-      console.log('No Redis configuration found, using no-op client');
       this.client = {
         get: async () => null,
         set: async () => null,
@@ -38,7 +35,6 @@ export class RedisService implements OnModuleInit {
   async onModuleInit() {
     // Skip if using no-op client
     if (!this.client.connect) {
-      console.log('Using no-op Redis client, skipping connection');
       return;
     }
 
@@ -50,7 +46,6 @@ export class RedisService implements OnModuleInit {
       );
 
       await Promise.race([connectPromise, timeoutPromise]);
-      console.log('Redis connected successfully');
     } catch (error) {
       console.error('Failed to connect to Redis:', error);
       // Disconnect the client to stop retry attempts

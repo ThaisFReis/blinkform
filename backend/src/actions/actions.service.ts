@@ -146,7 +146,6 @@ export class ActionsService {
     // Use default account for testing if not provided
     const userAccount = account || 'test-account';
 
-    // Fetch form
     const form = await this.prisma.form.findUnique({
       where: { id: formId },
     });
@@ -155,17 +154,13 @@ export class ActionsService {
       throw new Error('Form not found');
     }
 
-    // Get current session
     const sessionKey = `session:${formId}:${userAccount}`;
     const session = await this.redis.get(sessionKey);
     const sessionData = session ? JSON.parse(session) : { current_node_id: null, answers: {} };
 
-    // Get current node
     const schema = form.schema as any;
     let currentNodeId = sessionData.current_node_id;
     let currentNode = currentNodeId ? this.schemaParser.getCurrentNode(schema, currentNodeId) : null;
-
-    console.log('[Actions POST] Current node ID:', currentNodeId);
 
     // If no current node, start from beginning
     if (!currentNode) {
@@ -547,7 +542,6 @@ export class ActionsService {
     } else {
       // INTERMEDIATE STEP: Return PostResponse (no transaction)
 
-      // Move to next node
       sessionData.current_node_id = result.nextNodeId;
       await this.redis.set(sessionKey, JSON.stringify(sessionData), 3600); // 1 hour
 
