@@ -123,7 +123,7 @@ export class SchemaParserService {
           transactionDescription = `Transfer ${params?.amount || 0} tokens to ${params?.recipientAddress || 'recipient'}`;
           break;
         case 'SPL_MINT':
-          transactionDescription = `Mint ${params?.amount || 0} tokens`;
+          transactionDescription = `Mint ${params?.amount || 0} tokens to ${params?.recipientAddress || 'recipient'}`;
           break;
         default:
           transactionDescription = 'Execute custom transaction';

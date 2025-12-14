@@ -315,7 +315,143 @@ async function testSplTransfer() {
   }
 }
 
+async function testSplMint() {
+  console.log('🔍 Testing SPL Token Mint Transaction...\n');
+
+  // Configuration
+  const RPC_URL = 'https://api.devnet.solana.com';
+  const connection = new Connection(RPC_URL, 'confirmed');
+
+  // For testing, we'll use a mint that we can control
+  // This is just a simulation - in real usage, you'd need a mint you control
+  const MINT_ADDRESS = 'So11111111111111111111111111111111111111112'; // Wrapped SOL mint (for testing)
+  const AUTHORITY_WALLET = '5nWF63PbuUwqzHBDWjuafCZpF7A7gJ7v5q3eLV96i3Ka'; // Your wallet (would need to be mint authority)
+  const RECIPIENT_WALLET = 'isSereA3nQ97DJXnjNFc1JAFWBF9cdH8W6tvDdogK9W'; // Recipient
+  const AMOUNT = 0.01; // Small amount for testing
+  const DECIMALS = 9; // WSOL has 9 decimals
+
+  console.log('📝 Configuration:');
+  console.log('  RPC URL:', RPC_URL);
+  console.log('  Mint:', MINT_ADDRESS);
+  console.log('  Authority:', AUTHORITY_WALLET);
+  console.log('  Recipient:', RECIPIENT_WALLET);
+  console.log('  Amount:', AMOUNT, 'tokens');
+  console.log('  Decimals:', DECIMALS, '\n');
+
+  console.log('⚠️  Note: This test uses Wrapped SOL mint for simulation.');
+  console.log('   In real usage, you need to be the mint authority.\n');
+
+  try {
+    // Import SPL token functions
+    const {
+      getAssociatedTokenAddress,
+      createAssociatedTokenAccountInstruction,
+      createMintToInstruction,
+      TOKEN_PROGRAM_ID,
+      ASSOCIATED_TOKEN_PROGRAM_ID,
+    } = require('@solana/spl-token');
+
+    // Parse public keys
+    const authorityPublicKey = new PublicKey(AUTHORITY_WALLET);
+    const recipientPublicKey = new PublicKey(RECIPIENT_WALLET);
+    const mintPublicKey = new PublicKey(MINT_ADDRESS);
+    console.log('✅ Addresses are valid\n');
+
+    // Validate mint
+    const mintInfo = await connection.getAccountInfo(mintPublicKey);
+    if (!mintInfo) {
+      console.log('❌ Mint address not found');
+      process.exit(1);
+    }
+    console.log('✅ Mint address is valid\n');
+
+    // Get associated token account for recipient
+    const recipientTokenAccount = await getAssociatedTokenAddress(mintPublicKey, recipientPublicKey);
+    console.log('📍 Recipient Token Account:', recipientTokenAccount.toBase58());
+
+    // Check if recipient's token account exists
+    const recipientTokenAccountInfo = await connection.getAccountInfo(recipientTokenAccount);
+    console.log('📊 Recipient ATA exists:', !!recipientTokenAccountInfo);
+
+    // Get latest blockhash
+    console.log('\n⏳ Fetching latest blockhash...');
+    const { blockhash } = await connection.getLatestBlockhash();
+    console.log('✅ Blockhash:', blockhash, '\n');
+
+    const transaction = new Transaction({
+      feePayer: authorityPublicKey,
+      recentBlockhash: blockhash,
+    });
+
+    // If recipient's token account doesn't exist, create it
+    if (!recipientTokenAccountInfo) {
+      console.log('📦 Creating associated token account for recipient...');
+      const createAtaInstruction = createAssociatedTokenAccountInstruction(
+        authorityPublicKey, // payer
+        recipientTokenAccount, // associated token account
+        recipientPublicKey, // owner
+        mintPublicKey, // mint
+        TOKEN_PROGRAM_ID,
+        ASSOCIATED_TOKEN_PROGRAM_ID
+      );
+      transaction.add(createAtaInstruction);
+    }
+
+    // Convert amount to smallest unit
+    const mintAmount = Math.floor(AMOUNT * Math.pow(10, DECIMALS));
+    console.log(`🪙 Mint amount (smallest unit): ${mintAmount}`);
+
+    if (mintAmount <= 0) {
+      console.log('❌ Mint amount too small');
+      process.exit(1);
+    }
+
+    // Create mint instruction
+    console.log('📦 Creating token mint instruction...');
+    const mintInstruction = createMintToInstruction(
+      mintPublicKey, // mint
+      recipientTokenAccount, // destination
+      authorityPublicKey, // authority
+      mintAmount, // amount
+      [], // multiSigners
+      TOKEN_PROGRAM_ID
+    );
+
+    transaction.add(mintInstruction);
+
+    // Get transaction size
+    const serialized = transaction.serialize({ requireAllSignatures: false });
+    console.log('✅ Transaction size:', serialized.length, 'bytes\n');
+
+    // Simulate transaction
+    console.log('🔄 Simulating transaction...\n');
+    const simulation = await connection.simulateTransaction(transaction);
+
+    if (simulation.value.err) {
+      console.log('❌ SIMULATION FAILED!\n');
+      console.log('Error:', JSON.stringify(simulation.value.err, null, 2));
+      console.log('\nLogs:');
+      simulation.value.logs?.forEach(log => console.log('  ', log));
+      process.exit(1);
+    } else {
+      console.log('✅ SIMULATION SUCCESS!\n');
+      console.log('Compute units used:', simulation.value.unitsConsumed);
+      console.log('\nLogs:');
+      simulation.value.logs?.forEach(log => console.log('  ', log));
+
+      console.log('\n✨ SPL Token mint transaction is valid and ready to sign!');
+      console.log('📤 Base64 transaction:', Buffer.from(serialized).toString('base64').substring(0, 50) + '...');
+    }
+
+  } catch (error) {
+    console.log('\n❌ ERROR:', error.message);
+    console.log('\nFull error:', error);
+    process.exit(1);
+  }
+}
+
 // Run test
 // testMemoTransaction();
 // testSolTransfer();
-testSplTransfer();
+// testSplTransfer();
+testSplMint();

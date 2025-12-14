@@ -325,6 +325,18 @@ export class ActionsService {
             detailedMessage += `After signing, check the transaction on Solana Explorer.`;
             break;
 
+          case 'SPL_MINT':
+            detailedMessage += `🪙 Token Mint Details:\n`;
+            detailedMessage += `• Amount: ${params.amount} tokens\n`;
+            detailedMessage += `• Token Mint: ${params.mintAddress}\n`;
+            detailedMessage += `• Mint Authority: ${userAccount}\n`;
+            detailedMessage += `• Recipient: ${params.recipientAddress}\n`;
+            detailedMessage += `• Decimals: ${params.decimals}\n`;
+            detailedMessage += `• Network: Solana Devnet\n`;
+            detailedMessage += `• Timestamp: ${new Date().toISOString()}\n\n`;
+            detailedMessage += `After signing, check the transaction on Solana Explorer.`;
+            break;
+
           default:
             detailedMessage += `Transaction ready for signing.`;
         }

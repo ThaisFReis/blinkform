@@ -13,6 +13,7 @@ import {
   createTransferInstruction,
   getAssociatedTokenAddress,
   createAssociatedTokenAccountInstruction,
+  createMintToInstruction,
   TOKEN_PROGRAM_ID,
   ASSOCIATED_TOKEN_PROGRAM_ID,
 } from '@solana/spl-token';
@@ -244,6 +245,93 @@ export class TransactionBuilderService {
   }
 
   /**
+   * Creates a SPL token mint transaction
+   */
+  async createSplMintTransaction(
+    mintAuthorityAccount: string,
+    mintAddress: string,
+    recipientAddress: string,
+    amount: number,
+    decimals: number = 9
+  ): Promise<string> {
+    try {
+      this.logger.log(`Creating SPL token mint: ${amount} tokens to ${recipientAddress}`);
+      this.logger.log(`Mint: ${mintAddress}, Authority: ${mintAuthorityAccount}, Decimals: ${decimals}`);
+
+      const mintAuthorityPublicKey = new PublicKey(mintAuthorityAccount);
+      const recipientPublicKey = new PublicKey(recipientAddress);
+      const mintPublicKey = new PublicKey(mintAddress);
+
+      // Validate mint address
+      const mintInfo = await this.connection.getAccountInfo(mintPublicKey);
+      if (!mintInfo) {
+        throw new Error(`Invalid mint address: ${mintAddress}`);
+      }
+      this.logger.log('Mint address is valid');
+
+      // Get associated token account for recipient
+      const recipientTokenAccount = await getAssociatedTokenAddress(mintPublicKey, recipientPublicKey);
+      this.logger.log(`Recipient token account: ${recipientTokenAccount.toBase58()}`);
+
+      // Check if recipient's associated token account exists
+      const recipientTokenAccountInfo = await this.connection.getAccountInfo(recipientTokenAccount);
+      this.logger.log(`Recipient token account exists: ${!!recipientTokenAccountInfo}`);
+
+      // Get latest blockhash
+      const { blockhash } = await this.connection.getLatestBlockhash();
+
+      const transaction = new Transaction({
+        feePayer: mintAuthorityPublicKey,
+        recentBlockhash: blockhash,
+      });
+
+      // If recipient's token account doesn't exist, create it
+      if (!recipientTokenAccountInfo) {
+        this.logger.log('Creating associated token account for recipient');
+        const createAtaInstruction = createAssociatedTokenAccountInstruction(
+          mintAuthorityPublicKey, // payer
+          recipientTokenAccount, // associated token account
+          recipientPublicKey, // owner
+          mintPublicKey, // mint
+          TOKEN_PROGRAM_ID,
+          ASSOCIATED_TOKEN_PROGRAM_ID
+        );
+        transaction.add(createAtaInstruction);
+      }
+
+      // Convert amount to smallest unit
+      const mintAmount = Math.floor(amount * Math.pow(10, decimals));
+      this.logger.log(`Mint amount (smallest unit): ${mintAmount}`);
+
+      if (mintAmount <= 0) {
+        throw new Error(`Mint amount too small: ${amount} with ${decimals} decimals results in ${mintAmount} smallest units`);
+      }
+
+      // Create mint instruction
+      const mintInstruction = createMintToInstruction(
+        mintPublicKey, // mint
+        recipientTokenAccount, // destination
+        mintAuthorityPublicKey, // authority
+        mintAmount, // amount
+        [], // multiSigners
+        TOKEN_PROGRAM_ID
+      );
+
+      transaction.add(mintInstruction);
+
+      // Serialize transaction
+      const serializedTransaction = Buffer.from(transaction.serialize({ requireAllSignatures: false })).toString('base64');
+
+      this.logger.log(`SPL token mint transaction created successfully`);
+
+      return serializedTransaction;
+    } catch (error) {
+      this.logger.error('Failed to create SPL token mint transaction:', error);
+      throw new Error(`Failed to create SPL mint: ${error.message}`);
+    }
+  }
+
+  /**
    * Creates a transaction based on type and parameters
    */
   async createTransaction(
@@ -269,9 +357,13 @@ export class TransactionBuilderService {
         );
 
       case 'SPL_MINT':
-        // For now, fall back to memo - minting requires more complex setup
-        this.logger.warn('SPL_MINT not implemented yet, using memo fallback');
-        return this.createMemoTransaction(account, `Mint request: ${JSON.stringify(parameters)}`);
+        return this.createSplMintTransaction(
+          account, // mint authority
+          parameters.mintAddress,
+          parameters.recipientAddress,
+          parameters.amount,
+          parameters.decimals || 9
+        );
 
       case 'CUSTOM_CALL':
         // For now, fall back to memo - custom calls require program-specific logic
