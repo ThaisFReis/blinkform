@@ -127,6 +127,7 @@ export interface QuestionNodeData extends Record<string, unknown> {
   questionType: QuestionType;
   inputType?: InputType; // For input type questions
   placeholder?: string;
+  parameterName?: string; // Parameter name for use in transaction nodes (e.g., 'recipientAddress', 'amount')
   options?: QuestionOption[];
   multiSelect?: boolean; // For choice type: true = checkboxes, false = radio buttons
   validation?: ValidationRules;

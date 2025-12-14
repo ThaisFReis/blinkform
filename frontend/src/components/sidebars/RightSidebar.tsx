@@ -2335,6 +2335,22 @@ export const RightSidebar = () => {
                                                 />
                                             </div>
                                         )}
+                                        <div>
+                                            <label className="block text-xs font-medium text-sidebar-foreground mb-1">
+                                                Parameter Name
+                                                <span className="text-muted-foreground ml-1">(for use in transactions)</span>
+                                            </label>
+                                            <input
+                                                type="text"
+                                                value={selectedNode.data.parameterName || ''}
+                                                onChange={(e) => selectedNodeId && updateNode(selectedNodeId, { parameterName: e.target.value })}
+                                                className="w-full px-3 py-3 lg:py-2 text-base lg:text-sm min-h-[44px] border border-input bg-background rounded-md text-foreground font-mono focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
+                                                placeholder="e.g., recipientAddress, amount"
+                                            />
+                                            <p className="text-xs text-muted-foreground mt-1">
+                                                Use in transaction nodes as: <code className="bg-muted px-1 py-0.5 rounded">{'{{' + (selectedNode.data.parameterName || 'parameterName') + '}}'}</code>
+                                            </p>
+                                        </div>
                                     </>
                                 )}
                                 {selectedNode.data.questionType === 'choice' && (
