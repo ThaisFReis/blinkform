@@ -34,7 +34,7 @@ export const Header = () => {
   const handleCopyLink = async () => {
     const formId = useFormBuilderStore.getState().formId;
     if (formId) {
-      const link = `https://blinkform-backend.vercel.app/${formId}`;
+      const link = `https://blinkform-backend.vercel.app/api/actions/${formId}`;
       await navigator.clipboard.writeText(link);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
@@ -156,7 +156,7 @@ export const Header = () => {
                 <div className="flex items-center space-x-2">
                   <input
                     type="text"
-                    value={`https://blinkform-backend.vercel.app/${useFormBuilderStore.getState().formId || ''}`}
+                    value={`https://blinkform-backend.vercel.app/api/actions/${useFormBuilderStore.getState().formId || ''}`}
                     readOnly
                     className="flex-1 px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white text-sm"
                   />

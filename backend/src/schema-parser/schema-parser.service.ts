@@ -78,7 +78,17 @@ export class SchemaParserService {
     };
 
     // Generate actions based on node type
-    if (currentNode.type === 'end') {
+    if (currentNode.type === 'start') {
+      // Handle start node - use its specific data
+      baseResponse.icon = currentNode.data.imageUrl || 'https://via.placeholder.com/600x400/4F46E5/FFFFFF?text=BlinkForm';
+      baseResponse.title = currentNode.data.title || formTitle;
+      baseResponse.description = currentNode.data.description || 'Complete this interactive form';
+      baseResponse.label = 'Start';
+      baseResponse.links.actions = [{
+        label: 'Start',
+        href: `${baseUrl}/api/actions/${formId}`
+      }];
+    } else if (currentNode.type === 'end') {
       baseResponse.title = formTitle;
       baseResponse.description = currentNode.data.message || 'Thank you for your response!';
       baseResponse.label = 'Complete';
