@@ -116,7 +116,7 @@ export const MobileTransactionNode: React.FC<MobileTransactionNodeProps> = ({
         </button>
 
         <button
-          onClick={() => {/* Handle cancel */}}
+          onClick={() => {}}
           className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-3 px-6 rounded-lg transition-colors"
         >
           Cancel

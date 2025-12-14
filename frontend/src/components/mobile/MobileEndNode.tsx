@@ -107,7 +107,7 @@ export const MobileEndNode: React.FC<MobileEndNodeProps> = ({
         )}
 
         <button
-          onClick={() => {/* Handle share */}}
+          onClick={() => {}}
           className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-3 px-6 rounded-lg transition-colors"
         >
           Share Form

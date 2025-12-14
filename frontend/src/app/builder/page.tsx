@@ -39,9 +39,6 @@ export default function BuilderPage() {
           <RightSidebar />
         </div>
       </div>
-
-      {/* Mobile Preview */}
-     {/*  <MobilePreview /> */}
     </div>
   );
 }
