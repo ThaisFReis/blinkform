@@ -41,7 +41,6 @@ export class ActionsService {
       if (typeof value === 'string' && value.startsWith('{{') && value.endsWith('}}')) {
         // Extract parameter name from {{parameterName}}
         const paramName = value.slice(2, -2).trim();
-        console.log(`[Parameter Resolution] Found placeholder: ${value} -> paramName: ${paramName}`);
 
         // Find the input node that has this parameter name
         const inputNode = schema.nodes?.find((node: any) =>
@@ -54,7 +53,6 @@ export class ActionsService {
 
           if (userValue !== undefined && userValue !== null) {
             resolved[key] = userValue;
-            console.log(`[Parameter Resolution] Resolved ${key}: ${value} -> ${userValue}`);
           } else {
             console.warn(`[Parameter Resolution] No answer found for ${paramName} (node: ${nodeId})`);
           }
@@ -64,7 +62,6 @@ export class ActionsService {
       }
     }
 
-    console.log('[Parameter Resolution] Final resolved parameters:', resolved);
     return resolved;
   }
 
@@ -74,8 +71,8 @@ export class ActionsService {
    * Priority: query params > body.data > body root
    *
    * @param paramName - Parameter name to extract (e.g., 'input', 'choice')
-   * @param query - Query parameters from request
-   * @param body - Request body
+   * @param query
+   * @param body
    * @returns Extracted value or undefined
    */
   private extractParameter(paramName: string, query: any, body: any): any {
@@ -149,10 +146,6 @@ export class ActionsService {
     // Use default account for testing if not provided
     const userAccount = account || 'test-account';
 
-    console.log('[Actions POST] FormId:', formId, 'Account:', userAccount);
-    console.log('[Actions POST] Body:', JSON.stringify(body));
-    console.log('[Actions POST] Query:', JSON.stringify(query));
-
     // Fetch form
     const form = await this.prisma.form.findUnique({
       where: { id: formId },
@@ -166,8 +159,6 @@ export class ActionsService {
     const sessionKey = `session:${formId}:${userAccount}`;
     const session = await this.redis.get(sessionKey);
     const sessionData = session ? JSON.parse(session) : { current_node_id: null, answers: {} };
-
-    console.log('[Actions POST] Session data:', JSON.stringify(sessionData));
 
     // Get current node
     const schema = form.schema as any;
@@ -195,14 +186,9 @@ export class ActionsService {
                     || this.extractParameter('confirm', query, body)
                     || body;  // Keep body as ultimate fallback for backward compatibility
 
-    console.log('[Actions POST] User input:', userInput);
-
     const result = this.schemaParser.processUserInput(schema, currentNodeId, userInput);
 
-    console.log('[Actions POST] Process result:', JSON.stringify(result));
-
     if (!result.isValid) {
-      console.log('[Actions POST] Input validation failed');
       // Return Solana Actions compliant error response
       const baseUrl = process.env.BASE_URL || 'https://blinkform-backend.vercel.app';
       return {
@@ -227,22 +213,14 @@ export class ActionsService {
     sessionData.answers = sessionData.answers || {};
     sessionData.answers[currentNodeId] = userInput;
 
-    console.log('[Actions POST] Updated answers:', JSON.stringify(sessionData.answers));
-
     // Determine if this is the final step (requires transaction)
     const nextNode = result.nextNodeId ? this.schemaParser.getCurrentNode(schema, result.nextNodeId) : null;
     const isFinalStep = currentNode.type === 'transaction' ||
                        currentNode.data?.requiresTransaction === true ||
                        (nextNode && nextNode.data?.requiresTransaction === true);
 
-    console.log('[Actions POST] Current node type:', currentNode.type);
-    console.log('[Actions POST] Current node data:', JSON.stringify(currentNode.data, null, 2));
-    console.log('[Actions POST] Next node:', nextNode ? nextNode.type : 'null');
-    console.log('[Actions POST] Is final step:', isFinalStep);
-
     if (isFinalStep) {
       // FINAL STEP: Create transaction and save submission
-      console.log('[Actions POST] Final step - creating transaction and saving submission');
 
       let transaction: string;
       let transactionCreated = false;
@@ -250,19 +228,13 @@ export class ActionsService {
       try {
         // Check if this is a transaction node
         if (currentNode.type === 'transaction') {
-          console.log('[Actions POST] Transaction node detected, creating real transaction');
           const transactionData = currentNode.data as any;
-          console.log('[Actions POST] Transaction data:', JSON.stringify(transactionData, null, 2));
-          console.log('[Actions POST] Transaction type:', transactionData.transactionType);
-          console.log('[Actions POST] Transaction parameters:', transactionData.parameters);
-          console.log('[Actions POST] Parameters type:', typeof transactionData.parameters);
 
           // Ensure parameters is an object
           let parameters = transactionData.parameters;
           if (typeof parameters === 'string') {
             try {
               parameters = JSON.parse(parameters);
-              console.log('[Actions POST] Parsed parameters:', parameters);
             } catch (e) {
               console.error('[Actions POST] Failed to parse parameters:', e);
               throw new Error('Invalid transaction parameters format');
@@ -270,10 +242,7 @@ export class ActionsService {
           }
 
           // Resolve parameter placeholders like {{parameterName}}
-          console.log('[Actions POST] Resolving parameters with answers:', sessionData.answers);
           parameters = this.resolveParameters(parameters, sessionData.answers || {}, form.schema);
-
-          console.log('[Actions POST] Final resolved parameters:', parameters);
 
           // Validate required parameters based on transaction type
           if (transactionData.transactionType === 'SYSTEM_TRANSFER') {
@@ -333,26 +302,14 @@ export class ActionsService {
             }
           }
 
-          console.log('[Actions POST] Creating transaction with:', {
-            transactionType: transactionData.transactionType,
-            userAccount,
-            parameters
-          });
-
           transaction = await this.transactionBuilder.createTransaction(
             transactionData.transactionType,
             userAccount,
             parameters
           );
           transactionCreated = true;
-          console.log('[Actions POST] Transaction created successfully');
         } else if (nextNode && nextNode.type === 'transaction') {
-          console.log('[Actions POST] Next node is transaction, creating real transaction');
           const transactionData = nextNode.data as any;
-          console.log('[Actions POST] Transaction data:', JSON.stringify(transactionData, null, 2));
-          console.log('[Actions POST] Transaction type:', transactionData.transactionType);
-          console.log('[Actions POST] Transaction parameters:', transactionData.parameters);
-          console.log('[Actions POST] Parameters type:', typeof transactionData.parameters);
 
           // Ensure parameters is an object
           let parameters = transactionData.parameters;
@@ -363,7 +320,6 @@ export class ActionsService {
             if (parameters.trim().startsWith('{') || parameters.trim().startsWith('[')) {
               try {
                 parameters = JSON.parse(parameters);
-                console.log('[Actions POST] Parsed JSON parameters:', parameters);
               } catch (e) {
                 console.error('[Actions POST] Failed to parse JSON parameters:', e);
                 console.error('[Actions POST] Raw parameters:', transactionData.parameters);
@@ -371,20 +327,14 @@ export class ActionsService {
               }
             } else {
               // Not JSON, treat as plain object
-              console.log('[Actions POST] Parameters is string but not JSON, using as-is');
             }
           } else if (parameters && typeof parameters === 'object') {
-            console.log('[Actions POST] Parameters already object:', parameters);
           } else {
-            console.log('[Actions POST] Parameters undefined or invalid, using empty object');
             parameters = {};
           }
 
           // Resolve parameter placeholders like {{parameterName}}
-          console.log('[Actions POST] Resolving parameters with answers:', sessionData.answers);
           parameters = this.resolveParameters(parameters, sessionData.answers || {}, form.schema);
-
-          console.log('[Actions POST] Final resolved parameters:', parameters);
 
           // Validate required parameters based on transaction type
           if (transactionData.transactionType === 'SYSTEM_TRANSFER') {
@@ -444,22 +394,14 @@ export class ActionsService {
             }
           }
 
-          console.log('[Actions POST] Creating transaction with:', {
-            transactionType: transactionData.transactionType,
-            userAccount,
-            parameters
-          });
-
           transaction = await this.transactionBuilder.createTransaction(
             transactionData.transactionType,
             userAccount,
             parameters
           );
           transactionCreated = true;
-          console.log('[Actions POST] Transaction created successfully');
         } else {
           // This shouldn't happen with new logic, but fallback
-          console.log('[Actions POST] Unexpected transaction creation');
           const memoData = `FormID:${formId}|Answers:${JSON.stringify(sessionData.answers)}|Timestamp:${Date.now()}`;
           transaction = await this.transactionBuilder.createMemoTransaction(
             userAccount,
@@ -501,7 +443,6 @@ export class ActionsService {
 
       // Only save submission and return transaction response if transaction was created successfully
       if (transactionCreated) {
-        console.log('[Actions POST] User account:', userAccount);
 
         // Save submission to database
         await this.prisma.submission.create({
@@ -514,8 +455,6 @@ export class ActionsService {
 
         // Clear session
         await this.redis.del(sessionKey);
-
-        console.log('[Actions POST] Returning TransactionResponse for final step');
 
         // Create detailed message based on transaction type
         let detailedMessage = 'Form submitted successfully!';
@@ -586,7 +525,6 @@ export class ActionsService {
 
     } else if (!nextNode) {
       // END OF FORM: No transaction, just save and complete
-      console.log('[Actions POST] End of form - saving submission without transaction');
 
       // Save submission to database
       await this.prisma.submission.create({
@@ -600,8 +538,6 @@ export class ActionsService {
       // Clear session
       await this.redis.del(sessionKey);
 
-      console.log('[Actions POST] Returning PostResponse for form completion');
-
       // Return PostResponse (no transaction, form completed)
       return {
         type: 'post',
@@ -610,7 +546,6 @@ export class ActionsService {
 
     } else {
       // INTERMEDIATE STEP: Return PostResponse (no transaction)
-      console.log('[Actions POST] Intermediate step - returning PostResponse');
 
       // Move to next node
       sessionData.current_node_id = result.nextNodeId;
@@ -624,8 +559,6 @@ export class ActionsService {
       }).toString();
 
       const nextHref = `${baseUrl}/api/actions/${formId}/next?${stateParams}`;
-
-      console.log('[Actions POST] Callback URL:', nextHref);
 
       // Return PostResponse (advances immediately, no transaction)
       return {
@@ -652,8 +585,6 @@ export class ActionsService {
   async getNextAction(formId: string, account: string): Promise<ActionGetResponse> {
     const userAccount = account || 'test-account';
 
-    console.log('[Actions GET NEXT] FormId:', formId, 'Account:', userAccount);
-
     // Retrieve session
     const sessionKey = `session:${formId}:${userAccount}`;
     const sessionStr = await this.redis.get(sessionKey);
@@ -665,8 +596,6 @@ export class ActionsService {
 
     const sessionData = JSON.parse(sessionStr);
     const currentNodeId = sessionData.current_node_id;
-
-    console.log('[Actions GET NEXT] Current node ID:', currentNodeId);
 
     if (!currentNodeId) {
       throw new Error('No current node in session. Please start the form again.');
@@ -687,12 +616,8 @@ export class ActionsService {
       throw new Error('Current node not found in schema');
     }
 
-    console.log('[Actions GET NEXT] Current node:', currentNode.id, 'Type:', currentNode.type);
-
     // Get next node for action generation
     const nextNode = this.schemaParser.getNextNode(schema, currentNodeId);
-
-    console.log('[Actions GET NEXT] Next node:', nextNode ? nextNode.id : 'none');
 
     // Generate and return ActionGetResponse for current node
     const actionResponse = this.schemaParser.generateActionResponse(
@@ -701,8 +626,6 @@ export class ActionsService {
       nextNode?.id,
       formId
     );
-
-    console.log('[Actions GET NEXT] Returning action response');
 
     return actionResponse;
   }

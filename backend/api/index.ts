@@ -3,7 +3,6 @@ import { ExpressAdapter } from '@nestjs/platform-express';
 import { AppModule } from '../src/app.module';
 import { INestApplication } from '@nestjs/common';
 
-// Cache the NestJS app instance
 let cachedApp: INestApplication;
 
 async function createApp() {
