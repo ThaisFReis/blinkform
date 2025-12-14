@@ -271,6 +271,44 @@ export class ActionsService {
           console.log('[Actions POST] Resolving parameters with answers:', sessionData.answers);
           parameters = this.resolveParameters(parameters, sessionData.answers || {}, form.schema);
 
+          console.log('[Actions POST] Final resolved parameters:', parameters);
+
+          // Validate required parameters based on transaction type
+          if (transactionData.transactionType === 'SYSTEM_TRANSFER') {
+            if (!parameters.recipientAddress) {
+              throw new Error('SYSTEM_TRANSFER requires recipientAddress parameter');
+            }
+            if (parameters.amount === undefined || parameters.amount === null) {
+              throw new Error('SYSTEM_TRANSFER requires amount parameter');
+            }
+          } else if (transactionData.transactionType === 'SPL_TRANSFER') {
+            if (!parameters.recipientAddress) {
+              throw new Error('SPL_TRANSFER requires recipientAddress parameter');
+            }
+            if (!parameters.mintAddress) {
+              throw new Error('SPL_TRANSFER requires mintAddress parameter');
+            }
+            if (parameters.amount === undefined || parameters.amount === null) {
+              throw new Error('SPL_TRANSFER requires amount parameter');
+            }
+          } else if (transactionData.transactionType === 'SPL_MINT') {
+            if (!parameters.mintAddress) {
+              throw new Error('SPL_MINT requires mintAddress parameter');
+            }
+            if (!parameters.recipientAddress) {
+              throw new Error('SPL_MINT requires recipientAddress parameter');
+            }
+            if (parameters.amount === undefined || parameters.amount === null) {
+              throw new Error('SPL_MINT requires amount parameter');
+            }
+          }
+
+          console.log('[Actions POST] Creating transaction with:', {
+            transactionType: transactionData.transactionType,
+            userAccount,
+            parameters
+          });
+
           transaction = await this.transactionBuilder.createTransaction(
             transactionData.transactionType,
             userAccount,
@@ -314,6 +352,38 @@ export class ActionsService {
           console.log('[Actions POST] Resolving parameters with answers:', sessionData.answers);
           parameters = this.resolveParameters(parameters, sessionData.answers || {}, form.schema);
 
+          console.log('[Actions POST] Final resolved parameters:', parameters);
+
+          // Validate required parameters based on transaction type
+          if (transactionData.transactionType === 'SYSTEM_TRANSFER') {
+            if (!parameters.recipientAddress) {
+              throw new Error('SYSTEM_TRANSFER requires recipientAddress parameter');
+            }
+            if (parameters.amount === undefined || parameters.amount === null) {
+              throw new Error('SYSTEM_TRANSFER requires amount parameter');
+            }
+          } else if (transactionData.transactionType === 'SPL_TRANSFER') {
+            if (!parameters.recipientAddress) {
+              throw new Error('SPL_TRANSFER requires recipientAddress parameter');
+            }
+            if (!parameters.mintAddress) {
+              throw new Error('SPL_TRANSFER requires mintAddress parameter');
+            }
+            if (parameters.amount === undefined || parameters.amount === null) {
+              throw new Error('SPL_TRANSFER requires amount parameter');
+            }
+          } else if (transactionData.transactionType === 'SPL_MINT') {
+            if (!parameters.mintAddress) {
+              throw new Error('SPL_MINT requires mintAddress parameter');
+            }
+            if (!parameters.recipientAddress) {
+              throw new Error('SPL_MINT requires recipientAddress parameter');
+            }
+            if (parameters.amount === undefined || parameters.amount === null) {
+              throw new Error('SPL_MINT requires amount parameter');
+            }
+          }
+
           console.log('[Actions POST] Creating transaction with:', {
             transactionType: transactionData.transactionType,
             userAccount,
@@ -346,7 +416,25 @@ export class ActionsService {
           sessionData: JSON.stringify(sessionData),
           formId
         });
-        throw error;
+
+        // Return Solana Actions compliant error response for transaction errors
+        const baseUrl = process.env.BASE_URL || 'https://blinkform-backend.vercel.app';
+        return {
+          type: 'error',
+          icon: 'https://via.placeholder.com/600x400/EF4444/FFFFFF?text=Error',
+          title: form.title,
+          description: `Transaction Error: ${error.message}`,
+          label: 'Try Again',
+          error: {
+            message: error.message
+          },
+          links: {
+            actions: [{
+              label: 'Try Again',
+              href: `${baseUrl}/api/actions/${formId}`
+            }]
+          }
+        };
       }
 
       console.log('[Actions POST] User account:', userAccount);
