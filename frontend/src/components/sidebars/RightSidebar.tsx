@@ -599,6 +599,16 @@ export const RightSidebar = () => {
                             />
                         </div>
                         <div>
+                            <label className="block text-xs font-medium text-sidebar-foreground mb-1">Recipient Address</label>
+                            <input
+                                type="text"
+                                value={parameters.recipientAddress || ''}
+                                onChange={(e) => handleTransactionParameterChange('recipientAddress', e.target.value)}
+                                className="w-full px-3 py-2 border border-input bg-background rounded-md text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent font-mono"
+                                placeholder="Recipient address or {{parameterName}}..."
+                            />
+                        </div>
+                        <div>
                             <label className="block text-xs font-medium text-sidebar-foreground mb-1">Amount</label>
                             <input
                                 type="number"
@@ -2269,6 +2279,7 @@ export const RightSidebar = () => {
                                         <div>
                                             <strong>Mint Token:</strong><br />
                                             Token: {selectedNode.data.parameters?.mintAddress || 'Not set'}<br />
+                                            To: {selectedNode.data.parameters?.recipientAddress || 'Not set'}<br />
                                             Amount: {selectedNode.data.parameters?.amount || 0}<br />
                                             Decimals: {selectedNode.data.parameters?.decimals || 0}
                                         </div>
