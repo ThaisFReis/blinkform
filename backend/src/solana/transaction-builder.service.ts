@@ -150,17 +150,44 @@ export class TransactionBuilderService {
   ): Promise<string> {
     try {
       this.logger.log(`Creating SPL token transfer: ${amount} tokens from ${fromAccount} to ${toAccount}`);
+      this.logger.log(`Mint: ${mintAddress}, Decimals: ${decimals}`);
 
       const fromPublicKey = new PublicKey(fromAccount);
       const toPublicKey = new PublicKey(toAccount);
       const mintPublicKey = new PublicKey(mintAddress);
 
+      // Validate mint address
+      const mintInfo = await this.connection.getAccountInfo(mintPublicKey);
+      if (!mintInfo) {
+        throw new Error(`Invalid mint address: ${mintAddress}`);
+      }
+      this.logger.log('Mint address is valid');
+
       // Get associated token accounts
       const fromTokenAccount = await getAssociatedTokenAddress(mintPublicKey, fromPublicKey);
       const toTokenAccount = await getAssociatedTokenAddress(mintPublicKey, toPublicKey);
 
+      this.logger.log(`From token account: ${fromTokenAccount.toBase58()}`);
+      this.logger.log(`To token account: ${toTokenAccount.toBase58()}`);
+
+      // Check if sender's token account exists and has balance
+      const fromTokenAccountInfo = await this.connection.getAccountInfo(fromTokenAccount);
+      if (!fromTokenAccountInfo) {
+        throw new Error(`Sender does not have token account for mint ${mintAddress}`);
+      }
+      this.logger.log('Sender token account exists');
+
+      // Check token balance (optional - just for logging)
+      try {
+        const tokenBalance = await this.connection.getTokenAccountBalance(fromTokenAccount);
+        this.logger.log(`Sender token balance: ${tokenBalance.value.uiAmount} tokens`);
+      } catch (balanceError) {
+        this.logger.warn('Could not get token balance:', balanceError.message);
+      }
+
       // Check if recipient's associated token account exists
       const toTokenAccountInfo = await this.connection.getAccountInfo(toTokenAccount);
+      this.logger.log(`Recipient token account exists: ${!!toTokenAccountInfo}`);
 
       // Get latest blockhash
       const { blockhash } = await this.connection.getLatestBlockhash();
@@ -186,6 +213,11 @@ export class TransactionBuilderService {
 
       // Convert amount to smallest unit
       const transferAmount = Math.floor(amount * Math.pow(10, decimals));
+      this.logger.log(`Transfer amount (smallest unit): ${transferAmount}`);
+
+      if (transferAmount <= 0) {
+        throw new Error(`Transfer amount too small: ${amount} with ${decimals} decimals results in ${transferAmount} smallest units`);
+      }
 
       // Create transfer instruction
       const transferInstruction = createTransferInstruction(

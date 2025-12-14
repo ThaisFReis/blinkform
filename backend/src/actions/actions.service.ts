@@ -243,10 +243,47 @@ export class ActionsService {
 
       console.log('[Actions POST] Returning TransactionResponse for final step');
 
+      // Create detailed message based on transaction type
+      let detailedMessage = 'Form completed! Please sign to submit on-chain.\n\n';
+
+      if (currentNode.type === 'transaction') {
+        const txData = currentNode.data;
+        const params = txData.parameters;
+
+        switch (txData.transactionType) {
+          case 'SYSTEM_TRANSFER':
+            detailedMessage += `📤 SOL Transfer Details:\n`;
+            detailedMessage += `• Amount: ${params.amount} SOL\n`;
+            detailedMessage += `• From: ${userAccount}\n`;
+            detailedMessage += `• To: ${params.recipientAddress}\n`;
+            detailedMessage += `• Network: Solana Devnet\n`;
+            detailedMessage += `• Timestamp: ${new Date().toISOString()}\n\n`;
+            detailedMessage += `After signing, check the transaction on Solana Explorer.`;
+            break;
+
+          case 'SPL_TRANSFER':
+            detailedMessage += `📤 Token Transfer Details:\n`;
+            detailedMessage += `• Amount: ${params.amount} tokens\n`;
+            detailedMessage += `• Token Mint: ${params.mintAddress}\n`;
+            detailedMessage += `• From: ${userAccount}\n`;
+            detailedMessage += `• To: ${params.recipientAddress}\n`;
+            detailedMessage += `• Decimals: ${params.decimals}\n`;
+            detailedMessage += `• Network: Solana Devnet\n`;
+            detailedMessage += `• Timestamp: ${new Date().toISOString()}\n\n`;
+            detailedMessage += `After signing, check the transaction on Solana Explorer.`;
+            break;
+
+          default:
+            detailedMessage += `Transaction ready for signing.`;
+        }
+      } else {
+        detailedMessage += `Transaction ready for signing.`;
+      }
+
       // Return TransactionResponse (requires blockchain signature)
       return {
         transaction: transaction,
-        message: 'Form completed! Please sign to submit on-chain.',
+        message: detailedMessage,
       } as TransactionResponse;
 
     } else if (!nextNode) {
