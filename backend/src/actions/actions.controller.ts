@@ -38,9 +38,29 @@ export class ActionsController {
     @Query('account') account: string,
     @Body() body: any,
   ) {
-    // Account can come from query params or body
-    const userAccount = account || body.account || body.data?.account;
-    return this.actionsService.getNextAction(formId, userAccount);
+    try {
+      // Account can come from query params or body
+      const userAccount = account || body.account || body.data?.account;
+      return this.actionsService.getNextAction(formId, userAccount);
+    } catch (error) {
+      console.error('[Actions Controller] GET NEXT error:', error);
+      return {
+        type: 'error',
+        icon: 'https://via.placeholder.com/600x400/EF4444/FFFFFF?text=Error',
+        title: 'Session Error',
+        description: 'Session expired or invalid. Please start the form again.',
+        label: 'Start Over',
+        error: {
+          message: error.message || 'Session error'
+        },
+        links: {
+          actions: [{
+            label: 'Start Over',
+            href: `https://blinkform-backend.vercel.app/api/actions/${formId}`
+          }]
+        }
+      };
+    }
   }
 
   @Post(':formId/:choice')
@@ -57,11 +77,31 @@ export class ActionsController {
     @Query() query: Record<string, any>,
     @Body() body: any,
   ) {
-    // Account comes from the body in Solana Actions
-    const account = body.account || body.data?.account;
-    // Merge choice into query for unified handling
-    const enrichedQuery = { ...query, choice };
-    return this.actionsService.postAction(formId, account, body, enrichedQuery);
+    try {
+      // Account comes from the body in Solana Actions
+      const account = body.account || body.data?.account;
+      // Merge choice into query for unified handling
+      const enrichedQuery = { ...query, choice };
+      return this.actionsService.postAction(formId, account, body, enrichedQuery);
+    } catch (error) {
+      console.error('[Actions Controller] POST CHOICE error:', error);
+      return {
+        type: 'error',
+        icon: 'https://via.placeholder.com/600x400/EF4444/FFFFFF?text=Error',
+        title: 'Action Error',
+        description: 'An error occurred while processing your choice.',
+        label: 'Try Again',
+        error: {
+          message: error.message || 'Internal server error'
+        },
+        links: {
+          actions: [{
+            label: 'Try Again',
+            href: `https://blinkform-backend.vercel.app/api/actions/${formId}`
+          }]
+        }
+      };
+    }
   }
 
   @Post(':formId')
@@ -77,9 +117,30 @@ export class ActionsController {
     @Query() query: Record<string, any>,
     @Body() body: any,
   ) {
-    // Account comes from the body in Solana Actions
-    const account = body.account || body.data?.account;
-    return this.actionsService.postAction(formId, account, body, query);
+    try {
+      // Account comes from the body in Solana Actions
+      const account = body.account || body.data?.account;
+      return this.actionsService.postAction(formId, account, body, query);
+    } catch (error) {
+      console.error('[Actions Controller] POST error:', error);
+      // Return Solana Actions compliant error response
+      return {
+        type: 'error',
+        icon: 'https://via.placeholder.com/600x400/EF4444/FFFFFF?text=Error',
+        title: 'Transaction Error',
+        description: 'An error occurred while processing the transaction.',
+        label: 'Try Again',
+        error: {
+          message: error.message || 'Internal server error'
+        },
+        links: {
+          actions: [{
+            label: 'Try Again',
+            href: `https://blinkform-backend.vercel.app/api/actions/${formId}`
+          }]
+        }
+      };
+    }
   }
 
   /**
