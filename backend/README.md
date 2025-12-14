@@ -1,43 +1,111 @@
+# BlinkForm Backend
+
 <p align="center">
   <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
 </p>
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
-
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
+<p align="center">
+  Backend API for <a href="https://github.com/your-repo/blinkform">BlinkForm</a>, a no-code visual builder for creating Solana Blinks (Actions) with an intuitive drag-and-drop interface.
 </p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+
+![NestJS](https://img.shields.io/badge/NestJS-E0234E?logo=nestjs&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?logo=typescript&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-336791?logo=postgresql&logoColor=white)
+![Solana](https://img.shields.io/badge/Solana-9945FF?logo=solana&logoColor=white)
 
 ## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+This is the backend API server for BlinkForm, built with [NestJS](https://nestjs.com/) framework. It provides RESTful endpoints for form management, Solana Actions integration, and transaction processing.
 
-## Project setup
+## Features
+
+- **Form Management**: Create, update, and manage forms with persistent storage
+- **Solana Actions**: Integration with Solana Actions and Blinks protocol
+- **Transaction Support**: Handle Solana transactions with signature validation
+- **Schema Parsing**: Process and validate form schemas
+- **Database Integration**: PostgreSQL with Prisma ORM
+- **Caching**: Redis support for performance optimization
+
+## Tech Stack
+
+- **Framework**: [NestJS](https://nestjs.com/) - Progressive Node.js framework
+- **Language**: TypeScript
+- **Database**: PostgreSQL with [Prisma](https://www.prisma.io/) ORM
+- **Cache**: Redis (optional)
+- **Blockchain**: [Solana Web3.js](https://solana-labs.github.io/solana-web3.js/)
+
+## Project Structure
+
+```
+backend/
+├── src/
+│   ├── actions/         # Solana Actions endpoints
+│   ├── forms/           # Form CRUD operations
+│   ├── prisma/          # Database configuration
+│   ├── redis/           # Cache service
+│   ├── root/            # Health check & actions.json
+│   ├── schema-parser/   # Form schema processing
+│   └── solana/          # Solana transaction builder
+├── prisma/
+│   └── schema.prisma    # Database schema
+└── package.json
+```
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js 18+
+- PostgreSQL database
+- Redis (optional, for caching)
+- Solana CLI (for development)
+
+### Installation
 
 ```bash
 $ npm install
 ```
 
-## Compile and run the project
+### Environment Configuration
+
+Create a `.env` file based on `.env.example`:
+
+```env
+# Database
+DATABASE_URL="postgresql://username:password@localhost:5432/blinkform"
+
+# Supabase (optional)
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_ANON_KEY=your-supabase-anon-key
+
+# Redis (optional)
+REDIS_HOST=localhost
+REDIS_PORT=6379
+
+# Solana
+SOLANA_RPC_URL=https://api.mainnet-beta.solana.com
+
+# Server
+PORT=3001
+```
+
+### Database Setup
+
+1. **Install Prisma CLI** (if not already installed)
+   ```bash
+   npm install -g prisma
+   ```
+
+2. **Run database migrations**
+   ```bash
+   npx prisma migrate deploy
+   npx prisma generate
+   ```
+
+### Compile and run the project
 
 ```bash
 # development
-$ npm run start
-
-# watch mode
 $ npm run start:dev
 
 # production mode
@@ -59,93 +127,104 @@ $ npm run test:cov
 
 ## Deployment
 
-### Railway Deployment
+This application is configured for deployment on [Vercel](https://vercel.com).
 
-This application is configured for deployment on [Railway](https://railway.app).
+### Prerequisites
+- Vercel account
+- PostgreSQL database (Vercel Postgres or external)
+- Redis (Vercel Redis or external, optional)
 
-#### Prerequisites
-- Railway account
-- Supabase project (for database)
+### Environment Variables
+Set the following environment variables in your Vercel project:
 
-#### Environment Variables
-Copy `.env.example` to `.env` and configure the following variables in your Railway project:
-
-- `DATABASE_URL`: Your Supabase PostgreSQL connection string
-- `SUPABASE_URL`: Your Supabase project URL
-- `SUPABASE_ANON_KEY`: Your Supabase anon key
-- `REDIS_HOST`: Redis host (if using Railway Redis)
-- `REDIS_PORT`: Redis port (if using Railway Redis)
+- `DATABASE_URL`: Your PostgreSQL connection string
+- `SUPABASE_URL`: Your Supabase project URL (optional)
+- `SUPABASE_ANON_KEY`: Your Supabase anon key (optional)
+- `REDIS_HOST`: Redis host (if using Redis)
+- `REDIS_PORT`: Redis port (if using Redis)
 - `SOLANA_RPC_URL`: Solana RPC endpoint
 - `PORT`: Port for the application (usually 3000)
 
-#### Deployment Steps
+### Deployment Steps
 
-1. **Connect to Railway**:
+1. **Connect to Vercel**:
    ```bash
-   # Install Railway CLI
-   npm install -g @railway/cli
+   # Install Vercel CLI
+   npm install -g vercel
 
-   # Login to Railway
-   railway login
+   # Login to Vercel
+   vercel login
    ```
 
 2. **Deploy**:
    ```bash
    # Link your project
-   railway link
+   vercel link
 
    # Deploy
-   railway up
+   vercel --prod
    ```
 
 3. **Database Setup**:
-   Railway will automatically run the `railway:setup` script which:
-   - Generates Prisma client
-   - Pushes database schema to Supabase
+   Vercel will automatically run the build scripts which include:
+   - Generating Prisma client
+   - Running database migrations
 
-#### Manual Deployment
-If you prefer manual deployment through the Railway dashboard:
+### Production URLs
 
-1. Connect your GitHub repository to Railway
-2. Set environment variables in Railway dashboard
-3. Railway will automatically build and deploy using the `railway.json` configuration
+- **Production API**: https://blinkform-backend.vercel.app
+- **Actions Manifest**: https://blinkform-backend.vercel.app/actions.json
 
-### Other Deployment Options
+For more deployment options, check out the [NestJS deployment documentation](https://docs.nestjs.com/deployment).
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+## API Reference
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+### Base URL
+```
+http://localhost:3001/api
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+### Forms Endpoints
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/forms` | Create a new form |
+| `GET` | `/forms/:id` | Get form by ID |
+| `PUT` | `/forms/:id` | Update form |
+| `GET` | `/forms?creator=address` | Get forms by creator |
+
+### Actions Endpoints (Solana)
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/actions/:formId` | Get Solana Action metadata |
+| `POST` | `/actions/:formId` | Submit form via Solana Action |
+
+### System Endpoints
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/health` | Health check |
+| `GET` | `/actions.json` | Solana Actions manifest |
+
+For complete API documentation, see the main [README.md](../README.md).
 
 ## Resources
 
-Check out a few resources that may come in handy when working with NestJS:
+- [BlinkForm Main Documentation](../README.md) - Full project overview and setup
+- [NestJS Documentation](https://docs.nestjs.com) - Learn about the NestJS framework
+- [Prisma Documentation](https://www.prisma.io/docs) - Database ORM documentation
+- [Solana Documentation](https://docs.solana.com/) - Solana blockchain documentation
+- [Dialect Blinks](https://github.com/dialectlabs/blinks) - Blinks protocol implementation
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+## Troubleshooting
 
-## Support
+### Common Issues
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+- **Database Connection Failed**: Ensure PostgreSQL is running and `DATABASE_URL` is correct.
+- **Redis Connection Error**: Check Redis host/port or disable Redis if not needed.
+- **Solana RPC Errors**: Verify `SOLANA_RPC_URL` is accessible.
+- **Build Failures**: Run `npm install` and ensure all dependencies are installed.
 
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+For more help, check the [Testing Guide](../TESTING_GUIDE.md) or create an issue.
 
 ## License
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+This project is licensed under the MIT License - see the [LICENSE](../LICENSE) file for details.
