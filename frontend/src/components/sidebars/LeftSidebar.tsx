@@ -53,24 +53,6 @@ export const LeftSidebar = () => {
             Core Components
           </h3>
           <div className="space-y-2">
-            {/* Start Node */}
-            <div
-              draggable
-              onDragStart={(event) => onDragStart(event, "start")}
-              onClick={() => handleAddNode("start")}
-              className="flex items-center space-x-3 p-3 rounded-xl bg-[#13131A] border border-white/5 hover:border-indigo-500/50 hover:bg-[#1A1A24] cursor-grab active:cursor-grabbing transition-all group"
-            >
-              <div className="w-8 h-8 rounded-lg bg-indigo-400/10 flex items-center justify-center">
-                <Play className="w-4 h-4 text-indigo-400" />
-              </div>
-              <div>
-                <div className="text-sm font-medium text-gray-200 group-hover:text-white">
-                  Start Info
-                </div>
-                <div className="text-[10px] text-gray-500">Form Introduction</div>
-              </div>
-            </div>
-
             {/* Input Node */}
             <div
               draggable
@@ -257,6 +239,24 @@ export const LeftSidebar = () => {
             Terminal Nodes
           </h3>
           <div className="space-y-2">
+            {/* Start Node */}
+            <div
+              draggable
+              onDragStart={(event) => onDragStart(event, "start")}
+              onClick={() => handleAddNode("start")}
+              className="flex items-center space-x-3 p-3 rounded-xl bg-[#13131A] border border-white/5 hover:border-indigo-500/50 hover:bg-[#1A1A24] cursor-grab active:cursor-grabbing transition-all group"
+            >
+              <div className="w-8 h-8 rounded-lg bg-indigo-400/10 flex items-center justify-center">
+                <Play className="w-4 h-4 text-indigo-400" />
+              </div>
+              <div>
+                <div className="text-sm font-medium text-gray-200 group-hover:text-white">
+                  Start Form
+                </div>
+                <div className="text-[10px] text-gray-500">Form Introduction</div>
+              </div>
+            </div>
+
             {/* End Form Node */}
             <div
               draggable

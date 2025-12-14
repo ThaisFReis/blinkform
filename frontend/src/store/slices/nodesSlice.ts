@@ -118,15 +118,16 @@ const createDefaultNodeData = (type: NodeType, questionType?: string): NodeData 
 
     case 'start':
       return {
-        title: 'What is a Blink?',
-        description: 'A Blink is an interactive link that enables seamless blockchain transactions directly from social media, websites, or messaging apps.',
-        context: 'In BlinkForm, you build interactive forms that generate Solana Actions (Blinks) - allowing users to interact with blockchain applications without leaving their current platform.',
-        definition: 'Blinks are powered by Solana Actions, a standard for defining and rendering blockchain interactions in a cross-platform way.',
+        title: 'Welcome to this Interactive Form',
+        description: 'This is a Blink - an interactive blockchain experience that lets you complete transactions and interact with decentralized applications directly from this page.',
+        imageUrl: '', // Optional image URL for the form
+        context: 'Fill out this form to participate in blockchain activities. Your responses will be used to generate secure, on-chain transactions.',
+        definition: 'Blinks make blockchain interactions simple and accessible, eliminating the need for complex wallet setups or technical knowledge.',
         examples: [
-          'Mint an NFT directly from a tweet',
-          'Vote in a DAO proposal from Discord',
-          'Purchase tokens from a website link',
-          'Stake SOL from a mobile app'
+          'Submit a form to mint an NFT',
+          'Vote in a community proposal',
+          'Purchase tokens or digital assets',
+          'Participate in decentralized applications'
         ],
       } as StartNodeData;
 

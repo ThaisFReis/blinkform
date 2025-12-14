@@ -25,7 +25,7 @@ import { EndNode } from '@/components/nodes/EndNode';
 import { StartNode } from '@/components/nodes/StartNode';
 import { ContextMenu } from '@/components/ui/ContextMenu';
 import { MenuItemType } from '@/types/ui';
-import { Trash2, Grid3x3 } from 'lucide-react';
+import { Trash2, Grid3x3, HelpCircle, X } from 'lucide-react';
 
 const GraphBuilder = () => {
   // Selective subscriptions for performance
@@ -39,6 +39,7 @@ const GraphBuilder = () => {
   const moveNode = useFormBuilderStore((state) => state.moveNode);
   const autoSaveToLocalStorage = useFormBuilderStore((state) => state.autoSaveToLocalStorage);
 
+
   // Edge context menu state
   const [edgeContextMenu, setEdgeContextMenu] = useState<{
     isOpen: boolean;
@@ -49,6 +50,9 @@ const GraphBuilder = () => {
     position: { x: 0, y: 0 },
     edgeId: null,
   });
+
+  // Help panel state
+  const [isHelpOpen, setIsHelpOpen] = useState(false);
 
   // Auto-save effect
   useEffect(() => {
@@ -348,9 +352,17 @@ const GraphBuilder = () => {
           className="!bottom-24 lg:!bottom-4 !left-4 !bg-[#13131A] !border-white/10 !rounded-lg"
         />
 
-        {/* Custom Tidy Up Button - Hidden on mobile, shown on larger screens */}
-        {nodes.length > 0 && (
-          <div className="absolute top-4 right-4 z-10 hidden md:block">
+        {/* Custom buttons - Hidden on mobile, shown on larger screens */}
+        <div className="absolute top-4 right-4 z-10 hidden md:flex gap-2">
+          <button
+            onClick={() => setIsHelpOpen(true)}
+            className="flex items-center gap-2 px-3 py-2 bg-[#13131A] border border-white/10 rounded-lg shadow-sm hover:bg-white/10 transition-colors text-gray-200"
+            title="Help"
+          >
+            <HelpCircle className="w-4 h-4" />
+            <span className="text-sm">Help</span>
+          </button>
+          {nodes.length > 0 && (
             <button
               onClick={tidyUpNodes}
               className="flex items-center gap-2 px-3 py-2 bg-[#13131A] border border-white/10 rounded-lg shadow-sm hover:bg-white/10 transition-colors text-gray-200"
@@ -359,12 +371,19 @@ const GraphBuilder = () => {
               <Grid3x3 className="w-4 h-4" />
               <span className="text-sm">Tidy Up</span>
             </button>
-          </div>
-        )}
+          )}
+        </div>
 
         {/* Mobile-specific controls */}
         <div className="absolute top-4 right-4 z-10 md:hidden">
           <div className="flex gap-2">
+            <button
+              onClick={() => setIsHelpOpen(true)}
+              className="p-2 bg-[#13131A] border border-white/10 rounded-lg shadow-sm hover:bg-white/10 transition-colors text-gray-200"
+              title="Help"
+            >
+              <HelpCircle className="w-5 h-5" />
+            </button>
             {nodes.length > 0 && (
               <button
                 onClick={tidyUpNodes}
@@ -377,6 +396,66 @@ const GraphBuilder = () => {
           </div>
         </div>
       </ReactFlow>
+
+      {/* Help Panel */}
+      {isHelpOpen && (
+        <div className="absolute inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
+          <div className="bg-[#13131A] border border-white/10 rounded-xl shadow-xl max-w-2xl w-full max-h-[80vh] overflow-y-auto">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-xl font-bold text-white">Welcome to BlinkForm Builder</h2>
+                <button
+                  onClick={() => setIsHelpOpen(false)}
+                  className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+                >
+                  <X className="w-5 h-5 text-gray-400" />
+                </button>
+              </div>
+
+              <div className="space-y-4 text-gray-300">
+                <div>
+                  <h3 className="text-lg font-semibold text-white mb-2">What is a Blink?</h3>
+                  <p className="leading-relaxed">
+                    A Blink is an interactive blockchain experience that lets you complete transactions and interact with decentralized applications directly from this page.
+                  </p>
+                </div>
+
+                <div>
+                  <h3 className="text-lg font-semibold text-white mb-2">How to Build Your Form</h3>
+                  <p className="leading-relaxed mb-2">
+                    Use the components from the left sidebar to build your interactive form. Start with a <strong>Start Form</strong> node to define your blink's purpose, then add input fields, logic, and transaction nodes.
+                  </p>
+                  <ul className="list-disc list-inside space-y-1 ml-4">
+                    <li><strong>Start Form:</strong> Define your blink's title, description, and purpose</li>
+                    <li><strong>Input Fields:</strong> Collect user information (text, numbers, dates, choices)</li>
+                    <li><strong>Logic:</strong> Add conditions, validation, and calculations</li>
+                    <li><strong>Transactions:</strong> Enable blockchain interactions (transfers, NFT minting, etc.)</li>
+                    <li><strong>End Form:</strong> Complete the workflow with success actions</li>
+                  </ul>
+                </div>
+
+                <div>
+                  <h3 className="text-lg font-semibold text-white mb-2">What You Can Build</h3>
+                  <ul className="list-disc list-inside space-y-1 ml-4">
+                    <li>Submit forms to mint NFTs</li>
+                    <li>Vote in community proposals</li>
+                    <li>Purchase tokens or digital assets</li>
+                    <li>Participate in decentralized applications</li>
+                    <li>Create interactive blockchain experiences</li>
+                  </ul>
+                </div>
+
+                <div>
+                  <h3 className="text-lg font-semibold text-white mb-2">Getting Started</h3>
+                  <p className="leading-relaxed">
+                    Drag components from the sidebar onto the canvas. Connect them by dragging from the output handle (right side) to the input handle (left side) of another node. Click on any node to edit its properties in the right sidebar.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Edge Context Menu */}
       <ContextMenu

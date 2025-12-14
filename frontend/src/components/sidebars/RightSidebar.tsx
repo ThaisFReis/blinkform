@@ -1,8 +1,8 @@
 'use client';
 
 import { useFormBuilderStore } from '@/store/formBuilderStore';
-import { X, Type, Hash, Calendar, Circle, CheckCircle, CreditCard, Image, Code, GitBranch, Shield, Calculator, Save } from 'lucide-react';
-import { isQuestionNode, isTransactionNode, isLogicNode, isValidationNode, isCalculationNode, isEndNode, TransactionType, ConditionOperator, BRANCH_COLORS, ConditionalBranch, Condition, ValidationRule, CalculationOperation, CalculationOperator, SuccessAction, SuccessActionType } from '@/types/nodes';
+import { X, Type, Hash, Calendar, Circle, CheckCircle, CreditCard, Image, Code, GitBranch, Shield, Calculator, Save, Info } from 'lucide-react';
+import { isQuestionNode, isTransactionNode, isLogicNode, isValidationNode, isCalculationNode, isEndNode, isStartNode, TransactionType, ConditionOperator, BRANCH_COLORS, ConditionalBranch, Condition, ValidationRule, CalculationOperation, CalculationOperator, SuccessAction, SuccessActionType } from '@/types/nodes';
 
 // Type guard for NFT minting nodes
 const isMintNFTNode = (node: any): boolean => {
@@ -161,6 +161,12 @@ export const RightSidebar = () => {
       icon: <CheckCircle className="w-4 h-4 text-primary" />,
       title: 'End Form Node',
       type: 'Form Completion'
+    } : null;
+
+    const startNodeInfo = selectedNode && isStartNode(selectedNode) ? {
+      icon: <Info className="w-4 h-4 text-primary" />,
+      title: 'Start Form Node',
+      type: 'Form Introduction'
     } : null;
 
     // Helper to get all question nodes for conditional logic
@@ -2244,6 +2250,144 @@ export const RightSidebar = () => {
                                             Decimals: {selectedNode.data.parameters?.decimals || 0}
                                         </div>
                                     )}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                ) : selectedNode && isStartNode(selectedNode) ? (
+                    /* Start Form Node Configuration */
+                    <div className="space-y-6">
+                        {/* Node Type Header */}
+                        <div className="flex items-center gap-2 pb-2 border-b border-white/5">
+                            <div className="w-8 h-8 bg-indigo-400/10 rounded-lg flex items-center justify-center">
+                                {startNodeInfo?.icon}
+                            </div>
+                            <div>
+                                <h4 className="text-sm font-medium text-white">{startNodeInfo?.title}</h4>
+                                <p className="text-xs text-gray-400">{startNodeInfo?.type}</p>
+                            </div>
+                        </div>
+
+                        {/* Form Introduction Settings */}
+                        <div>
+                            <h4 className="text-sm font-medium text-white mb-3">Introduction Content</h4>
+                            <div className="space-y-4">
+                                {/* Title */}
+                                <div>
+                                    <label className="block text-xs font-medium text-gray-400 mb-1">Form Title</label>
+                                    <input
+                                        type="text"
+                                        value={selectedNode.data.title || ''}
+                                        onChange={(e) => selectedNodeId && updateNode(selectedNodeId, { title: e.target.value })}
+                                        className="w-full bg-[#13131A] border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-[#460DF2] transition-colors"
+                                        placeholder="e.g., Make a Donation"
+                                    />
+                                </div>
+
+                                {/* Description */}
+                                <div>
+                                    <label className="block text-xs font-medium text-gray-400 mb-1">Description</label>
+                                    <textarea
+                                        value={selectedNode.data.description || ''}
+                                        onChange={(e) => selectedNodeId && updateNode(selectedNodeId, { description: e.target.value })}
+                                        className="w-full bg-[#13131A] border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-[#460DF2] transition-colors"
+                                        rows={3}
+                                        placeholder="Brief description of your form..."
+                                    />
+                                </div>
+
+                                {/* Image URL */}
+                                <div>
+                                    <label className="block text-xs font-medium text-gray-400 mb-1">Image URL (Optional)</label>
+                                    <input
+                                        type="text"
+                                        value={selectedNode.data.imageUrl || ''}
+                                        onChange={(e) => selectedNodeId && updateNode(selectedNodeId, { imageUrl: e.target.value })}
+                                        className="w-full bg-[#13131A] border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-[#460DF2] transition-colors"
+                                        placeholder="https://example.com/image.png"
+                                    />
+                                    {selectedNode.data.imageUrl && (
+                                        <div className="mt-2">
+                                            <img
+                                                src={selectedNode.data.imageUrl}
+                                                alt="Preview"
+                                                className="w-full h-20 object-cover rounded border border-white/10"
+                                                onError={(e) => {
+                                                    e.currentTarget.style.display = 'none';
+                                                }}
+                                            />
+                                        </div>
+                                    )}
+                                </div>
+
+                                {/* Context */}
+                                <div>
+                                    <label className="block text-xs font-medium text-gray-400 mb-1">What users will do</label>
+                                    <textarea
+                                        value={selectedNode.data.context || ''}
+                                        onChange={(e) => selectedNodeId && updateNode(selectedNodeId, { context: e.target.value })}
+                                        className="w-full bg-[#13131A] border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-[#460DF2] transition-colors"
+                                        rows={2}
+                                        placeholder="Describe what participants will do..."
+                                    />
+                                </div>
+
+                                {/* Definition */}
+                                <div>
+                                    <label className="block text-xs font-medium text-gray-400 mb-1">About Blinks</label>
+                                    <textarea
+                                        value={selectedNode.data.definition || ''}
+                                        onChange={(e) => selectedNodeId && updateNode(selectedNodeId, { definition: e.target.value })}
+                                        className="w-full bg-[#13131A] border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-[#460DF2] transition-colors"
+                                        rows={2}
+                                        placeholder="Explain what Blinks are..."
+                                    />
+                                </div>
+
+                                {/* Examples */}
+                                <div>
+                                    <label className="block text-xs font-medium text-gray-400 mb-1">Examples</label>
+                                    <div className="space-y-2">
+                                        {selectedNode.data.examples?.map((example, index) => (
+                                            <div key={index} className="flex gap-2">
+                                                <input
+                                                    type="text"
+                                                    value={example}
+                                                    onChange={(e) => {
+                                                        if (selectedNodeId) {
+                                                            const newExamples = [...(selectedNode.data.examples || [])];
+                                                            newExamples[index] = e.target.value;
+                                                            updateNode(selectedNodeId, { examples: newExamples });
+                                                        }
+                                                    }}
+                                                    className="flex-1 bg-[#13131A] border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-[#460DF2] transition-colors"
+                                                    placeholder={`Example ${index + 1}`}
+                                                />
+                                                <button
+                                                    onClick={() => {
+                                                        if (selectedNodeId) {
+                                                            const newExamples = selectedNode.data.examples?.filter((_, i) => i !== index) || [];
+                                                            updateNode(selectedNodeId, { examples: newExamples });
+                                                        }
+                                                    }}
+                                                    className="px-3 py-2 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 rounded-lg text-red-400 text-xs transition-colors"
+                                                >
+                                                    Remove
+                                                </button>
+                                            </div>
+                                        ))}
+                                        <button
+                                            onClick={() => {
+                                                if (selectedNodeId) {
+                                                    const newExamples = [...(selectedNode.data.examples || []), ''];
+                                                    updateNode(selectedNodeId, { examples: newExamples });
+                                                }
+                                            }}
+                                            className="w-full px-3 py-2 bg-[#460DF2]/10 hover:bg-[#460DF2]/20 border border-[#460DF2]/20 rounded-lg text-[#460DF2] text-xs transition-colors"
+                                        >
+                                            + Add Example
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
