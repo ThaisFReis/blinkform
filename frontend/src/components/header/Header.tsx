@@ -66,17 +66,17 @@ export const Header = () => {
         </div>
 
         {/* Breadcrumbs */}
-        <div className="hidden sm:flex items-center space-x-2">
+{/*         <div className="hidden sm:flex items-center space-x-2">
           <span className="text-gray-600 text-lg font-light">/</span>
           <span className="text-gray-400 hover:text-white cursor-pointer transition-colors">My Projects</span>
           <span className="text-gray-600 text-lg font-light">/</span>
           <span className="text-white font-medium">Superteam Quiz Mint</span>
-        </div>
+        </div> */}
       </div>
 
       <div className="flex items-center space-x-4">
         {/* Active users - Hidden on small screens */}
-        <div className="hidden md:flex items-center -space-x-2">
+{/*         <div className="hidden md:flex items-center -space-x-2">
           {activeUsers.map((user) => (
             <div
               key={user.id}
@@ -86,10 +86,10 @@ export const Header = () => {
               <User className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
             </div>
           ))}
-        </div>
+        </div> */}
 
         {/* Button Group with Theme Toggle and Mobile Preview */}
-        <div className="hidden sm:flex items-center space-x-1 bg-white/5 rounded-lg p-1 border border-white/5">
+{/*         <div className="hidden sm:flex items-center space-x-1 bg-white/5 rounded-lg p-1 border border-white/5">
           <ThemeToggle />
           <button
             className="p-2 hover:bg-white/10 rounded-md transition-colors"
@@ -98,17 +98,17 @@ export const Header = () => {
           >
             <Smartphone className="w-4 h-4 text-gray-400" />
           </button>
-        </div>
+        </div> */}
 
         {/* Share button */}
-        <button
+{/*         <button
           className="hidden sm:flex items-center space-x-2 bg-white/5 hover:bg-white/10 text-white px-4 py-2 rounded-lg border border-white/5 transition-colors"
           aria-label="Share"
           title="Share"
         >
           <Share2 className="w-4 h-4" />
           <span>Share</span>
-        </button>
+        </button> */}
 
         {/* Right Sidebar Toggle */}
         <button

@@ -247,7 +247,7 @@ export const LeftSidebar = () => {
               </div>
 
               {/* Call Contract Node */}
-              <div
+{/*               <div
                 draggable
                 onDragStart={(event) => onDragStart(event, "transaction", "contract")}
                 onClick={() => handleAddNode("transaction", "contract")}
@@ -262,7 +262,7 @@ export const LeftSidebar = () => {
                   </div>
                   <div className="text-[10px] text-gray-500">Solana Action</div>
                 </div>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>
@@ -292,7 +292,7 @@ export const LeftSidebar = () => {
             </div>
 
             {/* Validation Node */}
-            <div
+{/*             <div
               draggable
               onDragStart={(event) => onDragStart(event, "logic", "validation")}
               onClick={() => handleAddNode("logic", "validation")}
@@ -307,10 +307,10 @@ export const LeftSidebar = () => {
                 </div>
                 <div className="text-[10px] text-gray-500">Flow Control</div>
               </div>
-            </div>
+            </div> */}
 
             {/* Calculation Node */}
-            <div
+{/*             <div
               draggable
               onDragStart={(event) => onDragStart(event, "logic", "calculation")}
               onClick={() => handleAddNode("logic", "calculation")}
@@ -325,7 +325,7 @@ export const LeftSidebar = () => {
                 </div>
                 <div className="text-[10px] text-gray-500">Flow Control</div>
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
 

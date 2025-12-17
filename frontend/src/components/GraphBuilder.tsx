@@ -22,7 +22,7 @@ import { MintTokenNode } from '@/components/nodes/MintTokenNode';
 import { CreateNftCollectionNode } from '@/components/nodes/CreateNftCollectionNode';
 import { BatchAirdropNode } from '@/components/nodes/BatchAirdropNode';
 import { ConditionalNode } from '@/components/nodes/ConditionalNode';
-import { ValidationNode } from '@/components/nodes/ValidationNode';
+/* import { ValidationNode } from '@/components/nodes/ValidationNode'; */
 import { CalculationNode } from '@/components/nodes/CalculationNode';
 import { EndNode } from '@/components/nodes/EndNode';
 import { StartNode } from '@/components/nodes/StartNode';
@@ -308,9 +308,9 @@ const GraphBuilder = () => {
   // Generic LogicNode that renders the appropriate specific node
   const LogicNodeRenderer = (props: any) => {
     const { data } = props;
-    if (data.logicType === 'validation') {
+/*     if (data.logicType === 'validation') {
       return <ValidationNode {...props} />;
-    }
+    } */
     if (data.logicType === 'calculation') {
       return <CalculationNode {...props} />;
     }
