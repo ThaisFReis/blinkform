@@ -46,6 +46,67 @@ const createDefaultNodeData = (type: NodeType, questionType?: string): NodeData 
       }
 
     case 'transaction':
+      if (questionType === 'create-token') {
+        return {
+          transactionType: 'CREATE_TOKEN',
+          program: 'SPL Token Program',
+          parameters: {
+            name: 'My Token',
+            symbol: 'TKN',
+            decimals: 9,
+            initialSupply: 1000000,
+            recipientAddress: '',
+            uri: '',
+          },
+        } as TransactionNodeData;
+      }
+      if (questionType === 'mint-tokens') {
+        return {
+          transactionType: 'MINT_TOKENS',
+          program: 'SPL Token Program',
+          parameters: {
+            mintAddress: '',
+            recipientAddress: '',
+            amount: 1000,
+            decimals: 9,
+          },
+        } as TransactionNodeData;
+      }
+      if (questionType === 'create-nft-collection') {
+        return {
+          transactionType: 'CREATE_NFT_COLLECTION',
+          program: 'Metaplex Token Metadata',
+          parameters: {
+            name: 'My NFT Collection',
+            symbol: 'COL',
+            uri: '',
+            sellerFeeBasisPoints: 500, // 5%
+          },
+        } as TransactionNodeData;
+      }
+      if (questionType === 'mint-nft') {
+        return {
+          transactionType: 'MINT_NFT',
+          program: 'Metaplex Token Metadata',
+          parameters: {
+            collectionAddress: '',
+            name: 'My NFT',
+            uri: '',
+            recipientAddress: '',
+          },
+        } as TransactionNodeData;
+      }
+      if (questionType === 'batch-airdrop') {
+        return {
+          transactionType: 'BATCH_AIRDROP',
+          program: 'SPL Token Program',
+          parameters: {
+            mintAddress: '',
+            recipients: [],
+            decimals: 9,
+          },
+        } as TransactionNodeData;
+      }
       if (questionType === 'nft') {
         return {
           transactionType: 'SPL_MINT',

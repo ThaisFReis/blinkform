@@ -274,15 +274,15 @@ export class ActionsService {
             } catch (e) {
               throw new Error(`Invalid mint address: ${parameters.mintAddress}`);
             }
-          } else if (transactionData.transactionType === 'SPL_MINT') {
+          } else if (transactionData.transactionType === 'SPL_MINT' || transactionData.transactionType === 'MINT_TOKENS') {
             if (!parameters.mintAddress) {
-              throw new Error('SPL_MINT requires mintAddress parameter');
+              throw new Error(`${transactionData.transactionType} requires mintAddress parameter`);
             }
             if (!parameters.recipientAddress) {
-              throw new Error('SPL_MINT requires recipientAddress parameter');
+              throw new Error(`${transactionData.transactionType} requires recipientAddress parameter`);
             }
             if (parameters.amount === undefined || parameters.amount === null) {
-              throw new Error('SPL_MINT requires amount parameter');
+              throw new Error(`${transactionData.transactionType} requires amount parameter`);
             }
             // Validate addresses
             try {
@@ -294,6 +294,83 @@ export class ActionsService {
               new PublicKey(parameters.mintAddress);
             } catch (e) {
               throw new Error(`Invalid mint address: ${parameters.mintAddress}`);
+            }
+          } else if (transactionData.transactionType === 'CREATE_TOKEN') {
+            if (!parameters.name) {
+              throw new Error('CREATE_TOKEN requires name parameter');
+            }
+            if (!parameters.symbol) {
+              throw new Error('CREATE_TOKEN requires symbol parameter');
+            }
+            if (!parameters.initialSupply) {
+              throw new Error('CREATE_TOKEN requires initialSupply parameter');
+            }
+            if (!parameters.recipientAddress) {
+              throw new Error('CREATE_TOKEN requires recipientAddress parameter');
+            }
+            // Validate recipient address
+            try {
+              new PublicKey(parameters.recipientAddress);
+            } catch (e) {
+              throw new Error(`Invalid recipient address: ${parameters.recipientAddress}`);
+            }
+          } else if (transactionData.transactionType === 'CREATE_NFT_COLLECTION') {
+            if (!parameters.name) {
+              throw new Error('CREATE_NFT_COLLECTION requires name parameter');
+            }
+            if (!parameters.symbol) {
+              throw new Error('CREATE_NFT_COLLECTION requires symbol parameter');
+            }
+            if (!parameters.uri) {
+              throw new Error('CREATE_NFT_COLLECTION requires uri parameter');
+            }
+          } else if (transactionData.transactionType === 'MINT_NFT') {
+            if (!parameters.collectionAddress) {
+              throw new Error('MINT_NFT requires collectionAddress parameter');
+            }
+            if (!parameters.name) {
+              throw new Error('MINT_NFT requires name parameter');
+            }
+            if (!parameters.uri) {
+              throw new Error('MINT_NFT requires uri parameter');
+            }
+            if (!parameters.recipientAddress) {
+              throw new Error('MINT_NFT requires recipientAddress parameter');
+            }
+            // Validate addresses
+            try {
+              new PublicKey(parameters.collectionAddress);
+            } catch (e) {
+              throw new Error(`Invalid collection address: ${parameters.collectionAddress}`);
+            }
+            try {
+              new PublicKey(parameters.recipientAddress);
+            } catch (e) {
+              throw new Error(`Invalid recipient address: ${parameters.recipientAddress}`);
+            }
+          } else if (transactionData.transactionType === 'BATCH_AIRDROP') {
+            if (!parameters.mintAddress) {
+              throw new Error('BATCH_AIRDROP requires mintAddress parameter');
+            }
+            if (!parameters.recipients || !Array.isArray(parameters.recipients)) {
+              throw new Error('BATCH_AIRDROP requires recipients array parameter');
+            }
+            // Validate mint address
+            try {
+              new PublicKey(parameters.mintAddress);
+            } catch (e) {
+              throw new Error(`Invalid mint address: ${parameters.mintAddress}`);
+            }
+            // Validate each recipient
+            for (const recipient of parameters.recipients) {
+              if (!recipient.address || !recipient.amount) {
+                throw new Error('BATCH_AIRDROP recipients must have address and amount');
+              }
+              try {
+                new PublicKey(recipient.address);
+              } catch (e) {
+                throw new Error(`Invalid recipient address: ${recipient.address}`);
+              }
             }
           }
 
@@ -366,15 +443,15 @@ export class ActionsService {
             } catch (e) {
               throw new Error(`Invalid mint address: ${parameters.mintAddress}`);
             }
-          } else if (transactionData.transactionType === 'SPL_MINT') {
+          } else if (transactionData.transactionType === 'SPL_MINT' || transactionData.transactionType === 'MINT_TOKENS') {
             if (!parameters.mintAddress) {
-              throw new Error('SPL_MINT requires mintAddress parameter');
+              throw new Error(`${transactionData.transactionType} requires mintAddress parameter`);
             }
             if (!parameters.recipientAddress) {
-              throw new Error('SPL_MINT requires recipientAddress parameter');
+              throw new Error(`${transactionData.transactionType} requires recipientAddress parameter`);
             }
             if (parameters.amount === undefined || parameters.amount === null) {
-              throw new Error('SPL_MINT requires amount parameter');
+              throw new Error(`${transactionData.transactionType} requires amount parameter`);
             }
             // Validate addresses
             try {
@@ -386,6 +463,83 @@ export class ActionsService {
               new PublicKey(parameters.mintAddress);
             } catch (e) {
               throw new Error(`Invalid mint address: ${parameters.mintAddress}`);
+            }
+          } else if (transactionData.transactionType === 'CREATE_TOKEN') {
+            if (!parameters.name) {
+              throw new Error('CREATE_TOKEN requires name parameter');
+            }
+            if (!parameters.symbol) {
+              throw new Error('CREATE_TOKEN requires symbol parameter');
+            }
+            if (!parameters.initialSupply) {
+              throw new Error('CREATE_TOKEN requires initialSupply parameter');
+            }
+            if (!parameters.recipientAddress) {
+              throw new Error('CREATE_TOKEN requires recipientAddress parameter');
+            }
+            // Validate recipient address
+            try {
+              new PublicKey(parameters.recipientAddress);
+            } catch (e) {
+              throw new Error(`Invalid recipient address: ${parameters.recipientAddress}`);
+            }
+          } else if (transactionData.transactionType === 'CREATE_NFT_COLLECTION') {
+            if (!parameters.name) {
+              throw new Error('CREATE_NFT_COLLECTION requires name parameter');
+            }
+            if (!parameters.symbol) {
+              throw new Error('CREATE_NFT_COLLECTION requires symbol parameter');
+            }
+            if (!parameters.uri) {
+              throw new Error('CREATE_NFT_COLLECTION requires uri parameter');
+            }
+          } else if (transactionData.transactionType === 'MINT_NFT') {
+            if (!parameters.collectionAddress) {
+              throw new Error('MINT_NFT requires collectionAddress parameter');
+            }
+            if (!parameters.name) {
+              throw new Error('MINT_NFT requires name parameter');
+            }
+            if (!parameters.uri) {
+              throw new Error('MINT_NFT requires uri parameter');
+            }
+            if (!parameters.recipientAddress) {
+              throw new Error('MINT_NFT requires recipientAddress parameter');
+            }
+            // Validate addresses
+            try {
+              new PublicKey(parameters.collectionAddress);
+            } catch (e) {
+              throw new Error(`Invalid collection address: ${parameters.collectionAddress}`);
+            }
+            try {
+              new PublicKey(parameters.recipientAddress);
+            } catch (e) {
+              throw new Error(`Invalid recipient address: ${parameters.recipientAddress}`);
+            }
+          } else if (transactionData.transactionType === 'BATCH_AIRDROP') {
+            if (!parameters.mintAddress) {
+              throw new Error('BATCH_AIRDROP requires mintAddress parameter');
+            }
+            if (!parameters.recipients || !Array.isArray(parameters.recipients)) {
+              throw new Error('BATCH_AIRDROP requires recipients array parameter');
+            }
+            // Validate mint address
+            try {
+              new PublicKey(parameters.mintAddress);
+            } catch (e) {
+              throw new Error(`Invalid mint address: ${parameters.mintAddress}`);
+            }
+            // Validate each recipient
+            for (const recipient of parameters.recipients) {
+              if (!recipient.address || !recipient.amount) {
+                throw new Error('BATCH_AIRDROP recipients must have address and amount');
+              }
+              try {
+                new PublicKey(recipient.address);
+              } catch (e) {
+                throw new Error(`Invalid recipient address: ${recipient.address}`);
+              }
             }
           }
 

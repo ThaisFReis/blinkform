@@ -9,7 +9,7 @@ import { isQuestionNode, isTransactionNode, isLogicNode, isValidationNode, isCal
 const isMintNFTNode = (node: any): boolean => {
   return isTransactionNode(node) &&
          node.data.transactionType === 'SPL_MINT' &&
-         (node.data.parameters?.name || node.data.parameters?.symbol || node.data.parameters?.uri);
+         Boolean(node.data.parameters?.name || node.data.parameters?.symbol || node.data.parameters?.uri);
 };
 
 // Type guard for contract call nodes
@@ -725,6 +725,307 @@ export const RightSidebar = () => {
                                 className="w-full bg-[#13131A] border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-[#460DF2] transition-colors"
                                 placeholder="Amount in SOL..."
                             />
+                        </div>
+                    </>
+                );
+            case 'CREATE_TOKEN':
+                return (
+                    <>
+                        <div>
+                            <label className="block text-xs font-medium text-sidebar-foreground mb-1">Token Name</label>
+                            <input
+                                type="text"
+                                value={parameters.name || ''}
+                                onChange={(e) => handleTransactionParameterChange('name', e.target.value)}
+                                className="w-full bg-[#13131A] border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-[#460DF2] transition-colors"
+                                placeholder="My Token"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-xs font-medium text-sidebar-foreground mb-1">Token Symbol</label>
+                            <input
+                                type="text"
+                                value={parameters.symbol || ''}
+                                onChange={(e) => handleTransactionParameterChange('symbol', e.target.value)}
+                                className="w-full bg-[#13131A] border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-[#460DF2] transition-colors"
+                                placeholder="TKN"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-xs font-medium text-sidebar-foreground mb-1">Decimals</label>
+                            <input
+                                type="number"
+                                min="0"
+                                max="9"
+                                value={parameters.decimals || 9}
+                                onChange={(e) => handleTransactionParameterChange('decimals', e.target.value ? parseInt(e.target.value) : 9)}
+                                className="w-full bg-[#13131A] border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-[#460DF2] transition-colors"
+                                placeholder="9"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-xs font-medium text-sidebar-foreground mb-1">Initial Supply</label>
+                            <input
+                                type="number"
+                                min="0"
+                                step="0.000001"
+                                value={parameters.initialSupply || ''}
+                                onChange={(e) => handleTransactionParameterChange('initialSupply', e.target.value ? parseFloat(e.target.value) : undefined)}
+                                className="w-full bg-[#13131A] border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-[#460DF2] transition-colors"
+                                placeholder="1000000"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-xs font-medium text-sidebar-foreground mb-1">Recipient Address</label>
+                            <input
+                                type="text"
+                                value={parameters.recipientAddress || ''}
+                                onChange={(e) => handleTransactionParameterChange('recipientAddress', e.target.value)}
+                                className="w-full bg-[#13131A] border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-[#460DF2] transition-colors font-mono"
+                                placeholder="Recipient address or {{parameterName}}..."
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-xs font-medium text-sidebar-foreground mb-1">Metadata URI (Optional)</label>
+                            <input
+                                type="url"
+                                value={parameters.uri || ''}
+                                onChange={(e) => handleTransactionParameterChange('uri', e.target.value)}
+                                className="w-full bg-[#13131A] border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-[#460DF2] transition-colors font-mono"
+                                placeholder="https://..."
+                            />
+                        </div>
+                    </>
+                );
+            case 'MINT_TOKENS':
+                return (
+                    <>
+                        <div>
+                            <label className="block text-xs font-medium text-sidebar-foreground mb-1">Mint Address</label>
+                            <input
+                                type="text"
+                                value={parameters.mintAddress || ''}
+                                onChange={(e) => handleTransactionParameterChange('mintAddress', e.target.value)}
+                                className="w-full bg-[#13131A] border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-[#460DF2] transition-colors font-mono"
+                                placeholder="Token mint address..."
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-xs font-medium text-sidebar-foreground mb-1">Recipient Address</label>
+                            <input
+                                type="text"
+                                value={parameters.recipientAddress || ''}
+                                onChange={(e) => handleTransactionParameterChange('recipientAddress', e.target.value)}
+                                className="w-full bg-[#13131A] border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-[#460DF2] transition-colors font-mono"
+                                placeholder="Recipient address or {{parameterName}}..."
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-xs font-medium text-sidebar-foreground mb-1">Amount</label>
+                            <input
+                                type="number"
+                                min="0"
+                                step="0.000001"
+                                value={parameters.amount || ''}
+                                onChange={(e) => handleTransactionParameterChange('amount', e.target.value ? parseFloat(e.target.value) : undefined)}
+                                className="w-full bg-[#13131A] border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-[#460DF2] transition-colors"
+                                placeholder="Amount to mint..."
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-xs font-medium text-sidebar-foreground mb-1">Decimals</label>
+                            <input
+                                type="number"
+                                min="0"
+                                max="9"
+                                value={parameters.decimals || 9}
+                                onChange={(e) => handleTransactionParameterChange('decimals', e.target.value ? parseInt(e.target.value) : 9)}
+                                className="w-full bg-[#13131A] border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-[#460DF2] transition-colors"
+                                placeholder="Token decimals..."
+                            />
+                        </div>
+                    </>
+                );
+            case 'CREATE_NFT_COLLECTION':
+                return (
+                    <>
+                        <div>
+                            <label className="block text-xs font-medium text-sidebar-foreground mb-1">Collection Name</label>
+                            <input
+                                type="text"
+                                value={parameters.name || ''}
+                                onChange={(e) => handleTransactionParameterChange('name', e.target.value)}
+                                className="w-full bg-[#13131A] border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-[#460DF2] transition-colors"
+                                placeholder="My NFT Collection"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-xs font-medium text-sidebar-foreground mb-1">Collection Symbol</label>
+                            <input
+                                type="text"
+                                value={parameters.symbol || ''}
+                                onChange={(e) => handleTransactionParameterChange('symbol', e.target.value)}
+                                className="w-full bg-[#13131A] border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-[#460DF2] transition-colors"
+                                placeholder="COL"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-xs font-medium text-sidebar-foreground mb-1">Metadata URI</label>
+                            <input
+                                type="url"
+                                value={parameters.uri || ''}
+                                onChange={(e) => handleTransactionParameterChange('uri', e.target.value)}
+                                className="w-full bg-[#13131A] border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-[#460DF2] transition-colors font-mono"
+                                placeholder="https://arweave.net/..."
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-xs font-medium text-sidebar-foreground mb-1">Royalty Percentage (0-20%)</label>
+                            <input
+                                type="number"
+                                min="0"
+                                max="20"
+                                step="0.1"
+                                value={parameters.sellerFeeBasisPoints ? (parameters.sellerFeeBasisPoints / 100) : 5}
+                                onChange={(e) => handleTransactionParameterChange('sellerFeeBasisPoints', e.target.value ? Math.round(parseFloat(e.target.value) * 100) : 500)}
+                                className="w-full bg-[#13131A] border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-[#460DF2] transition-colors"
+                                placeholder="5"
+                            />
+                        </div>
+                    </>
+                );
+            case 'MINT_NFT':
+                return (
+                    <>
+                        <div>
+                            <label className="block text-xs font-medium text-sidebar-foreground mb-1">Collection Address</label>
+                            <input
+                                type="text"
+                                value={parameters.collectionAddress || ''}
+                                onChange={(e) => handleTransactionParameterChange('collectionAddress', e.target.value)}
+                                className="w-full bg-[#13131A] border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-[#460DF2] transition-colors font-mono"
+                                placeholder="Collection mint address..."
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-xs font-medium text-sidebar-foreground mb-1">NFT Name</label>
+                            <input
+                                type="text"
+                                value={parameters.name || ''}
+                                onChange={(e) => handleTransactionParameterChange('name', e.target.value)}
+                                className="w-full bg-[#13131A] border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-[#460DF2] transition-colors"
+                                placeholder="My Awesome NFT"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-xs font-medium text-sidebar-foreground mb-1">Metadata URI</label>
+                            <input
+                                type="url"
+                                value={parameters.uri || ''}
+                                onChange={(e) => handleTransactionParameterChange('uri', e.target.value)}
+                                className="w-full bg-[#13131A] border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-[#460DF2] transition-colors font-mono"
+                                placeholder="https://arweave.net/..."
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-xs font-medium text-sidebar-foreground mb-1">Recipient Address</label>
+                            <input
+                                type="text"
+                                value={parameters.recipientAddress || ''}
+                                onChange={(e) => handleTransactionParameterChange('recipientAddress', e.target.value)}
+                                className="w-full bg-[#13131A] border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-[#460DF2] transition-colors font-mono"
+                                placeholder="Recipient address or {{parameterName}}..."
+                            />
+                        </div>
+                    </>
+                );
+            case 'BATCH_AIRDROP':
+                return (
+                    <>
+                        <div>
+                            <label className="block text-xs font-medium text-sidebar-foreground mb-1">Mint Address</label>
+                            <input
+                                type="text"
+                                value={parameters.mintAddress || ''}
+                                onChange={(e) => handleTransactionParameterChange('mintAddress', e.target.value)}
+                                className="w-full bg-[#13131A] border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-[#460DF2] transition-colors font-mono"
+                                placeholder="Token mint address..."
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-xs font-medium text-sidebar-foreground mb-1">Recipients</label>
+                            <div className="space-y-2 max-h-32 overflow-y-auto">
+                                {(parameters.recipients || []).map((recipient: any, index: number) => (
+                                    <div key={index} className="flex gap-2">
+                                        <input
+                                            type="text"
+                                            value={recipient.address || ''}
+                                            onChange={(e) => {
+                                                const newRecipients = [...(parameters.recipients || [])];
+                                                newRecipients[index] = { ...newRecipients[index], address: e.target.value };
+                                                handleTransactionParameterChange('recipients', newRecipients);
+                                            }}
+                                            className="flex-1 bg-[#13131A] border border-white/10 rounded px-2 py-1 text-xs text-white focus:outline-none focus:border-[#460DF2] font-mono"
+                                            placeholder="Address..."
+                                        />
+                                        <input
+                                            type="number"
+                                            min="0"
+                                            step="0.000001"
+                                            value={recipient.amount || ''}
+                                            onChange={(e) => {
+                                                const newRecipients = [...(parameters.recipients || [])];
+                                                newRecipients[index] = { ...newRecipients[index], amount: parseFloat(e.target.value) || 0 };
+                                                handleTransactionParameterChange('recipients', newRecipients);
+                                            }}
+                                            className="w-20 bg-[#13131A] border border-white/10 rounded px-2 py-1 text-xs text-white focus:outline-none focus:border-[#460DF2]"
+                                            placeholder="Amount..."
+                                        />
+                                        <button
+                                            onClick={() => {
+                                                const newRecipients = (parameters.recipients || []).filter((_: any, i: number) => i !== index);
+                                                handleTransactionParameterChange('recipients', newRecipients);
+                                            }}
+                                            className="text-red-400 hover:text-red-300 px-1"
+                                        >
+                                            ×
+                                        </button>
+                                    </div>
+                                ))}
+                                <button
+                                    onClick={() => {
+                                        const newRecipients = [...(parameters.recipients || []), { address: '', amount: 0 }];
+                                        handleTransactionParameterChange('recipients', newRecipients);
+                                    }}
+                                    className="w-full px-2 py-1.5 border border-dashed border-white/10 bg-white/5 hover:bg-white/10 rounded text-xs text-gray-400 hover:text-white transition-all hover:border-[#460DF2]/30"
+                                >
+                                    + Add Recipient
+                                </button>
+                            </div>
+                        </div>
+                        <div>
+                            <label className="block text-xs font-medium text-sidebar-foreground mb-1">Decimals</label>
+                            <input
+                                type="number"
+                                min="0"
+                                max="9"
+                                value={parameters.decimals || 9}
+                                onChange={(e) => handleTransactionParameterChange('decimals', e.target.value ? parseInt(e.target.value) : 9)}
+                                className="w-full bg-[#13131A] border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-[#460DF2] transition-colors"
+                                placeholder="Token decimals..."
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-xs font-medium text-sidebar-foreground mb-1">Total Recipients</label>
+                            <div className="w-full bg-[#13131A] border border-white/10 rounded-lg px-3 py-2 text-sm text-gray-400">
+                                {(parameters.recipients || []).length} recipients
+                            </div>
+                        </div>
+                        <div>
+                            <label className="block text-xs font-medium text-sidebar-foreground mb-1">Total Amount</label>
+                            <div className="w-full bg-[#13131A] border border-white/10 rounded-lg px-3 py-2 text-sm text-gray-400">
+                                {(parameters.recipients || []).reduce((sum: number, r: any) => sum + (r.amount || 0), 0).toLocaleString()} tokens
+                            </div>
                         </div>
                     </>
                 );
@@ -2261,6 +2562,11 @@ export const RightSidebar = () => {
                                         <option value="SYSTEM_TRANSFER">Transfer SOL</option>
                                         <option value="SPL_TRANSFER">Transfer Token</option>
                                         <option value="SPL_MINT">Mint Token</option>
+                                        <option value="CREATE_TOKEN">Create Token</option>
+                                        <option value="MINT_TOKENS">Mint Tokens</option>
+                                        <option value="CREATE_NFT_COLLECTION">Create NFT Collection</option>
+                                        <option value="MINT_NFT">Mint NFT</option>
+                                        <option value="BATCH_AIRDROP">Batch Airdrop</option>
                                     </select>
                                 </div>
 
@@ -2295,6 +2601,49 @@ export const RightSidebar = () => {
                                             To: {selectedNode.data.parameters?.recipientAddress || 'Not set'}<br />
                                             Amount: {selectedNode.data.parameters?.amount || 0}<br />
                                             Decimals: {selectedNode.data.parameters?.decimals || 0}
+                                        </div>
+                                    )}
+                                    {selectedNode.data.transactionType === 'CREATE_TOKEN' && (
+                                        <div>
+                                            <strong>Create Token:</strong><br />
+                                            Name: {selectedNode.data.parameters?.name || 'Not set'}<br />
+                                            Symbol: {selectedNode.data.parameters?.symbol || 'Not set'}<br />
+                                            Supply: {selectedNode.data.parameters?.initialSupply || 0}<br />
+                                            Decimals: {selectedNode.data.parameters?.decimals || 9}<br />
+                                            To: {selectedNode.data.parameters?.recipientAddress || 'Not set'}
+                                        </div>
+                                    )}
+                                    {selectedNode.data.transactionType === 'MINT_TOKENS' && (
+                                        <div>
+                                            <strong>Mint Tokens:</strong><br />
+                                            Token: {selectedNode.data.parameters?.mintAddress || 'Not set'}<br />
+                                            To: {selectedNode.data.parameters?.recipientAddress || 'Not set'}<br />
+                                            Amount: {selectedNode.data.parameters?.amount || 0}<br />
+                                            Decimals: {selectedNode.data.parameters?.decimals || 9}
+                                        </div>
+                                    )}
+                                    {selectedNode.data.transactionType === 'CREATE_NFT_COLLECTION' && (
+                                        <div>
+                                            <strong>Create NFT Collection:</strong><br />
+                                            Name: {selectedNode.data.parameters?.name || 'Not set'}<br />
+                                            Symbol: {selectedNode.data.parameters?.symbol || 'Not set'}<br />
+                                            Royalties: {selectedNode.data.parameters?.sellerFeeBasisPoints ? (selectedNode.data.parameters.sellerFeeBasisPoints / 100) + '%' : '5%'}
+                                        </div>
+                                    )}
+                                    {selectedNode.data.transactionType === 'MINT_NFT' && (
+                                        <div>
+                                            <strong>Mint NFT:</strong><br />
+                                            Collection: {selectedNode.data.parameters?.collectionAddress ? selectedNode.data.parameters.collectionAddress.slice(0, 16) + '...' : 'Not set'}<br />
+                                            Name: {selectedNode.data.parameters?.name || 'Not set'}<br />
+                                            To: {selectedNode.data.parameters?.recipientAddress ? selectedNode.data.parameters.recipientAddress.slice(0, 16) + '...' : 'Not set'}
+                                        </div>
+                                    )}
+                                    {selectedNode.data.transactionType === 'BATCH_AIRDROP' && (
+                                        <div>
+                                            <strong>Batch Airdrop:</strong><br />
+                                            Token: {selectedNode.data.parameters?.mintAddress ? selectedNode.data.parameters.mintAddress.slice(0, 16) + '...' : 'Not set'}<br />
+                                            Recipients: {(selectedNode.data.parameters?.recipients || []).length}<br />
+                                            Total: {(selectedNode.data.parameters?.recipients || []).reduce((sum: number, r: any) => sum + (r.amount || 0), 0).toLocaleString()} tokens
                                         </div>
                                     )}
                                 </div>

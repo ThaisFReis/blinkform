@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, Inject } from '@nestjs/common';
 import {
   Connection,
   PublicKey,
@@ -17,16 +17,62 @@ import {
   TOKEN_PROGRAM_ID,
   ASSOCIATED_TOKEN_PROGRAM_ID,
 } from '@solana/spl-token';
+import { MetaplexService } from './metaplex.service';
 
 @Injectable()
 export class TransactionBuilderService {
   private readonly logger = new Logger(TransactionBuilderService.name);
   private connection: Connection;
 
-  constructor() {
+  constructor(
+    @Inject(MetaplexService) private metaplexService: MetaplexService,
+  ) {
     const rpcUrl = process.env.SOLANA_RPC_URL || 'https://api.devnet.solana.com';
     this.connection = new Connection(rpcUrl, 'confirmed');
     this.logger.log(`Connected to Solana: ${rpcUrl}`);
+  }
+
+  /**
+   * Validates a Solana address format
+   */
+  private validateSolanaAddress(address: string): boolean {
+    try {
+      new PublicKey(address);
+      return address.length === 44; // Base58 encoded public keys are 44 characters
+    } catch {
+      return false;
+    }
+  }
+
+  /**
+   * Validates amount with decimals
+   */
+  private validateAmount(amount: number, decimals: number = 9): boolean {
+    if (amount <= 0 || !isFinite(amount)) return false;
+
+    const smallestUnit = amount * Math.pow(10, decimals);
+    const maxAmount = Math.pow(2, 64) - 1; // u64 max
+
+    return smallestUnit > 0 && smallestUnit <= maxAmount && Number.isInteger(smallestUnit);
+  }
+
+  /**
+   * Validates token decimals
+   */
+  private validateDecimals(decimals: number): boolean {
+    return Number.isInteger(decimals) && decimals >= 0 && decimals <= 9;
+  }
+
+  /**
+   * Validates URI format (basic check)
+   */
+  private validateUri(uri: string): boolean {
+    try {
+      new URL(uri);
+      return uri.startsWith('http://') || uri.startsWith('https://');
+    } catch {
+      return false;
+    }
   }
 
   /**
@@ -332,6 +378,114 @@ export class TransactionBuilderService {
   }
 
   /**
+   * Creates a token creation transaction with Metaplex metadata
+   */
+  async createTokenCreationTransaction(params: any): Promise<string> {
+    return this.metaplexService.createTokenWithMetadata(params);
+  }
+
+  /**
+   * Creates an NFT collection creation transaction
+   */
+  async createNftCollectionTransaction(params: any): Promise<string> {
+    return this.metaplexService.createNftCollection(params);
+  }
+
+  /**
+   * Creates an NFT mint transaction from collection
+   */
+  async createNftMintTransaction(params: any): Promise<string> {
+    return this.metaplexService.mintNftFromCollection(params);
+  }
+
+  /**
+   * Creates a batch airdrop transaction
+   */
+  async createBatchAirdropTransaction(params: any): Promise<string> {
+    try {
+      this.logger.log(`Creating batch airdrop transaction for mint: ${params.mintAddress}`);
+
+      const mintPublicKey = new PublicKey(params.mintAddress);
+      const recipients = params.recipients || [];
+      const decimals = params.decimals || 9;
+      const payerAddress = params.payerAddress || params.authorityAddress; // Use authority as payer if not specified
+
+      // Validate inputs
+      if (!payerAddress) {
+        throw new Error('Batch airdrop requires payerAddress or authorityAddress parameter');
+      }
+
+      const payerPublicKey = new PublicKey(payerAddress);
+      const authorityPublicKey = new PublicKey(params.authorityAddress);
+
+      // Get latest blockhash
+      const { blockhash } = await this.connection.getLatestBlockhash();
+
+      const transaction = new Transaction({
+        feePayer: payerPublicKey,
+        recentBlockhash: blockhash,
+      });
+
+      // Add instructions for each recipient
+      for (const recipient of recipients) {
+        const recipientPublicKey = new PublicKey(recipient.address);
+        const recipientTokenAccount = await getAssociatedTokenAddress(mintPublicKey, recipientPublicKey);
+
+        // Check if token account exists
+        const tokenAccountInfo = await this.connection.getAccountInfo(recipientTokenAccount);
+
+        // Create ATA if it doesn't exist
+        if (!tokenAccountInfo) {
+          this.logger.log(`Creating ATA for recipient: ${recipient.address}`);
+          const createAtaInstruction = createAssociatedTokenAccountInstruction(
+            payerPublicKey, // payer
+            recipientTokenAccount, // associated token account
+            recipientPublicKey, // owner
+            mintPublicKey, // mint
+            TOKEN_PROGRAM_ID,
+            ASSOCIATED_TOKEN_PROGRAM_ID
+          );
+          transaction.add(createAtaInstruction);
+        }
+
+        // Convert amount to smallest unit
+        const amount = Math.floor(recipient.amount * Math.pow(10, decimals));
+
+        if (amount <= 0) {
+          throw new Error(`Invalid amount for recipient ${recipient.address}: ${recipient.amount}`);
+        }
+
+        // Create mint instruction
+        const mintInstruction = createMintToInstruction(
+          mintPublicKey,
+          recipientTokenAccount,
+          authorityPublicKey, // mint authority
+          amount,
+          [], // multiSigners
+          TOKEN_PROGRAM_ID
+        );
+
+        transaction.add(mintInstruction);
+      }
+
+      // Check transaction size limit (Solana limit is ~1232 bytes for legacy transactions)
+      const serializedSize = transaction.serialize({ requireAllSignatures: false }).length;
+      if (serializedSize > 1000) { // Conservative limit
+        throw new Error(`Transaction too large: ${serializedSize} bytes. Reduce number of recipients.`);
+      }
+
+      // Serialize transaction
+      const serializedTransaction = Buffer.from(transaction.serialize({ requireAllSignatures: false })).toString('base64');
+
+      this.logger.log(`Batch airdrop transaction created for ${recipients.length} recipients (${serializedSize} bytes)`);
+      return serializedTransaction;
+    } catch (error) {
+      this.logger.error('Failed to create batch airdrop transaction:', error);
+      throw new Error(`Failed to create batch airdrop: ${error.message}`);
+    }
+  }
+
+  /**
    * Creates a transaction based on type and parameters
    */
   async createTransaction(
@@ -367,16 +521,23 @@ export class TransactionBuilderService {
         );
 
       case 'SPL_MINT':
-        this.logger.log('SPL_MINT requested with parameters:', parameters);
-        if (!parameters.mintAddress) {
-          throw new Error('SPL_MINT requires mintAddress parameter');
+      case 'MINT_TOKENS':
+        this.logger.log(`${transactionType} requested with parameters:`, parameters);
+
+        // Validate required parameters
+        if (!this.validateSolanaAddress(parameters.mintAddress)) {
+          throw new Error(`${transactionType} requires valid mintAddress parameter`);
         }
-        if (!parameters.recipientAddress) {
-          throw new Error('SPL_MINT requires recipientAddress parameter');
+        if (!this.validateSolanaAddress(parameters.recipientAddress)) {
+          throw new Error(`${transactionType} requires valid recipientAddress parameter`);
         }
-        if (parameters.amount === undefined || parameters.amount === null) {
-          throw new Error('SPL_MINT requires amount parameter');
+        if (!this.validateAmount(parameters.amount)) {
+          throw new Error(`${transactionType} requires valid amount parameter`);
         }
+        if (parameters.decimals !== undefined && !this.validateDecimals(parameters.decimals)) {
+          throw new Error(`${transactionType} requires valid decimals parameter (0-9)`);
+        }
+
         return this.createSplMintTransaction(
           account, // mint authority
           parameters.mintAddress,
@@ -384,6 +545,88 @@ export class TransactionBuilderService {
           parameters.amount,
           parameters.decimals || 9
         );
+
+      case 'CREATE_TOKEN':
+        this.logger.log('CREATE_TOKEN requested with parameters:', parameters);
+
+        // Validate required parameters
+        if (!parameters.name || typeof parameters.name !== 'string' || parameters.name.trim().length === 0) {
+          throw new Error('CREATE_TOKEN requires valid name parameter');
+        }
+        if (!parameters.symbol || typeof parameters.symbol !== 'string' || parameters.symbol.trim().length === 0) {
+          throw new Error('CREATE_TOKEN requires valid symbol parameter');
+        }
+        if (!this.validateAmount(parameters.initialSupply)) {
+          throw new Error('CREATE_TOKEN requires valid initialSupply parameter');
+        }
+        if (!this.validateSolanaAddress(parameters.recipientAddress)) {
+          throw new Error('CREATE_TOKEN requires valid recipientAddress parameter');
+        }
+        if (parameters.uri && !this.validateUri(parameters.uri)) {
+          throw new Error('CREATE_TOKEN requires valid URI parameter');
+        }
+        if (parameters.decimals !== undefined && !this.validateDecimals(parameters.decimals)) {
+          throw new Error('CREATE_TOKEN requires valid decimals parameter (0-9)');
+        }
+
+        return this.createTokenCreationTransaction(parameters);
+
+      case 'CREATE_NFT_COLLECTION':
+        this.logger.log('CREATE_NFT_COLLECTION requested with parameters:', parameters);
+        if (!parameters.name) {
+          throw new Error('CREATE_NFT_COLLECTION requires name parameter');
+        }
+        if (!parameters.symbol) {
+          throw new Error('CREATE_NFT_COLLECTION requires symbol parameter');
+        }
+        if (!parameters.uri) {
+          throw new Error('CREATE_NFT_COLLECTION requires uri parameter');
+        }
+        return this.createNftCollectionTransaction(parameters);
+
+      case 'MINT_NFT':
+        this.logger.log('MINT_NFT requested with parameters:', parameters);
+        if (!parameters.collectionAddress) {
+          throw new Error('MINT_NFT requires collectionAddress parameter');
+        }
+        if (!parameters.name) {
+          throw new Error('MINT_NFT requires name parameter');
+        }
+        if (!parameters.uri) {
+          throw new Error('MINT_NFT requires uri parameter');
+        }
+        if (!parameters.recipientAddress) {
+          throw new Error('MINT_NFT requires recipientAddress parameter');
+        }
+        return this.createNftMintTransaction(parameters);
+
+      case 'BATCH_AIRDROP':
+        this.logger.log('BATCH_AIRDROP requested with parameters:', parameters);
+
+        // Validate required parameters
+        if (!this.validateSolanaAddress(parameters.mintAddress)) {
+          throw new Error('BATCH_AIRDROP requires valid mintAddress parameter');
+        }
+        if (!parameters.recipients || !Array.isArray(parameters.recipients) || parameters.recipients.length === 0) {
+          throw new Error('BATCH_AIRDROP requires non-empty recipients array parameter');
+        }
+
+        // Validate each recipient
+        for (let i = 0; i < parameters.recipients.length; i++) {
+          const recipient = parameters.recipients[i];
+          if (!this.validateSolanaAddress(recipient.address)) {
+            throw new Error(`BATCH_AIRDROP recipient ${i} has invalid address: ${recipient.address}`);
+          }
+          if (!this.validateAmount(recipient.amount)) {
+            throw new Error(`BATCH_AIRDROP recipient ${i} has invalid amount: ${recipient.amount}`);
+          }
+        }
+
+        if (parameters.decimals !== undefined && !this.validateDecimals(parameters.decimals)) {
+          throw new Error('BATCH_AIRDROP requires valid decimals parameter (0-9)');
+        }
+
+        return this.createBatchAirdropTransaction(parameters);
 
       case 'CUSTOM_CALL':
         // For now, fall back to memo - custom calls require program-specific logic

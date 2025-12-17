@@ -17,6 +17,10 @@ import { ChoiceNode } from '@/components/nodes/ChoiceNode';
 import { TransactionNode } from '@/components/nodes/TransactionNode';
 import { MintNFTNode } from '@/components/nodes/MintNFTNode';
 import { CallContractNode } from '@/components/nodes/CallContractNode';
+import { CreateTokenNode } from '@/components/nodes/CreateTokenNode';
+import { MintTokenNode } from '@/components/nodes/MintTokenNode';
+import { CreateNftCollectionNode } from '@/components/nodes/CreateNftCollectionNode';
+import { BatchAirdropNode } from '@/components/nodes/BatchAirdropNode';
 import { ConditionalNode } from '@/components/nodes/ConditionalNode';
 import { ValidationNode } from '@/components/nodes/ValidationNode';
 import { CalculationNode } from '@/components/nodes/CalculationNode';
@@ -276,16 +280,29 @@ const GraphBuilder = () => {
   // Generic TransactionNode that renders the appropriate specific node
   const TransactionNodeRenderer = (props: any) => {
     const { data } = props;
-    // Check if it's a custom contract call
-    if (data.transactionType === 'CUSTOM_CALL') {
-      return <CallContractNode {...props} />;
+    // Route to specific components based on transaction type
+    switch (data.transactionType) {
+      case 'CREATE_TOKEN':
+        return <CreateTokenNode {...props} />;
+      case 'MINT_TOKENS':
+        return <MintTokenNode {...props} />;
+      case 'CREATE_NFT_COLLECTION':
+        return <CreateNftCollectionNode {...props} />;
+      case 'MINT_NFT':
+        return <MintNFTNode {...props} />;
+      case 'BATCH_AIRDROP':
+        return <BatchAirdropNode {...props} />;
+      case 'CUSTOM_CALL':
+        return <CallContractNode {...props} />;
+      case 'SPL_MINT':
+        // Check if it's an NFT minting node (has NFT-specific parameters)
+        if (data.parameters?.name || data.parameters?.symbol || data.parameters?.uri) {
+          return <MintNFTNode {...props} />;
+        }
+        return <MintTokenNode {...props} />;
+      default:
+        return <TransactionNode {...props} />;
     }
-    // Check if it's an NFT minting node (has NFT-specific parameters)
-    if (data.transactionType === 'SPL_MINT' &&
-        (data.parameters?.name || data.parameters?.symbol || data.parameters?.uri)) {
-      return <MintNFTNode {...props} />;
-    }
-    return <TransactionNode {...props} />;
   };
 
   // Generic LogicNode that renders the appropriate specific node

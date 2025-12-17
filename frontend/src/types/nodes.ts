@@ -69,7 +69,16 @@ export type QuestionType = 'input' | 'choice';
 export type InputType = 'text' | 'number' | 'email' | 'phone' | 'cpf' | 'currency' | 'date' | 'custom';
 
 // Transaction types (extensible)
-export type TransactionType = 'SPL_MINT' | 'SPL_TRANSFER' | 'SYSTEM_TRANSFER' | 'CUSTOM_CALL';
+export type TransactionType =
+  | 'SPL_MINT'           // Legacy, keep for backward compatibility
+  | 'SPL_TRANSFER'       // Existing
+  | 'SYSTEM_TRANSFER'    // Existing
+  | 'CUSTOM_CALL'        // Existing
+  | 'CREATE_TOKEN'       // NEW
+  | 'MINT_TOKENS'        // NEW
+  | 'CREATE_NFT_COLLECTION'  // NEW
+  | 'MINT_NFT'           // NEW
+  | 'BATCH_AIRDROP';     // NEW
 
 // Option for choice-type questions
 export interface QuestionOption {
@@ -135,11 +144,26 @@ export interface QuestionNodeData extends Record<string, unknown> {
 
 // Transaction parameters based on type
 export interface TransactionParameters {
+  // Existing
   amount?: number;
   recipientAddress?: string;
   mintAddress?: string;
   decimals?: number;
-  [key: string]: any; // Allow extensibility for custom parameters
+
+  // Token creation
+  name?: string;
+  symbol?: string;
+  uri?: string;
+  initialSupply?: number;
+
+  // NFT specific
+  collectionAddress?: string;
+  sellerFeeBasisPoints?: number;
+
+  // Batch airdrop
+  recipients?: Array<{ address: string; amount: number }>;
+
+  [key: string]: any; // Extensibility
 }
 
 // Transaction node data
@@ -261,4 +285,30 @@ export function isCalculationNode(node: BlinkFormNode): node is BlinkFormNode & 
 
 export function isStartNode(node: BlinkFormNode): node is BlinkFormNode & { data: StartNodeData } {
   return node.type === 'start';
+}
+
+export function isCreateTokenNode(node: BlinkFormNode): boolean {
+  return isTransactionNode(node) &&
+    node.data.transactionType === 'CREATE_TOKEN';
+}
+
+export function isMintTokenNode(node: BlinkFormNode): boolean {
+  return isTransactionNode(node) &&
+    (node.data.transactionType === 'MINT_TOKENS' ||
+     node.data.transactionType === 'SPL_MINT');
+}
+
+export function isCreateNftCollectionNode(node: BlinkFormNode): boolean {
+  return isTransactionNode(node) &&
+    node.data.transactionType === 'CREATE_NFT_COLLECTION';
+}
+
+export function isMintNftNode(node: BlinkFormNode): boolean {
+  return isTransactionNode(node) &&
+    node.data.transactionType === 'MINT_NFT';
+}
+
+export function isBatchAirdropNode(node: BlinkFormNode): boolean {
+  return isTransactionNode(node) &&
+    node.data.transactionType === 'BATCH_AIRDROP';
 }

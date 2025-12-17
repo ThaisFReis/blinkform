@@ -48,6 +48,61 @@ export const MobileTransactionNode: React.FC<MobileTransactionNodeProps> = ({
             { label: 'Network', value: 'Solana Mainnet' },
           ]
         };
+      case 'CREATE_TOKEN':
+        return {
+          title: 'Create Token',
+          icon: '✨',
+          details: [
+            { label: 'Name', value: parameters?.name || 'Not specified' },
+            { label: 'Symbol', value: parameters?.symbol || 'Not specified' },
+            { label: 'Supply', value: parameters?.initialSupply ? `${parameters.initialSupply.toLocaleString()}` : 'Not specified' },
+            { label: 'Decimals', value: parameters?.decimals?.toString() || '9' },
+          ]
+        };
+      case 'MINT_TOKENS':
+        return {
+          title: 'Mint Tokens',
+          icon: '🪙',
+          details: [
+            { label: 'Amount', value: parameters?.amount ? `${parameters.amount.toLocaleString()}` : 'Not specified' },
+            { label: 'Mint Address', value: parameters?.mintAddress || 'Not specified' },
+            { label: 'Recipient', value: parameters?.recipientAddress || 'Your wallet' },
+            { label: 'Decimals', value: parameters?.decimals?.toString() || '9' },
+          ]
+        };
+      case 'CREATE_NFT_COLLECTION':
+        return {
+          title: 'Create NFT Collection',
+          icon: '🗂️',
+          details: [
+            { label: 'Name', value: parameters?.name || 'Not specified' },
+            { label: 'Symbol', value: parameters?.symbol || 'Not specified' },
+            { label: 'Royalty', value: parameters?.sellerFeeBasisPoints ? `${(parameters.sellerFeeBasisPoints / 100).toFixed(1)}%` : '5%' },
+            { label: 'Metadata URI', value: parameters?.uri ? 'Set' : 'Not specified' },
+          ]
+        };
+      case 'MINT_NFT':
+        return {
+          title: 'Mint NFT',
+          icon: '🎨',
+          details: [
+            { label: 'Name', value: parameters?.name || 'Not specified' },
+            { label: 'Collection', value: parameters?.collectionAddress || 'Not specified' },
+            { label: 'Recipient', value: parameters?.recipientAddress || 'Your wallet' },
+            { label: 'Metadata URI', value: parameters?.uri ? 'Set' : 'Not specified' },
+          ]
+        };
+      case 'BATCH_AIRDROP':
+        return {
+          title: 'Batch Airdrop',
+          icon: '📦',
+          details: [
+            { label: 'Recipients', value: parameters?.recipients?.length ? `${parameters.recipients.length}` : '0' },
+            { label: 'Mint Address', value: parameters?.mintAddress || 'Not specified' },
+            { label: 'Total Amount', value: parameters?.recipients?.reduce((sum: number, r: any) => sum + (r.amount || 0), 0)?.toLocaleString() || '0' },
+            { label: 'Decimals', value: parameters?.decimals?.toString() || '9' },
+          ]
+        };
       default:
         return {
           title: 'Custom Transaction',
