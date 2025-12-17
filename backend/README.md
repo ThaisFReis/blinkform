@@ -25,6 +25,10 @@ This is the backend API server for BlinkForm, built with [NestJS](https://nestjs
 - **Schema Parsing**: Process and validate form schemas
 - **Database Integration**: PostgreSQL with Prisma ORM
 - **Caching**: Redis support for performance optimization
+- **Token Minting**: Complete SPL token and NFT creation/minting system
+- **Metaplex Integration**: Full support for token metadata and NFT standards
+- **Batch Operations**: Multi-recipient token airdrops with automatic ATA creation
+- **Security**: Server-controlled mint authorities with partial signing
 
 ## Tech Stack
 
@@ -197,6 +201,11 @@ http://localhost:3001/api
 |--------|----------|-------------|
 | `GET` | `/actions/:formId` | Get Solana Action metadata |
 | `POST` | `/actions/:formId` | Submit form via Solana Action |
+
+### Token Minting Endpoints
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/actions/:formId` | Create tokens, NFTs, and batch airdrops |
 
 ### System Endpoints
 | Method | Endpoint | Description |
