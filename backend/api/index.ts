@@ -34,26 +34,50 @@ async function createApp() {
 
 // Export default handler for Vercel
 export default async (req: any, res: any) => {
-  // Handle OPTIONS preflight requests
-  if (req.method === 'OPTIONS') {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization,Content-Encoding,Accept-Encoding');
-    res.setHeader('Access-Control-Expose-Headers', 'X-Action-Version,X-Blockchain-Ids,Content-Type');
-    res.status(200).end();
-    return;
-  }
+  try {
+    console.log('[Vercel Handler] Request received:', {
+      method: req.method,
+      url: req.url,
+      headers: req.headers,
+      vercel: process.env.VERCEL,
+      node_env: process.env.NODE_ENV
+    });
 
-  // Strip /api prefix from URL since it's part of the base URL
-  // This allows using BACKEND_URL=https://...vercel.app/api
-  // without doubling the prefix
-  if (req.url.startsWith('/api/')) {
-    req.url = req.url.substring(4);  // Remove '/api'
-  } else if (req.url === '/api') {
-    req.url = '/';
-  }
+    // Handle OPTIONS preflight requests
+    if (req.method === 'OPTIONS') {
+      res.setHeader('Access-Control-Allow-Origin', '*');
+      res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
+      res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization,Content-Encoding,Accept-Encoding');
+      res.setHeader('Access-Control-Expose-Headers', 'X-Action-Version,X-Blockchain-Ids,Content-Type');
+      res.status(200).end();
+      return;
+    }
 
-  const app = await createApp();
-  const instance = app.getHttpAdapter().getInstance();
-  return instance(req, res);
+    // Strip /api prefix from URL since it's part of the base URL
+    // This allows using BACKEND_URL=https://...vercel.app/api
+    // without doubling the prefix
+    if (req.url.startsWith('/api/')) {
+      req.url = req.url.substring(4);  // Remove '/api'
+    } else if (req.url === '/api') {
+      req.url = '/';
+    }
+
+    console.log('[Vercel Handler] Creating app...');
+    const app = await createApp();
+    console.log('[Vercel Handler] App created successfully');
+
+    const instance = app.getHttpAdapter().getInstance();
+    console.log('[Vercel Handler] Processing request...');
+    return instance(req, res);
+  } catch (error) {
+    console.error('[Vercel Handler] Critical error:', error);
+    console.error('[Vercel Handler] Error stack:', error.stack);
+
+    // Return 500 error with details
+    res.status(500).json({
+      error: 'Internal Server Error',
+      message: error.message,
+      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+    });
+  }
 };
