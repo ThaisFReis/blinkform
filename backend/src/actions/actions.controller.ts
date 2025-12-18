@@ -17,7 +17,27 @@ export class ActionsController {
     @Param('formId') formId: string,
     @Query('account') account?: string,
   ) {
-    return this.actionsService.getAction(formId, account);
+    try {
+      return this.actionsService.getAction(formId, account);
+    } catch (error) {
+      console.error('[Actions Controller] GET error:', error);
+      return {
+        type: 'action',
+        icon: 'https://via.placeholder.com/600x400/EF4444/FFFFFF?text=Error',
+        title: 'Form Error',
+        description: 'An error occurred while loading the form.',
+        label: 'Try Again',
+        error: {
+          message: error.message || 'Internal server error'
+        },
+        links: {
+          actions: [{
+            label: 'Try Again',
+            href: `https://blinkform-backend.vercel.app/api/actions/${formId}`
+          }]
+        }
+      };
+    }
   }
 
   /**
