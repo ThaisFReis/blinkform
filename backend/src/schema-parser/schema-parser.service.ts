@@ -86,7 +86,12 @@ export class SchemaParserService {
       baseResponse.label = 'Start';
       baseResponse.links.actions = [{
         label: 'Start',
-        href: `${baseUrl}/api/actions/${formId}`
+        href: `${baseUrl}/api/actions/${formId}`,
+        parameters: [{
+          name: 'start',
+          label: 'Click Start to begin',
+          required: true
+        }]
       }];
     } else if (currentNode.type === 'end') {
       baseResponse.title = formTitle;
@@ -196,6 +201,9 @@ export class SchemaParserService {
    */
   validateNodeInput(node: FormNode, input: any): boolean {
     switch (node.type) {
+      case 'start':
+        // Start node just needs any input to proceed
+        return true;
       case 'transaction':
         // For transaction nodes, we just need confirmation
         return input === 'transaction' || input?.confirm === 'transaction';
