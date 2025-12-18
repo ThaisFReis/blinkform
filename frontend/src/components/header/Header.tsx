@@ -89,16 +89,16 @@ export const Header = () => {
         </div> */}
 
         {/* Button Group with Theme Toggle and Mobile Preview */}
-{/*         <div className="hidden sm:flex items-center space-x-1 bg-white/5 rounded-lg p-1 border border-white/5">
+        <div className="hidden sm:flex items-center space-x-1 bg-white/5 rounded-lg p-1 border border-white/5">
           <ThemeToggle />
-          <button
+{/*           <button
             className="p-2 hover:bg-white/10 rounded-md transition-colors"
             aria-label="Mobile Preview"
             title="Mobile Preview"
           >
             <Smartphone className="w-4 h-4 text-gray-400" />
-          </button>
-        </div> */}
+          </button> */}
+        </div>
 
         {/* Share button */}
 {/*         <button
