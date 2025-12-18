@@ -23,6 +23,7 @@ export interface CreateTokenParams {
   uri?: string;
   initialSupply: number;
   recipientAddress: string;
+  userAccount: string;
 }
 
 export interface CreateCollectionParams {

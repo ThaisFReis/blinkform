@@ -493,13 +493,18 @@ export class TransactionBuilderService {
     account: string,
     parameters: any
   ): Promise<string> {
+    this.logger.log(`[TransactionBuilder] Creating ${transactionType} transaction for account: ${account}`);
+    this.logger.log(`[TransactionBuilder] Parameters:`, JSON.stringify(parameters, null, 2));
+
+    let transaction: string;
     switch (transactionType) {
       case 'SYSTEM_TRANSFER':
-        return this.createSystemTransferTransaction(
+        transaction = await this.createSystemTransferTransaction(
           account,
           parameters.recipientAddress,
           parameters.amount
         );
+        break;
 
       case 'SPL_TRANSFER':
         this.logger.log('SPL_TRANSFER requested with parameters:', parameters);
@@ -512,13 +517,14 @@ export class TransactionBuilderService {
         if (parameters.amount === undefined || parameters.amount === null) {
           throw new Error('SPL_TRANSFER requires amount parameter');
         }
-        return this.createSplTransferTransaction(
+        transaction = await this.createSplTransferTransaction(
           account,
           parameters.recipientAddress,
           parameters.mintAddress,
           parameters.amount,
           parameters.decimals || 9
         );
+        break;
 
       case 'SPL_MINT':
       case 'MINT_TOKENS':
@@ -538,13 +544,14 @@ export class TransactionBuilderService {
           throw new Error(`${transactionType} requires valid decimals parameter (0-9)`);
         }
 
-        return this.createSplMintTransaction(
+        transaction = await this.createSplMintTransaction(
           account, // mint authority
           parameters.mintAddress,
           parameters.recipientAddress,
           parameters.amount,
           parameters.decimals || 9
         );
+        break;
 
       case 'CREATE_TOKEN':
         this.logger.log('CREATE_TOKEN requested with parameters:', parameters);
@@ -569,7 +576,8 @@ export class TransactionBuilderService {
           throw new Error('CREATE_TOKEN requires valid decimals parameter (0-9)');
         }
 
-        return this.createTokenCreationTransaction(parameters);
+        transaction = await this.createTokenCreationTransaction(parameters);
+        break;
 
       case 'CREATE_NFT_COLLECTION':
         this.logger.log('CREATE_NFT_COLLECTION requested with parameters:', parameters);
@@ -582,7 +590,8 @@ export class TransactionBuilderService {
         if (!parameters.uri) {
           throw new Error('CREATE_NFT_COLLECTION requires uri parameter');
         }
-        return this.createNftCollectionTransaction(parameters);
+        transaction = await this.createNftCollectionTransaction(parameters);
+        break;
 
       case 'MINT_NFT':
         this.logger.log('MINT_NFT requested with parameters:', parameters);
@@ -598,7 +607,8 @@ export class TransactionBuilderService {
         if (!parameters.recipientAddress) {
           throw new Error('MINT_NFT requires recipientAddress parameter');
         }
-        return this.createNftMintTransaction(parameters);
+        transaction = await this.createNftMintTransaction(parameters);
+        break;
 
       case 'BATCH_AIRDROP':
         this.logger.log('BATCH_AIRDROP requested with parameters:', parameters);
@@ -626,17 +636,34 @@ export class TransactionBuilderService {
           throw new Error('BATCH_AIRDROP requires valid decimals parameter (0-9)');
         }
 
-        return this.createBatchAirdropTransaction(parameters);
+        transaction = await this.createBatchAirdropTransaction(parameters);
+        break;
 
       case 'CUSTOM_CALL':
         // For now, fall back to memo - custom calls require program-specific logic
         this.logger.warn('CUSTOM_CALL not implemented yet, using memo fallback');
-        return this.createMemoTransaction(account, `Custom call request: ${JSON.stringify(parameters)}`);
+        transaction = await this.createMemoTransaction(account, `Custom call request: ${JSON.stringify(parameters)}`);
+        break;
 
       default:
         this.logger.warn(`Unknown transaction type: ${transactionType}, using memo fallback`);
-        return this.createMemoTransaction(account, `Unknown transaction: ${transactionType} - ${JSON.stringify(parameters)}`);
+        transaction = await this.createMemoTransaction(account, `Unknown transaction: ${transactionType} - ${JSON.stringify(parameters)}`);
+        break;
     }
+
+    this.logger.log(`[TransactionBuilder] Transaction created successfully for ${transactionType}`);
+    this.logger.log(`[TransactionBuilder] Transaction length: ${transaction.length} characters`);
+
+    // Basic validation - check if it's valid base64
+    try {
+      Buffer.from(transaction, 'base64');
+      this.logger.log(`[TransactionBuilder] Transaction is valid base64`);
+    } catch (error) {
+      this.logger.error(`[TransactionBuilder] Invalid base64 transaction: ${error.message}`);
+      throw new Error(`Invalid transaction format: ${error.message}`);
+    }
+
+    return transaction;
   }
 
   /**
