@@ -239,6 +239,13 @@ export class ActionsService {
           // Resolve parameter placeholders like {{parameterName}}
           parameters = this.resolveParameters(parameters, sessionData.answers || {}, form.schema);
 
+          // Default recipientAddress to userAccount for CREATE_TOKEN if not set or set to system program
+          if (transactionData.transactionType === 'CREATE_TOKEN') {
+            if (!parameters.recipientAddress || parameters.recipientAddress === '11111111111111111111111111111112') {
+              parameters.recipientAddress = userAccount;
+            }
+          }
+
           // Validate required parameters based on transaction type
           if (transactionData.transactionType === 'SYSTEM_TRANSFER') {
             if (!parameters.recipientAddress) {
@@ -407,6 +414,13 @@ export class ActionsService {
 
           // Resolve parameter placeholders like {{parameterName}}
           parameters = this.resolveParameters(parameters, sessionData.answers || {}, form.schema);
+
+          // Default recipientAddress to userAccount for CREATE_TOKEN if not set or set to system program
+          if (transactionData.transactionType === 'CREATE_TOKEN') {
+            if (!parameters.recipientAddress || parameters.recipientAddress === '11111111111111111111111111111112') {
+              parameters.recipientAddress = userAccount;
+            }
+          }
 
           // Validate required parameters based on transaction type
           if (transactionData.transactionType === 'SYSTEM_TRANSFER') {

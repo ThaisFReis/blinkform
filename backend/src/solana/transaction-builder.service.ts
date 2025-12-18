@@ -38,7 +38,7 @@ export class TransactionBuilderService {
   private validateSolanaAddress(address: string): boolean {
     try {
       new PublicKey(address);
-      return address.length === 44; // Base58 encoded public keys are 44 characters
+      return true;
     } catch {
       return false;
     }
