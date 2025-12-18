@@ -1,0 +1,455 @@
+.demo {
+  position: relative;
+  background-color: #0A0A0F;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 2rem;
+  padding: 2rem;
+  aspect-ratio: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  text-align: center;
+  overflow: hidden;
+  min-height: 400px;
+}
+
+.gridPattern {
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+  background-size: 2rem 2rem;
+  border-radius: 2rem;
+}
+
+.templateSelector {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  z-index: 10;
+  position: relative;
+}
+
+.templateButton {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.5rem;
+  color: #9CA3AF;
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.templateButton:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: #E5E7EB;
+}
+
+.templateButton.active {
+  background-color: rgba(34, 211, 238, 0.1);
+  border-color: rgba(34, 211, 238, 0.3);
+  color: #22d3ee;
+}
+
+.templateName {
+  white-space: nowrap;
+}
+
+.flowContainer {
+  position: relative;
+  flex: 1;
+  width: 100%;
+  max-width: 100%;
+  z-index: 10;
+}
+
+.connections {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.connection {
+  stroke: rgba(255, 255, 255, 0.2);
+  stroke-width: 2;
+  stroke-dasharray: 5, 5;
+  animation: flow 2s linear infinite;
+}
+
+.connection.active {
+  stroke: #22d3ee;
+  stroke-dasharray: none;
+  animation: none;
+}
+
+@keyframes flow {
+  0% {
+    stroke-dashoffset: 10;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+.node {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  background-color: rgba(19, 19, 26, 0.9);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.75rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 120px;
+  max-width: 140px;
+  text-align: center;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.node:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.node.current {
+  border-color: #22d3ee;
+  box-shadow: 0 0 20px rgba(34, 211, 238, 0.3);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.node.completed {
+  border-color: rgba(34, 197, 94, 0.5);
+  background-color: rgba(34, 197, 94, 0.1);
+}
+
+.node.start {
+  border-color: rgba(34, 211, 238, 0.3);
+}
+
+.node.input {
+  border-color: rgba(168, 85, 247, 0.3);
+}
+
+.node.transaction {
+  border-color: rgba(236, 72, 153, 0.3);
+}
+
+.node.end {
+  border-color: rgba(34, 197, 94, 0.3);
+}
+
+@keyframes pulse {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(34, 211, 238, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(34, 211, 238, 0.5);
+  }
+}
+
+.nodeIcon {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #22d3ee;
+}
+
+.node.start .nodeIcon {
+  background-color: rgba(34, 211, 238, 0.2);
+  color: #22d3ee;
+}
+
+.node.input .nodeIcon {
+  background-color: rgba(168, 85, 247, 0.2);
+  color: #a855f7;
+}
+
+.node.transaction .nodeIcon {
+  background-color: rgba(236, 72, 153, 0.2);
+  color: #ec4899;
+}
+
+.node.end .nodeIcon {
+  background-color: rgba(34, 197, 94, 0.2);
+  color: #22c55e;
+}
+
+.nodeContent {
+  flex: 1;
+}
+
+.nodeTitle {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: white;
+  margin-bottom: 0.25rem;
+}
+
+.nodeDesc {
+  font-size: 0.625rem;
+  color: #9CA3AF;
+  line-height: 1.2;
+}
+
+.navigation {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  z-index: 10;
+  position: relative;
+}
+
+.navButton {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.5rem;
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #9CA3AF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.navButton:hover:not(:disabled) {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: #E5E7EB;
+}
+
+.navButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.stepIndicator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 120px;
+}
+
+.stepText {
+  font-size: 0.75rem;
+  color: #9CA3AF;
+  font-weight: 500;
+}
+
+.progressBar {
+  width: 100%;
+  height: 0.25rem;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 0.125rem;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background-color: #22d3ee;
+  border-radius: 0.125rem;
+  transition: width 0.3s ease;
+}
+
+.modal {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 20;
+  border-radius: 2rem;
+}
+
+.modalContent {
+  background-color: rgba(19, 19, 26, 0.95);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  max-width: 300px;
+  width: 90%;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+}
+
+.modalHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.modalIcon {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.5rem;
+  background-color: rgba(34, 211, 238, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #22d3ee;
+}
+
+.modalTitle {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: white;
+  flex: 1;
+}
+
+.closeButton {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.5rem;
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #9CA3AF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
+.closeButton:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: #E5E7EB;
+}
+
+.modalDescription {
+  color: #9CA3AF;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.infoButton {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.375rem;
+  color: #9CA3AF;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  z-index: 15;
+}
+
+.infoButton:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: #E5E7EB;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .demo {
+    padding: 1.5rem;
+    min-height: 350px;
+  }
+
+  .templateSelector {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .templateButton {
+    padding: 0.375rem 0.5rem;
+    font-size: 0.625rem;
+  }
+
+  .node {
+    min-width: 100px;
+    max-width: 120px;
+    padding: 0.5rem;
+  }
+
+  .nodeTitle {
+    font-size: 0.625rem;
+  }
+
+  .nodeDesc {
+    font-size: 0.5rem;
+  }
+
+  .navigation {
+    gap: 0.5rem;
+  }
+
+  .stepIndicator {
+    min-width: 80px;
+  }
+
+  .stepText {
+    font-size: 0.625rem;
+  }
+
+  .modalContent {
+    padding: 1rem;
+    max-width: 280px;
+  }
+
+  .modalTitle {
+    font-size: 1rem;
+  }
+
+  .modalDescription {
+    font-size: 0.75rem;
+  }
+}
+
+/* Accessibility improvements */
+@media (prefers-reduced-motion: reduce) {
+  .connection {
+    animation: none;
+  }
+
+  .node {
+    transition: none;
+  }
+
+  .node.current {
+    animation: none;
+  }
+
+  .navButton,
+  .templateButton,
+  .closeButton,
+  .resetButton {
+    transition: none;
+  }
+}

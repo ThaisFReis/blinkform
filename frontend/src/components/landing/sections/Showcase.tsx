@@ -1,11 +1,12 @@
 import React from 'react';
 import {
   CheckCircle,
-  Box,
   Wand2,
   Wallet,
 } from 'lucide-react';
 import styles from './Showcase.module.css';
+import BentoCard from '../shared/BentoCard';
+import InteractiveDemo from '../shared/InteractiveDemo';
 
 /**
  * Showcase component
@@ -47,13 +48,7 @@ const Showcase: React.FC = () => {
           <div className={styles.rightColumn}>
             <div className={styles.blob}></div>
 
-            <div className={styles.demo}>
-              <div className={styles.gridPattern}></div>
-
-              <Box className={styles.demoIcon} />
-              <h3 className={styles.demoTitle}>Interactive Demo</h3>
-              <p className={styles.demoDesc}>Select a template to view</p>
-            </div>
+            <InteractiveDemo />
 
             <div className={styles.floatingCard}>
               <div className={styles.cardHeader}>
