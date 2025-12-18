@@ -192,9 +192,7 @@ export class ActionsService {
         title: form.title,
         description: result.error || 'Invalid input',
         label: 'Try Again',
-        error: {
-          message: result.error || 'Invalid input'
-        },
+        message: result.error || 'Invalid input',
         links: {
           actions: [{
             label: 'Try Again',
@@ -592,9 +590,7 @@ export class ActionsService {
           title: form.title,
           description: `Transaction Error: ${error.message}`,
           label: 'Try Again',
-          error: {
-            message: error.message
-          },
+          message: error.message,
           links: {
             actions: [{
               label: 'Try Again',

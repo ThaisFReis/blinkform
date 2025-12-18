@@ -27,9 +27,7 @@ export class ActionsController {
         title: 'Form Error',
         description: 'An error occurred while loading the form.',
         label: 'Try Again',
-        error: {
-          message: error.message || 'Internal server error'
-        },
+        message: error.message || 'Internal server error',
         links: {
           actions: [{
             label: 'Try Again',
@@ -70,9 +68,7 @@ export class ActionsController {
         title: 'Session Error',
         description: 'Session expired or invalid. Please start the form again.',
         label: 'Start Over',
-        error: {
-          message: error.message || 'Session error'
-        },
+        message: error.message || 'Session error',
         links: {
           actions: [{
             label: 'Start Over',
@@ -111,9 +107,7 @@ export class ActionsController {
         title: 'Action Error',
         description: 'An error occurred while processing your choice.',
         label: 'Try Again',
-        error: {
-          message: error.message || 'Internal server error'
-        },
+        message: error.message || 'Internal server error',
         links: {
           actions: [{
             label: 'Try Again',
@@ -150,9 +144,7 @@ export class ActionsController {
         title: 'Transaction Error',
         description: 'An error occurred while processing the transaction.',
         label: 'Try Again',
-        error: {
-          message: error.message || 'Internal server error'
-        },
+        message: error.message || 'Internal server error',
         links: {
           actions: [{
             label: 'Try Again',
