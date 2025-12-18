@@ -2,7 +2,6 @@ import { Injectable, Logger, Inject } from '@nestjs/common';
 import { KeypairService } from './keypair.service';
 import { Connection, PublicKey, VersionedTransaction } from '@solana/web3.js';
 import { createUmi } from '@metaplex-foundation/umi';
-import { endpoint } from '@metaplex-foundation/umi-bundle-defaults';
 import {
   Umi,
   publicKey,
@@ -71,11 +70,12 @@ export class MetaplexService {
     const rpcUrl = process.env.SOLANA_RPC_URL || 'https://api.devnet.solana.com';
     this.connection = new Connection(rpcUrl, 'confirmed');
 
-    // Initialize UMI
-    this.umi = createUmi(rpcUrl);
+    // Initialize UMI (with zero arguments as required)
+    this.umi = createUmi();
 
     // Ensure signer identity is set before adding plugins
     this.ensureSignerIdentity();
+
 
     // Add Metaplex plugins
     this.umi.use(mplTokenMetadata());
