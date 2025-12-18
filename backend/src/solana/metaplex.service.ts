@@ -88,22 +88,20 @@ try {
   }
 
   private ensureSignerIdentity() {
-    if (!this.umi.identity) {
-      const mintAuthority = this.keypairService.getMintAuthority();
-      this.logger.log(`Mint authority available: ${!!mintAuthority}`);
-      if (mintAuthority) {
-        const umiSigner = createSignerFromKeypair(this.umi, {
-          publicKey: fromWeb3JsPublicKey(mintAuthority.publicKey),
-          secretKey: mintAuthority.secretKey,
-        });
-        this.umi.use(signerIdentity(umiSigner));
-        this.logger.log('Signer identity set with mint authority');
-      } else {
-        // Generate a dummy signer to avoid NullSigner errors
-        const dummySigner = generateSigner(this.umi);
-        this.umi.use(signerIdentity(dummySigner));
-        this.logger.log('Signer identity set with generated dummy signer');
-      }
+    const mintAuthority = this.keypairService.getMintAuthority();
+    this.logger.log(`Mint authority available: ${!!mintAuthority}`);
+    if (mintAuthority) {
+      const umiSigner = createSignerFromKeypair(this.umi, {
+        publicKey: fromWeb3JsPublicKey(mintAuthority.publicKey),
+        secretKey: mintAuthority.secretKey,
+      });
+      this.umi.use(signerIdentity(umiSigner));
+      this.logger.log('Signer identity set with mint authority');
+    } else {
+      // Generate a dummy signer to avoid NullSigner errors
+      const dummySigner = generateSigner(this.umi);
+      this.umi.use(signerIdentity(dummySigner));
+      this.logger.log('Signer identity set with generated dummy signer');
     }
   }
 
