@@ -1,7 +1,7 @@
 import { Injectable, Logger, Inject } from '@nestjs/common';
 import { KeypairService } from './keypair.service';
 import { Connection, PublicKey, VersionedTransaction } from '@solana/web3.js';
-import { createUmi } from '@metaplex-foundation/umi';
+import { createUmi } from '@metaplex-foundation/umi-bundle-defaults';
 import {
   Umi,
   publicKey,
@@ -13,9 +13,7 @@ import {
   percentAmount,
 } from '@metaplex-foundation/umi';
 import { mplTokenMetadata, createNft, createV1, updateV1 } from '@metaplex-foundation/mpl-token-metadata';
-import { mplToolbox } from '@metaplex-foundation/mpl-toolbox';
 import { fromWeb3JsPublicKey, toWeb3JsTransaction } from '@metaplex-foundation/umi-web3js-adapters';
-import { web3JsRpc } from '@metaplex-foundation/umi-rpc-web3js';
 
 
 export interface CreateTokenParams {
@@ -72,27 +70,20 @@ export class MetaplexService {
   ) {
     const rpcUrl = process.env.SOLANA_RPC_URL || 'https://api.devnet.solana.com';
     this.connection = new Connection(rpcUrl, 'confirmed');
+// Initialize UMI with RPC URL
+this.umi = createUmi(rpcUrl);
 
-    // Initialize UMI (with zero arguments as required)
-    this.umi = createUmi();
+// Ensure signer identity is set before adding plugins
+this.ensureSignerIdentity();
 
-    // Set up RPC connection
-    this.umi.use(web3JsRpc(rpcUrl));
-
-    // Ensure signer identity is set before adding plugins
-    this.ensureSignerIdentity();
-
-    // Add Metaplex plugins
-    try {
-      this.umi.use(mplToolbox());
-      this.logger.log('mplToolbox plugin installed successfully');
-      this.umi.use(mplTokenMetadata());
-      this.logger.log('mplTokenMetadata plugin installed successfully');
-    } catch (error) {
-      this.logger.error('Failed to install Metaplex plugins:', error);
-      throw error;
-    }
-
+// Add Metaplex plugins
+try {
+  this.umi.use(mplTokenMetadata());
+  this.logger.log('mplTokenMetadata plugin installed successfully');
+} catch (error) {
+  this.logger.error('Failed to install Metaplex plugins:', error);
+  throw error;
+}
     this.logger.log(`Metaplex service initialized with RPC: ${rpcUrl}`);
   }
 
