@@ -13,6 +13,7 @@ import {
   percentAmount,
 } from '@metaplex-foundation/umi';
 import { mplTokenMetadata, createNft, createV1, updateV1 } from '@metaplex-foundation/mpl-token-metadata';
+import { mplToolbox } from '@metaplex-foundation/mpl-toolbox';
 import { fromWeb3JsPublicKey, toWeb3JsTransaction } from '@metaplex-foundation/umi-web3js-adapters';
 import { web3JsRpc } from '@metaplex-foundation/umi-rpc-web3js';
 
@@ -81,10 +82,16 @@ export class MetaplexService {
     // Ensure signer identity is set before adding plugins
     this.ensureSignerIdentity();
 
-
-
     // Add Metaplex plugins
-    this.umi.use(mplTokenMetadata());
+    try {
+      this.umi.use(mplToolbox());
+      this.logger.log('mplToolbox plugin installed successfully');
+      this.umi.use(mplTokenMetadata());
+      this.logger.log('mplTokenMetadata plugin installed successfully');
+    } catch (error) {
+      this.logger.error('Failed to install Metaplex plugins:', error);
+      throw error;
+    }
 
     this.logger.log(`Metaplex service initialized with RPC: ${rpcUrl}`);
   }
