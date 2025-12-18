@@ -1,13 +1,13 @@
-import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { Keypair, PublicKey } from '@solana/web3.js';
 
 @Injectable()
-export class KeypairService implements OnModuleInit {
+export class KeypairService {
   private readonly logger = new Logger(KeypairService.name);
   private mintAuthority: Keypair;
   private collectionAuthority: Keypair;
 
-  onModuleInit() {
+  constructor() {
     this.loadKeypairs();
   }
 

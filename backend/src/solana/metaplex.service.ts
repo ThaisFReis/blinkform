@@ -1,8 +1,9 @@
 import { Injectable, Logger, Inject } from '@nestjs/common';
 import { KeypairService } from './keypair.service';
 import { Connection, PublicKey, VersionedTransaction } from '@solana/web3.js';
+import { createUmi } from '@metaplex-foundation/umi';
+import { endpoint } from '@metaplex-foundation/umi-bundle-defaults';
 import {
-  createUmi,
   Umi,
   publicKey,
   some,
@@ -13,7 +14,6 @@ import {
   percentAmount,
 } from '@metaplex-foundation/umi';
 import { mplTokenMetadata, createNft, createV1, updateV1 } from '@metaplex-foundation/mpl-token-metadata';
-import { createUmi as createUmiInstance } from '@metaplex-foundation/umi-bundle-defaults';
 import { fromWeb3JsPublicKey, toWeb3JsTransaction } from '@metaplex-foundation/umi-web3js-adapters';
 
 export interface CreateTokenParams {
@@ -72,7 +72,10 @@ export class MetaplexService {
     this.connection = new Connection(rpcUrl, 'confirmed');
 
     // Initialize UMI
-    this.umi = createUmiInstance(rpcUrl);
+    this.umi = createUmi(rpcUrl);
+
+    // Ensure signer identity is set before adding plugins
+    this.ensureSignerIdentity();
 
     // Add Metaplex plugins
     this.umi.use(mplTokenMetadata());
@@ -83,12 +86,19 @@ export class MetaplexService {
   private ensureSignerIdentity() {
     if (!this.umi.identity) {
       const mintAuthority = this.keypairService.getMintAuthority();
+      this.logger.log(`Mint authority available: ${!!mintAuthority}`);
       if (mintAuthority) {
         const umiSigner = createSignerFromKeypair(this.umi, {
           publicKey: fromWeb3JsPublicKey(mintAuthority.publicKey),
           secretKey: mintAuthority.secretKey,
         });
         this.umi.use(signerIdentity(umiSigner));
+        this.logger.log('Signer identity set with mint authority');
+      } else {
+        // Generate a dummy signer to avoid NullSigner errors
+        const dummySigner = generateSigner(this.umi);
+        this.umi.use(signerIdentity(dummySigner));
+        this.logger.log('Signer identity set with generated dummy signer');
       }
     }
   }
