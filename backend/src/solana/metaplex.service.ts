@@ -16,6 +16,7 @@ import { mplTokenMetadata, createNft, createV1, updateV1 } from '@metaplex-found
 import { fromWeb3JsPublicKey, toWeb3JsTransaction } from '@metaplex-foundation/umi-web3js-adapters';
 import { web3JsRpc } from '@metaplex-foundation/umi-rpc-web3js';
 
+
 export interface CreateTokenParams {
   name: string;
   symbol: string;
@@ -75,7 +76,7 @@ export class MetaplexService {
     this.umi = createUmi();
 
     // Set up RPC connection
-    this.umi.use(web3JsRpc(this.connection as any));
+    this.umi.use(web3JsRpc(rpcUrl));
 
     // Ensure signer identity is set before adding plugins
     this.ensureSignerIdentity();
