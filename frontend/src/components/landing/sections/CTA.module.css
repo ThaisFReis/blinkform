@@ -1,0 +1,118 @@
+.section {
+  padding: 8rem 1.5rem;
+  position: relative;
+  z-index: 10;
+  overflow: hidden;
+}
+
+.container {
+  max-width: 64rem;
+  margin: 0 auto;
+  position: relative;
+}
+
+.glow {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top right, rgba(34, 211, 238, 0.2), rgba(160, 21, 245, 0.2), rgba(236, 72, 153, 0.2));
+  filter: blur(100px);
+  border-radius: 50%;
+  opacity: 0.5;
+}
+
+.card {
+  position: relative;
+  background-color: rgba(10, 10, 15, 0.8);
+  backdrop-filter: blur(48px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 3rem;
+  padding: 3rem;
+  text-align: center;
+  overflow: hidden;
+}
+
+.cardMd {
+  padding: 6rem;
+}
+
+.shine {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 31.25rem;
+  height: 31.25rem;
+  background: conic-gradient(from 0deg at 50% 50%, transparent 0deg, rgba(34, 211, 238, 0.1) 100deg, transparent 200deg);
+  animation: spin 10s linear infinite;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: white;
+  margin-bottom: 2rem;
+  letter-spacing: -0.025em;
+  position: relative;
+  z-index: 10;
+}
+
+.titleMd {
+  font-size: 3.75rem;
+}
+
+.gradient {
+  background: linear-gradient(to right, #22d3ee, #a855f7);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.ctas {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  position: relative;
+  z-index: 10;
+}
+
+.ctasSm {
+  flex-direction: row;
+  gap: 1.5rem;
+}
+
+.docLink {
+  padding: 0.75rem 2rem;
+  background-color: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: white;
+  font-weight: 500;
+  border-radius: 9999px;
+  transition: border-color 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.docLink:hover {
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+@keyframes spin {
+  from {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+@media (min-width: 768px) {
+  .ctas {
+    flex-direction: row;
+  }
+}

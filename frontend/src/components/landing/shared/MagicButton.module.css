@@ -1,0 +1,50 @@
+.magicButton {
+  position: relative;
+  display: inline-flex;
+  height: 3rem;
+  overflow: hidden;
+  border-radius: 9999px;
+  padding: 1px;
+  outline: none;
+}
+
+.magicButton:focus {
+  box-shadow: 0 0 0 2px #22d3ee, 0 0 0 4px #f1f5f9;
+}
+
+.gradientBorder {
+  position: absolute;
+  inset: -100%;
+  animation: spin 2s linear infinite;
+  background: conic-gradient(from 90deg at 50% 50%, #22d3ee 0%, #a855f7 50%, #22d3ee 100%);
+}
+
+.innerButton {
+  display: inline-flex;
+  height: 100%;
+  width: 100%;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  background-color: #050508;
+  padding: 0.25rem 2rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: white;
+  backdrop-filter: blur(48px);
+  transition: background-color 0.15s ease-in-out;
+}
+
+.innerButton:hover {
+  background-color: #0A0A0F;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}

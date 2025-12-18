@@ -1,0 +1,211 @@
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  transition: all 0.5s ease;
+  background-color: transparent;
+}
+
+.navbarScrolled {
+  background-color: rgba(5, 5, 8, 0.8);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.shimmerBorder {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(to right, transparent, rgba(34, 211, 238, 0.5), transparent);
+  opacity: 0.5;
+}
+
+.container {
+  max-width: 80rem;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+  height: 5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+}
+
+.logoArea {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  z-index: 50;
+}
+
+.logoGlow {
+  position: relative;
+  cursor: pointer;
+}
+
+.logoGlowInset {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to right, #22d3ee, #a855f7);
+  border-radius: 0.5rem;
+  filter: blur(40px);
+  opacity: 0.4;
+  transition: opacity 0.5s ease;
+}
+
+.logoGlow:hover .logoGlowInset {
+  opacity: 0.75;
+}
+
+.logo {
+  position: relative;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.5rem;
+  background-color: rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(8px);
+}
+
+.logoIcon {
+  color: white;
+  width: 1rem;
+  height: 1rem;
+  fill: rgba(34, 211, 238, 0.2);
+}
+
+.brandName {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: white;
+  letter-spacing: -0.025em;
+}
+
+.desktopNav {
+  display: none;
+}
+
+.desktopNavMd {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: rgba(255, 255, 255, 0.05);
+  padding: 0.5rem;
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(8px);
+}
+
+.navLink {
+  padding: 0.25rem 1rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #9CA3AF;
+  transition: color 0.3s ease;
+  border-radius: 9999px;
+}
+
+.navLink:hover {
+  color: white;
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.externalLink {
+  color: inherit;
+  text-decoration: none;
+}
+
+.desktopCtas {
+  display: none;
+}
+
+.desktopCtasMd {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.themeToggle {
+  color: #9CA3AF;
+  transition: color 0.3s ease;
+  cursor: pointer;
+}
+
+.themeToggle:hover {
+  color: white;
+}
+
+.themeIcon {
+  width: 1.25rem;
+  height: 1.25rem;
+  border: 1px solid #6B7280;
+  border-radius: 50%;
+  background: linear-gradient(to top right, #374151, #4B5563);
+}
+
+.mobileToggle {
+  display: block;
+  color: white;
+  z-index: 50;
+  padding: 0.5rem;
+}
+
+.mobileToggleMd {
+  display: none;
+}
+
+.mobileMenu {
+  position: fixed;
+  inset: 0;
+  background-color: #050508;
+  z-index: 40;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  transition: transform 0.3s ease;
+}
+
+.mobileMenuOpen {
+  transform: translateY(0);
+}
+
+.mobileMenuClosed {
+  transform: translateY(-100%);
+}
+
+.mobileNavLink {
+  font-size: 1.5rem;
+  color: white;
+  font-weight: 700;
+}
+
+.mobileCtas {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 16rem;
+}
+
+@media (min-width: 768px) {
+  .desktopNav {
+    display: flex;
+  }
+  .desktopCtas {
+    display: flex;
+  }
+  .mobileToggle {
+    display: none;
+  }
+  .mobileMenu {
+    display: none;
+  }
+}

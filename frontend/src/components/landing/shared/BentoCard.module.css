@@ -1,0 +1,140 @@
+.card {
+  position: relative;
+  border-radius: 1.5rem;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  background-color: #0A0A0F;
+  transition: all 0.3s ease;
+}
+
+.cardHighlight {
+  box-shadow: 0 0 0 1px rgba(34, 211, 238, 0.2);
+}
+
+.sizeSm {
+  grid-column: span 1;
+}
+
+.sizeMd {
+  grid-column: span 1;
+}
+
+.sizeMdMd {
+  grid-column: span 2;
+}
+
+.sizeLg {
+  grid-column: span 1;
+}
+
+.sizeLgMd {
+  grid-column: span 2;
+}
+
+.sizeLgLg {
+  grid-column: span 3;
+}
+
+.gridPattern {
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+  background-size: 24px 24px;
+  opacity: 0.2;
+}
+
+.spotlight {
+  pointer-events: none;
+  position: absolute;
+  inset: -1px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 10;
+}
+
+.gradientBorder {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.content {
+  position: relative;
+  height: 100%;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  z-index: 20;
+}
+
+.iconContainer {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+  transition: transform 0.5s ease;
+}
+
+.iconContainerHighlight {
+  background-color: rgba(34, 211, 238, 0.1);
+}
+
+.card:hover .iconContainer {
+  transform: scale(1.1);
+}
+
+.icon {
+  width: 1.5rem;
+  height: 1.5rem;
+  transition: color 0.3s ease;
+}
+
+.iconDefault {
+  color: #9CA3AF;
+}
+
+.iconDefault:hover {
+  color: white;
+}
+
+.iconHighlight {
+  color: #22D3EE;
+}
+
+.title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: white;
+  margin-bottom: 0.75rem;
+  tracking: -0.025em;
+}
+
+.desc {
+  color: #9CA3AF;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  font-weight: 300;
+}
+
+.decorativeDots {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  display: flex;
+  gap: 0.25rem;
+}
+
+.dot {
+  width: 1px;
+  height: 1px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+}

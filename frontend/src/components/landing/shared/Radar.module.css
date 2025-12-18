@@ -1,0 +1,89 @@
+.radar {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  overflow: visible;
+}
+
+.container {
+  position: relative;
+  height: 400px;
+  width: 400px;
+}
+
+.coreGlow {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  height: 128px;
+  width: 128px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background-color: rgba(34, 211, 238, 0.2);
+  filter: blur(60px);
+}
+
+.ring {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.ring1 {
+  width: 450px;
+  height: 450px;
+  animation: pulse 9s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.ring2 {
+  width: 600px;
+  height: 600px;
+  animation: pulse 6s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.ring3 {
+  width: 750px;
+  height: 750px;
+  animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.scanner {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  height: 300px;
+  width: 300px;
+  transform: translate(-50%, -50%);
+  animation: spin 4s linear infinite;
+}
+
+.scannerInner {
+  height: 100%;
+  width: 100%;
+  border-radius: 50%;
+  background: conic-gradient(from 0deg at 50% 50%, transparent 0deg, transparent 60deg, rgba(34, 211, 238, 0.1) 100deg);
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 0.2;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    opacity: 0.1;
+    transform: translate(-50%, -50%) scale(1.05);
+  }
+}

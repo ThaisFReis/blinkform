@@ -1,0 +1,235 @@
+.section {
+  padding: 6rem 0;
+  position: relative;
+  z-index: 10;
+}
+
+.container {
+  max-width: 80rem;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+.grid {
+  display: grid;
+  gap: 4rem;
+  align-items: center;
+}
+
+.gridMd {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: rgba(160, 21, 245, 0.1);
+  border: 1px solid rgba(160, 21, 245, 0.2);
+  border-radius: 9999px;
+  padding: 0.25rem 0.75rem;
+  margin-bottom: 1.5rem;
+  color: #c084fc;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.title {
+  font-size: 1.875rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+}
+
+.titleMd {
+  font-size: 2.25rem;
+}
+
+.description {
+  color: #9CA3AF;
+  font-size: 1.125rem;
+  margin-bottom: 2rem;
+  line-height: 1.75;
+  font-weight: 300;
+}
+
+.list {
+  gap: 1.5rem;
+}
+
+.listItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.listItem:hover .icon {
+  background-color: rgba(34, 211, 238, 0.2);
+}
+
+.icon {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  background-color: rgba(34, 211, 238, 0.1);
+  border: 1px solid rgba(34, 211, 238, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 0.25rem;
+  transition: background-color 0.3s ease;
+}
+
+.iconInner {
+  width: 1.25rem;
+  height: 1.25rem;
+  color: #22d3ee;
+}
+
+.itemTitle {
+  color: white;
+  font-weight: 700;
+  font-size: 1.125rem;
+}
+
+.itemDesc {
+  color: #6B7280;
+  font-size: 0.875rem;
+}
+
+.rightColumn {
+  position: relative;
+}
+
+.blob {
+  position: absolute;
+  inset: -1rem;
+  background: linear-gradient(to right, #22d3ee, #a855f7);
+  border-radius: 2rem;
+  opacity: 0.1;
+  filter: blur(2rem);
+}
+
+.demo {
+  position: relative;
+  background-color: #0A0A0F;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 2rem;
+  padding: 2rem;
+  aspect-ratio: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  overflow: hidden;
+}
+
+.gridPattern {
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+  background-size: 2rem 2rem;
+}
+
+.demoIcon {
+  width: 6rem;
+  height: 6rem;
+  color: #6B7280;
+  margin-bottom: 1.5rem;
+  position: relative;
+  z-index: 10;
+}
+
+.demoTitle {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #9CA3AF;
+  position: relative;
+  z-index: 10;
+}
+
+.demoDesc {
+  color: #374151;
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+  position: relative;
+  z-index: 10;
+}
+
+.floatingCard {
+  position: absolute;
+  top: 2.5rem;
+  left: -2.5rem;
+  background-color: rgba(19, 19, 26, 0.9);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 1rem;
+  border-radius: 0.75rem;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  width: 12rem;
+  animation: float 6s ease-in-out infinite;
+}
+
+.floatingCard2 {
+  top: -1.25rem;
+  left: -1.25rem;
+  animation: float 7s ease-in-out infinite;
+  animation-delay: 1s;
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.cardIcon {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cardIconPurple {
+  background-color: #a855f7;
+}
+
+.cardIconCyan {
+  background-color: #22d3ee;
+}
+
+.cardTitle {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: white;
+}
+
+.progress {
+  height: 0.5rem;
+  width: 100%;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 0.25rem;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@media (min-width: 768px) {
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
