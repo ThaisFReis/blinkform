@@ -138,3 +138,55 @@ export function validateSolanaAddresses(addresses: string[]): ValidationResult {
 
   return { valid: true };
 }
+
+/**
+ * Validate and sanitize account parameter from Solana Actions request
+ * Returns the validated account or throws descriptive error
+ *
+ * @param account - Account from request (can be undefined/null)
+ * @param context - Context string for better error messages (e.g., "postAction", "getNextAction")
+ * @returns Validated account string
+ * @throws Error with descriptive message if validation fails
+ */
+export function validateAndSanitizeAccount(
+  account: string | undefined | null,
+  context: string = 'transaction'
+): string {
+  // Check if account is missing
+  if (!account || typeof account !== 'string') {
+    throw new Error(
+      `Account parameter is required for ${context}. ` +
+      `Wallet must provide a valid Solana address in the request body.`
+    );
+  }
+
+  const trimmedAccount = account.trim();
+
+  // Check if it's empty after trimming
+  if (trimmedAccount.length === 0) {
+    throw new Error(
+      `Account parameter is required for ${context}. ` +
+      `Wallet must provide a valid Solana address in the request body.`
+    );
+  }
+
+  // Check for the old 'test-account' fallback value
+  if (trimmedAccount === 'test-account') {
+    throw new Error(
+      `Invalid account: 'test-account' is not a valid Solana address. ` +
+      `A valid base58-encoded public key is required.`
+    );
+  }
+
+  // Validate using existing strict validation
+  const validation = validateSolanaAddress(trimmedAccount);
+
+  if (!validation.valid) {
+    throw new Error(
+      `Invalid account address for ${context}: ${validation.error}. ` +
+      `Please ensure your wallet is connected and try again.`
+    );
+  }
+
+  return trimmedAccount;
+}

@@ -3,7 +3,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { RedisService } from '../redis/redis.service';
 import { SchemaParserService } from '../schema-parser/schema-parser.service';
 import { TransactionBuilderService } from '../solana/transaction-builder.service';
-import { validateSolanaAddress, isPlaceholder } from '../utils/solana-validation.utils';
+import { validateSolanaAddress, isPlaceholder, validateAndSanitizeAccount } from '../utils/solana-validation.utils';
 import {
   ActionPostResponse,
   PostResponse,
@@ -143,15 +143,37 @@ export class ActionsService {
   }
 
   async postAction(formId: string, account: string, body: any, query?: Record<string, any>) {
-    // Use default account for testing if not provided
-    const userAccount = account || 'test-account';
-
     const form = await this.prisma.form.findUnique({
       where: { id: formId },
     });
     if (!form) {
       console.error('[Actions POST] Form not found:', formId);
       throw new Error('Form not found');
+    }
+
+    // Validate account parameter before any processing
+    let userAccount: string;
+    try {
+      userAccount = validateAndSanitizeAccount(account, 'form submission');
+    } catch (error) {
+      console.error('[Actions POST] Account validation failed:', error.message);
+      console.error('[Actions POST] Received account value:', account);
+
+      const baseUrl = process.env.BASE_URL || 'https://blinkform-backend.vercel.app';
+      return {
+        type: 'error',
+        icon: 'https://via.placeholder.com/600x400/EF4444/FFFFFF?text=Error',
+        title: 'Wallet Connection Error',
+        description: error.message,
+        label: 'Retry',
+        message: error.message,
+        links: {
+          actions: [{
+            label: 'Retry',
+            href: `${baseUrl}/api/actions/${formId}`
+          }]
+        }
+      };
     }
 
     const sessionKey = `session:${formId}:${userAccount}`;
@@ -761,7 +783,8 @@ export class ActionsService {
    * @returns ActionGetResponse with next question UI
    */
   async getNextAction(formId: string, account: string): Promise<ActionGetResponse> {
-    const userAccount = account || 'test-account';
+    // Validate account parameter
+    const userAccount = validateAndSanitizeAccount(account, 'next action');
 
     // Retrieve session
     const sessionKey = `session:${formId}:${userAccount}`;

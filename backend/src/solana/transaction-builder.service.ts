@@ -147,6 +147,18 @@ export class TransactionBuilderService {
     try {
       this.logger.log(`Creating SOL transfer transaction: ${amount} SOL from ${fromAccount} to ${toAccount}`);
 
+      // Validate fromAccount before creating PublicKey
+      const fromValidation = this.validateSolanaAddressStrict(fromAccount);
+      if (!fromValidation.valid) {
+        throw new Error(`Invalid sender address (fromAccount): ${fromValidation.error}`);
+      }
+
+      // Validate toAccount
+      const toValidation = this.validateSolanaAddressStrict(toAccount);
+      if (!toValidation.valid) {
+        throw new Error(`Invalid recipient address (toAccount): ${toValidation.error}`);
+      }
+
       const fromPublicKey = new PublicKey(fromAccount);
       const toPublicKey = new PublicKey(toAccount);
 
@@ -491,6 +503,13 @@ export class TransactionBuilderService {
   ): Promise<string> {
     this.logger.log(`[TransactionBuilder] Creating ${transactionType} transaction for account: ${account}`);
     this.logger.log(`[TransactionBuilder] Parameters:`, JSON.stringify(parameters, null, 2));
+
+    // Validate account parameter BEFORE any transaction creation
+    const accountValidation = this.validateSolanaAddressStrict(account);
+    if (!accountValidation.valid) {
+      this.logger.error(`[TransactionBuilder] Invalid account parameter: ${accountValidation.error}`);
+      throw new Error(`Transaction creation failed: Invalid sender account - ${accountValidation.error}`);
+    }
 
     let transaction: string;
     switch (transactionType) {

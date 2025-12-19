@@ -134,6 +134,16 @@ export class ActionsController {
     try {
       // Account comes from the body in Solana Actions
       const account = body.account || body.data?.account;
+
+      // Log incoming request for debugging
+      console.log('[Actions Controller POST] Incoming request:', {
+        formId,
+        account: account || 'MISSING',
+        accountSource: body.account ? 'body.account' : (body.data?.account ? 'body.data.account' : 'NOT_PROVIDED'),
+        hasBody: !!body,
+        bodyKeys: Object.keys(body || {}),
+      });
+
       return this.actionsService.postAction(formId, account, body, query);
     } catch (error) {
       console.error('[Actions Controller] POST error:', error);
