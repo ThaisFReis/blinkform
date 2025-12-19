@@ -234,6 +234,28 @@ export class ActionsService {
                        currentNode.data?.requiresTransaction === true ||
                        (nextNode && nextNode.data?.requiresTransaction === true);
 
+    // In demo mode, skip all transactions and return mock success
+    const isDemoMode = process.env.DEMO_MODE === 'true';
+    if (isDemoMode) {
+      // Save submission to database
+      await this.prisma.submission.create({
+        data: {
+          formId: form.id,
+          userAccount: userAccount,
+          answers: sessionData.answers,
+        },
+      });
+
+      // Clear session
+      await this.redis.del(sessionKey);
+
+      // Return mock success response
+      return {
+        type: 'post',
+        message: '🎉 Demo Complete! Form submitted successfully with mock transaction.\n\nIn a real scenario, this would have created a blockchain transaction, but demo mode prevents any real wallet connections.',
+      } as PostResponse;
+    }
+
     if (isFinalStep) {
       // FINAL STEP: Create transaction and save submission
 
