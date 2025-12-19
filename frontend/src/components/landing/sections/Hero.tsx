@@ -65,12 +65,12 @@ const Hero: React.FC = () => {
 
           <div className={`${styles.ctas} ${styles.ctasSm}`}>
             <MagicButton href="/builder">
-              <span>Start Building Free <ArrowRight className="w-4 h-4" /></span>
+              <span>View Demo <ArrowRight className="w-4 h-4" /></span>
             </MagicButton>
 
-            <Link href="/builder" className={styles.demoLink}>
+            {/* <Link href="/builder" className={styles.demoLink}>
               <Eye className="mr-2 w-4 h-4" /> View Demo
-            </Link>
+            </Link> */}
           </div>
         </div>
 

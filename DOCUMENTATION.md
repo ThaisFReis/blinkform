@@ -46,7 +46,7 @@ BlinkForm is a revolutionary no-code visual builder that empowers users to creat
 #### Included
 - Visual form builder with drag-and-drop interface
 - Support for multiple input types (text, number, choice, date)
-- Transaction node types (SOL transfer, SPL token transfer, NFT minting)
+- Transaction node types (SOL transfer, SPL token transfer, token operations, NFT operations, batch airdrops)
 - Logic nodes (conditional branching, validation, calculations)
 - Solana Actions integration and compliance
 - Mobile-responsive form rendering
@@ -1522,6 +1522,6 @@ git push origin v1.0.0
 
 ---
 
-*Last Updated: December 14, 2024*
+*Last Updated: December 19, 2025*
 *Version: 1.0.0*
 *Contact: support@blinkform.com*

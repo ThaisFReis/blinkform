@@ -1,12 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import Link from 'next/link';
-import {
-  Zap,
-  Menu,
-  X,
-} from 'lucide-react';
-import styles from './Header.module.css';
-import MagicButton from '../shared/MagicButton';
+import React, { useState, useEffect } from "react";
+import Link from "next/link";
+import { Zap, Menu, X } from "lucide-react";
+import styles from "./Header.module.css";
+import MagicButton from "../shared/MagicButton";
 
 /**
  * Header component
@@ -18,17 +14,21 @@ const Header: React.FC = () => {
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   const navLinks = [
-    { name: 'Home', href: '/' },
-    { name: 'Builder', href: '/builder' },
+    { name: "Home", href: "/" },
+    { name: "Builder", href: "/builder" },
   ];
 
   return (
-    <nav className={`${styles.navbar} ${isScrolled || mobileMenuOpen ? styles.navbarScrolled : ''}`}>
+    <nav
+      className={`${styles.navbar} ${
+        isScrolled || mobileMenuOpen ? styles.navbarScrolled : ""
+      }`}
+    >
       {isScrolled && <div className={styles.shimmerBorder} />}
 
       <div className={styles.container}>
@@ -46,25 +46,9 @@ const Header: React.FC = () => {
         {/* Desktop Navigation */}
         <div className={`${styles.desktopNav} ${styles.desktopNavMd}`}>
           {navLinks.map((item) => (
-            item.external ? (
-              <a
-                key={item.name}
-                href={item.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={styles.navLink}
-              >
-                {item.name}
-              </a>
-            ) : (
-              <Link
-                key={item.name}
-                href={item.href}
-                className={styles.navLink}
-              >
-                {item.name}
-              </Link>
-            )
+            <Link key={item.name} href={item.href} className={styles.navLink}>
+              {item.name}
+            </Link>
           ))}
         </div>
 
@@ -89,20 +73,12 @@ const Header: React.FC = () => {
       </div>
 
       {/* Mobile Menu Dropdown */}
-      <div className={`${styles.mobileMenu} ${mobileMenuOpen ? styles.mobileMenuOpen : styles.mobileMenuClosed}`}>
-        {navLinks.map((item) => (
-          item.external ? (
-            <a
-              key={item.name}
-              href={item.href}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={styles.mobileNavLink}
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              {item.name}
-            </a>
-          ) : (
+      <div
+        className={`${styles.mobileMenu} ${
+          mobileMenuOpen ? styles.mobileMenuOpen : styles.mobileMenuClosed
+        }`}
+      >
+        {navLinks.map((item) =>
             <Link
               key={item.name}
               href={item.href}
@@ -111,8 +87,7 @@ const Header: React.FC = () => {
             >
               {item.name}
             </Link>
-          )
-        ))}
+        )}
         <div className={styles.mobileCtas}>
           <MagicButton href="/builder" className="w-full">
             Start Building
