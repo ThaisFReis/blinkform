@@ -130,9 +130,37 @@ export class SchemaParserService {
 
       if (isDemoMode) {
         // In demo mode, show mock completion
-        transactionDescription = `Demo Mode: This would ${transactionType.toLowerCase().replace('_', ' ')} ${params?.amount || 0} tokens/assets. No real transaction will be created.`;
+        let demoDescription = 'Demo Mode: No real transaction will be created.';
+
+        switch (transactionType) {
+          case 'CREATE_TOKEN':
+            demoDescription = `Demo Mode: This would create the "${params?.name || 'Token'}" token with symbol "${params?.symbol || ''}" and initial supply of ${params?.initialSupply || 0}. No real token will be created.`;
+            break;
+          case 'CREATE_NFT_COLLECTION':
+            demoDescription = `Demo Mode: This would create an NFT collection "${params?.name || 'Collection'}" with symbol "${params?.symbol || ''}". No real collection will be created.`;
+            break;
+          case 'MINT_NFT':
+            demoDescription = `Demo Mode: This would mint an NFT "${params?.name || 'NFT'}" into the collection. No real NFT will be minted.`;
+            break;
+          case 'BATCH_AIRDROP':
+            demoDescription = `Demo Mode: This would airdrop tokens to ${params?.recipients?.length || 0} recipients. No real airdrop will occur.`;
+            break;
+          case 'SYSTEM_TRANSFER':
+            demoDescription = `Demo Mode: This would transfer ${params?.amount || 0} SOL. No real transfer will occur.`;
+            break;
+          case 'SPL_TRANSFER':
+            demoDescription = `Demo Mode: This would transfer ${params?.amount || 0} tokens. No real transfer will occur.`;
+            break;
+          case 'SPL_MINT':
+          case 'MINT_TOKENS':
+            demoDescription = `Demo Mode: This would mint ${params?.amount || 0} tokens. No real tokens will be minted.`;
+            break;
+          default:
+            demoDescription = `Demo Mode: This would execute a ${transactionType.toLowerCase().replace('_', ' ')} transaction. No real transaction will be created.`;
+        }
+
         baseResponse.title = formTitle;
-        baseResponse.description = transactionDescription;
+        baseResponse.description = demoDescription;
         baseResponse.label = 'Complete Demo';
         baseResponse.links.actions = [{
           label: 'Complete Demo',
