@@ -8,7 +8,7 @@ import PartnersMarquee from '@/components/landing/sections/PartnersMarquee';
 import Features from '@/components/landing/sections/Features';
 import Showcase from '@/components/landing/sections/Showcase';
 import CTA from '@/components/landing/sections/CTA';
-import Footer from '@/components/landing/sections/Footer';
+/* import Footer from '@/components/landing/sections/Footer'; */
 
 /**
  * LandingPage component
@@ -24,7 +24,7 @@ export default function LandingPage() {
       <Features />
       <Showcase />
       <CTA />
-      <Footer />
+      {/* <Footer /> */}
     </div>
   );
 }
