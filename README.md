@@ -39,7 +39,7 @@ A no-code visual builder for creating Solana Blinks (Actions) with an intuitive 
 
 ## 📸 Screenshots
 
-*Coming soon - Screenshots of the visual builder interface and mobile preview*
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/081310df-a18f-4f0a-8d97-e4bde5236097" />
 
 ## 🛠️ Tech Stack
 
