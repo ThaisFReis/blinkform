@@ -534,7 +534,7 @@ export class TransactionBuilderService {
         break;
 
       case 'SPL_MINT':
-      case 'MINT_TOKENS':
+      case 'MINT_TOKENS': {
         this.logger.log(`${transactionType} requested with parameters:`, parameters);
 
         // Validate required parameters
@@ -561,8 +561,9 @@ export class TransactionBuilderService {
           parameters.decimals || 9
         );
         break;
+      }
 
-      case 'CREATE_TOKEN':
+      case 'CREATE_TOKEN': {
         this.logger.log('CREATE_TOKEN requested with parameters:', parameters);
 
         // Validate required parameters
@@ -588,6 +589,7 @@ export class TransactionBuilderService {
 
         transaction = await this.createTokenCreationTransaction(parameters);
         break;
+      }
 
       case 'CREATE_NFT_COLLECTION':
         this.logger.log('CREATE_NFT_COLLECTION requested with parameters:', parameters);
