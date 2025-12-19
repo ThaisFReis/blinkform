@@ -1,8 +1,6 @@
 import React from 'react';
 import {
   CheckCircle,
-  Wand2,
-  Wallet,
 } from 'lucide-react';
 import styles from './Showcase.module.css';
 import BentoCard from '../shared/BentoCard';
@@ -49,26 +47,6 @@ const Showcase: React.FC = () => {
             <div className={styles.blob}></div>
 
             <InteractiveDemo />
-
-            <div className={styles.floatingCard}>
-              <div className={styles.cardHeader}>
-                <div className={`${styles.cardIcon} ${styles.cardIconPurple}`}>
-                  <Wand2 className="w-4 h-4 text-white" />
-                </div>
-                <div className={styles.cardTitle}>Mint Pass</div>
-              </div>
-              <div className={styles.progress}></div>
-            </div>
-
-            <div className={`${styles.floatingCard} ${styles.floatingCard2}`}>
-              <div className={styles.cardHeader}>
-                <div className={`${styles.cardIcon} ${styles.cardIconCyan}`}>
-                  <Wallet className="w-4 h-4 text-white" />
-                </div>
-                <div className={styles.cardTitle}>Swap SOL</div>
-              </div>
-              <div className={styles.progress}></div>
-            </div>
           </div>
         </div>
       </div>

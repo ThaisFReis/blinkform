@@ -2,6 +2,10 @@
 
 A no-code visual builder for creating Solana Blinks (Actions) with an intuitive drag-and-drop interface. Build complex transaction flows, forms, and interactive experiences without writing code.
 
+## Status
+
+⚠️ **Note**: This dapp is not fully complete, and the blink has not been registered yet.
+
 ![BlinkForm](https://img.shields.io/badge/BlinkForm-Solana-blue)
 ![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?logo=typescript&logoColor=white)
 ![Next.js](https://img.shields.io/badge/Next.js-000000?logo=next.js&logoColor=white)
@@ -9,6 +13,7 @@ A no-code visual builder for creating Solana Blinks (Actions) with an intuitive 
 
 ## Table of Contents
 
+- [Status](#-status)
 - [Features](#-features)
 - [Tech Stack](#️-tech-stack)
 - [Project Structure](#-project-structure)
@@ -190,6 +195,11 @@ PORT=3001
 - **Calculation Node**: Mathematical operations
 - **Validation Node**: Input validation
 - **End Node**: Form completion
+- **Start Node**: The starting point of the form with title, description, and optional image
+- **Batch Airdrop Node**: For batch airdropping tokens to multiple recipients
+- **Create NFT Collection Node**: For creating NFT collections with name, symbol, royalty, and URI
+- **Create Token Node**: For creating new tokens with name, symbol, supply, decimals, and URI
+- **Mint Token Node**: For minting tokens to a recipient
 
 ### Form Submission
 
