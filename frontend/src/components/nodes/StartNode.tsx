@@ -28,7 +28,7 @@ export const StartNode: React.FC<StartNodeProps> = (props) => {
           <Handle
             type="target"
             position={Position.Left}
-            className="!w-6 !h-6 !rounded-full !bg-[#13131A] !border-2 !border-white/20 hover:!border-cyan-400 hover:!scale-110 !transition-all !cursor-crosshair !-left-3"
+            className="!w-6 !h-6 !rounded-full !bg-[#13131A] !border-2 !border-white/20 hover:!border-cyan-400 !cursor-crosshair !-left-3"
           />
 
           {content}
@@ -37,7 +37,7 @@ export const StartNode: React.FC<StartNodeProps> = (props) => {
           <Handle
             type="source"
             position={Position.Right}
-            className="!w-6 !h-6 !rounded-full !bg-[#13131A] !border-2 !border-[#460DF2]/50 hover:!border-[#460DF2] hover:!scale-110 !transition-all !cursor-crosshair !-right-3"
+            className="!w-6 !h-6 !rounded-full !bg-[#13131A] !border-2 !border-[#460DF2]/50 hover:!border-[#460DF2] !cursor-crosshair !-right-3"
           />
         </div>
       )}

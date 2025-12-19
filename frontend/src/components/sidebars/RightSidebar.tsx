@@ -1,9 +1,10 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useFormBuilderStore } from '@/store/formBuilderStore';
 import { X, Type, Hash, Calendar, Circle, CheckCircle, CreditCard, Image, Code, GitBranch, Shield, Calculator, Save, Info } from 'lucide-react';
 import { isQuestionNode, isTransactionNode, isLogicNode, isValidationNode, isCalculationNode, isEndNode, isStartNode, TransactionType, ConditionOperator, BRANCH_COLORS, ConditionalBranch, Condition, ValidationRule, CalculationOperation, CalculationOperator, SuccessAction, SuccessActionType } from '@/types/nodes';
+import { validateSolanaAddress } from '@/utils/solana-validation';
 
 // Type guard for NFT minting nodes
 const isMintNFTNode = (node: any): boolean => {
@@ -36,6 +37,9 @@ export const RightSidebar = () => {
         rightSidebarActiveTab,
         setRightSidebarActiveTab
     } = useFormBuilderStore();
+
+    // State for address validation errors
+    const [addressErrors, setAddressErrors] = useState<Record<string, string>>({});
 
     const handleTitleChange = (value: string) => {
         setFormMetadata({ title: value });
@@ -212,6 +216,29 @@ export const RightSidebar = () => {
             updateNode(selectedNodeId, {
                 parameters: { ...currentParameters, [key]: value }
             });
+        }
+    };
+
+    // Address validation handler
+    const handleAddressValidation = (fieldKey: string, address: string) => {
+        if (!address || address.trim() === '') {
+            // Clear error for empty fields (they're optional)
+            setAddressErrors(prev => ({ ...prev, [fieldKey]: '' }));
+            return;
+        }
+
+        // Skip validation for placeholders
+        if (address.startsWith('{{') && address.endsWith('}}')) {
+            setAddressErrors(prev => ({ ...prev, [fieldKey]: '' }));
+            return;
+        }
+
+        // Validate address
+        const validation = validateSolanaAddress(address);
+        if (!validation.valid) {
+            setAddressErrors(prev => ({ ...prev, [fieldKey]: validation.error || 'Invalid address' }));
+        } else {
+            setAddressErrors(prev => ({ ...prev, [fieldKey]: '' }));
         }
     };
 
@@ -781,9 +808,16 @@ export const RightSidebar = () => {
                                 type="text"
                                 value={parameters.recipientAddress || ''}
                                 onChange={(e) => handleTransactionParameterChange('recipientAddress', e.target.value)}
-                                className="w-full bg-[#13131A] border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-[#460DF2] transition-colors font-mono"
-                                placeholder="Recipient address or {{parameterName}}..."
+                                onBlur={(e) => handleAddressValidation('createToken_recipientAddress', e.target.value)}
+                                className={`w-full bg-[#13131A] border ${addressErrors['createToken_recipientAddress'] ? 'border-red-500' : 'border-white/10'} rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-[#460DF2] transition-colors font-mono`}
+                                placeholder="Leave empty to use user's wallet or {{parameterName}}"
                             />
+                            {addressErrors['createToken_recipientAddress'] && (
+                                <p className="text-xs text-red-500 mt-1">{addressErrors['createToken_recipientAddress']}</p>
+                            )}
+                            <p className="text-xs text-sidebar-foreground/60 mt-1">
+                                Optional. Valid format: 32-44 base58 characters (no 0, O, I, l)
+                            </p>
                         </div>
                         <div>
                             <label className="block text-xs font-medium text-sidebar-foreground mb-1">Metadata URI (Optional)</label>

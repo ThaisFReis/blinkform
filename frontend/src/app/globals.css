@@ -382,13 +382,50 @@ select:focus-visible {
 }
 
 /* ReactFlow custom styling for dark theme */
-.react-flow__edge.selected path {
-  stroke: #460DF2 !important;
-  stroke-width: 2.5 !important;
+/* Edge transitions for smooth interactions */
+.react-flow__edge path {
+  transition: stroke 0.2s ease, stroke-width 0.2s ease !important;
 }
 
+/* Selected edge styling with animation */
+.react-flow__edge.selected path {
+  stroke: #a855f7 !important;
+  stroke-width: 3px !important;
+}
+
+.react-flow__edge.selected .react-flow__edge-path {
+  stroke: #a855f7 !important;
+}
+
+/* Hover effects for better interactivity */
 .react-flow__edge:hover path {
-  stroke: #7C3AED !important;
+  stroke: #c084fc !important;
+  stroke-width: 3px !important;
+}
+
+.react-flow__edge:hover .react-flow__edge-path {
+  stroke: #c084fc !important;
+}
+
+/* Arrow marker hover effects */
+.react-flow__edge:hover marker path,
+.react-flow__edge.selected marker path {
+  fill: #a855f7 !important;
+  stroke: #a855f7 !important;
+}
+
+/* Better edge interaction area */
+.react-flow__edge-interaction {
+  stroke: transparent;
+  stroke-width: 20px !important;
+  fill: none;
+  cursor: pointer;
+}
+
+/* Connection line styling (when dragging to create new edge) */
+.react-flow__connectionline path {
+  stroke: #a855f7 !important;
+  stroke-width: 2.5px !important;
 }
 
 .react-flow__controls {

@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { PublicKey } from '@solana/web3.js';
 import { PrismaService } from '../prisma/prisma.service';
 import { RedisService } from '../redis/redis.service';
 import { SchemaParserService } from '../schema-parser/schema-parser.service';
 import { TransactionBuilderService } from '../solana/transaction-builder.service';
+import { validateSolanaAddress, isPlaceholder } from '../utils/solana-validation.utils';
 import {
   ActionPostResponse,
   PostResponse,
@@ -253,10 +253,11 @@ export class ActionsService {
               throw new Error('SYSTEM_TRANSFER requires amount parameter');
             }
             // Validate recipient address format
-            try {
-              new PublicKey(parameters.recipientAddress);
-            } catch (e) {
-              throw new Error(`Invalid recipient address: ${parameters.recipientAddress}`);
+            if (!isPlaceholder(parameters.recipientAddress)) {
+              const validation = validateSolanaAddress(parameters.recipientAddress);
+              if (!validation.valid) {
+                throw new Error(`Invalid recipient address: ${validation.error}`);
+              }
             }
           } else if (transactionData.transactionType === 'SPL_TRANSFER') {
             if (!parameters.recipientAddress) {
@@ -269,15 +270,17 @@ export class ActionsService {
               throw new Error('SPL_TRANSFER requires amount parameter');
             }
             // Validate addresses
-            try {
-              new PublicKey(parameters.recipientAddress);
-            } catch (e) {
-              throw new Error(`Invalid recipient address: ${parameters.recipientAddress}`);
+            if (!isPlaceholder(parameters.recipientAddress)) {
+              const validation = validateSolanaAddress(parameters.recipientAddress);
+              if (!validation.valid) {
+                throw new Error(`Invalid recipient address: ${validation.error}`);
+              }
             }
-            try {
-              new PublicKey(parameters.mintAddress);
-            } catch (e) {
-              throw new Error(`Invalid mint address: ${parameters.mintAddress}`);
+            if (!isPlaceholder(parameters.mintAddress)) {
+              const mintValidation = validateSolanaAddress(parameters.mintAddress);
+              if (!mintValidation.valid) {
+                throw new Error(`Invalid mint address: ${mintValidation.error}`);
+              }
             }
           } else if (transactionData.transactionType === 'SPL_MINT' || transactionData.transactionType === 'MINT_TOKENS') {
             if (!parameters.mintAddress) {
@@ -290,15 +293,17 @@ export class ActionsService {
               throw new Error(`${transactionData.transactionType} requires amount parameter`);
             }
             // Validate addresses
-            try {
-              new PublicKey(parameters.recipientAddress);
-            } catch (e) {
-              throw new Error(`Invalid recipient address: ${parameters.recipientAddress}`);
+            if (!isPlaceholder(parameters.recipientAddress)) {
+              const validation = validateSolanaAddress(parameters.recipientAddress);
+              if (!validation.valid) {
+                throw new Error(`Invalid recipient address: ${validation.error}`);
+              }
             }
-            try {
-              new PublicKey(parameters.mintAddress);
-            } catch (e) {
-              throw new Error(`Invalid mint address: ${parameters.mintAddress}`);
+            if (!isPlaceholder(parameters.mintAddress)) {
+              const mintValidation = validateSolanaAddress(parameters.mintAddress);
+              if (!mintValidation.valid) {
+                throw new Error(`Invalid mint address: ${mintValidation.error}`);
+              }
             }
           } else if (transactionData.transactionType === 'CREATE_TOKEN') {
             if (!parameters.name) {
@@ -313,11 +318,12 @@ export class ActionsService {
             if (!parameters.recipientAddress) {
               throw new Error('CREATE_TOKEN requires recipientAddress parameter');
             }
-            // Validate recipient address
-            try {
-              new PublicKey(parameters.recipientAddress);
-            } catch (e) {
-              throw new Error(`Invalid recipient address: ${parameters.recipientAddress}`);
+            // Validate recipient address with strict validation
+            if (!isPlaceholder(parameters.recipientAddress)) {
+              const validation = validateSolanaAddress(parameters.recipientAddress);
+              if (!validation.valid) {
+                throw new Error(`Invalid recipient address: ${validation.error}`);
+              }
             }
           } else if (transactionData.transactionType === 'CREATE_NFT_COLLECTION') {
             if (!parameters.name) {
@@ -343,15 +349,17 @@ export class ActionsService {
               throw new Error('MINT_NFT requires recipientAddress parameter');
             }
             // Validate addresses
-            try {
-              new PublicKey(parameters.collectionAddress);
-            } catch (e) {
-              throw new Error(`Invalid collection address: ${parameters.collectionAddress}`);
+            if (!isPlaceholder(parameters.collectionAddress)) {
+              const collectionValidation = validateSolanaAddress(parameters.collectionAddress);
+              if (!collectionValidation.valid) {
+                throw new Error(`Invalid collection address: ${collectionValidation.error}`);
+              }
             }
-            try {
-              new PublicKey(parameters.recipientAddress);
-            } catch (e) {
-              throw new Error(`Invalid recipient address: ${parameters.recipientAddress}`);
+            if (!isPlaceholder(parameters.recipientAddress)) {
+              const validation = validateSolanaAddress(parameters.recipientAddress);
+              if (!validation.valid) {
+                throw new Error(`Invalid recipient address: ${validation.error}`);
+              }
             }
           } else if (transactionData.transactionType === 'BATCH_AIRDROP') {
             if (!parameters.mintAddress) {
@@ -361,20 +369,22 @@ export class ActionsService {
               throw new Error('BATCH_AIRDROP requires recipients array parameter');
             }
             // Validate mint address
-            try {
-              new PublicKey(parameters.mintAddress);
-            } catch (e) {
-              throw new Error(`Invalid mint address: ${parameters.mintAddress}`);
+            if (!isPlaceholder(parameters.mintAddress)) {
+              const mintValidation = validateSolanaAddress(parameters.mintAddress);
+              if (!mintValidation.valid) {
+                throw new Error(`Invalid mint address: ${mintValidation.error}`);
+              }
             }
             // Validate each recipient
             for (const recipient of parameters.recipients) {
               if (!recipient.address || !recipient.amount) {
                 throw new Error('BATCH_AIRDROP recipients must have address and amount');
               }
-              try {
-                new PublicKey(recipient.address);
-              } catch (e) {
-                throw new Error(`Invalid recipient address: ${recipient.address}`);
+              if (!isPlaceholder(recipient.address)) {
+                const recipientValidation = validateSolanaAddress(recipient.address);
+                if (!recipientValidation.valid) {
+                  throw new Error(`Invalid recipient address: ${recipientValidation.error}`);
+                }
               }
             }
           }
@@ -429,10 +439,11 @@ export class ActionsService {
               throw new Error('SYSTEM_TRANSFER requires amount parameter');
             }
             // Validate recipient address format
-            try {
-              new PublicKey(parameters.recipientAddress);
-            } catch (e) {
-              throw new Error(`Invalid recipient address: ${parameters.recipientAddress}`);
+            if (!isPlaceholder(parameters.recipientAddress)) {
+              const validation = validateSolanaAddress(parameters.recipientAddress);
+              if (!validation.valid) {
+                throw new Error(`Invalid recipient address: ${validation.error}`);
+              }
             }
           } else if (transactionData.transactionType === 'SPL_TRANSFER') {
             if (!parameters.recipientAddress) {
@@ -445,15 +456,17 @@ export class ActionsService {
               throw new Error('SPL_TRANSFER requires amount parameter');
             }
             // Validate addresses
-            try {
-              new PublicKey(parameters.recipientAddress);
-            } catch (e) {
-              throw new Error(`Invalid recipient address: ${parameters.recipientAddress}`);
+            if (!isPlaceholder(parameters.recipientAddress)) {
+              const validation = validateSolanaAddress(parameters.recipientAddress);
+              if (!validation.valid) {
+                throw new Error(`Invalid recipient address: ${validation.error}`);
+              }
             }
-            try {
-              new PublicKey(parameters.mintAddress);
-            } catch (e) {
-              throw new Error(`Invalid mint address: ${parameters.mintAddress}`);
+            if (!isPlaceholder(parameters.mintAddress)) {
+              const mintValidation = validateSolanaAddress(parameters.mintAddress);
+              if (!mintValidation.valid) {
+                throw new Error(`Invalid mint address: ${mintValidation.error}`);
+              }
             }
           } else if (transactionData.transactionType === 'SPL_MINT' || transactionData.transactionType === 'MINT_TOKENS') {
             if (!parameters.mintAddress) {
@@ -466,15 +479,17 @@ export class ActionsService {
               throw new Error(`${transactionData.transactionType} requires amount parameter`);
             }
             // Validate addresses
-            try {
-              new PublicKey(parameters.recipientAddress);
-            } catch (e) {
-              throw new Error(`Invalid recipient address: ${parameters.recipientAddress}`);
+            if (!isPlaceholder(parameters.recipientAddress)) {
+              const validation = validateSolanaAddress(parameters.recipientAddress);
+              if (!validation.valid) {
+                throw new Error(`Invalid recipient address: ${validation.error}`);
+              }
             }
-            try {
-              new PublicKey(parameters.mintAddress);
-            } catch (e) {
-              throw new Error(`Invalid mint address: ${parameters.mintAddress}`);
+            if (!isPlaceholder(parameters.mintAddress)) {
+              const mintValidation = validateSolanaAddress(parameters.mintAddress);
+              if (!mintValidation.valid) {
+                throw new Error(`Invalid mint address: ${mintValidation.error}`);
+              }
             }
           } else if (transactionData.transactionType === 'CREATE_TOKEN') {
             if (!parameters.name) {
@@ -489,11 +504,12 @@ export class ActionsService {
             if (!parameters.recipientAddress) {
               throw new Error('CREATE_TOKEN requires recipientAddress parameter');
             }
-            // Validate recipient address
-            try {
-              new PublicKey(parameters.recipientAddress);
-            } catch (e) {
-              throw new Error(`Invalid recipient address: ${parameters.recipientAddress}`);
+            // Validate recipient address with strict validation
+            if (!isPlaceholder(parameters.recipientAddress)) {
+              const validation = validateSolanaAddress(parameters.recipientAddress);
+              if (!validation.valid) {
+                throw new Error(`Invalid recipient address: ${validation.error}`);
+              }
             }
           } else if (transactionData.transactionType === 'CREATE_NFT_COLLECTION') {
             if (!parameters.name) {
@@ -519,15 +535,17 @@ export class ActionsService {
               throw new Error('MINT_NFT requires recipientAddress parameter');
             }
             // Validate addresses
-            try {
-              new PublicKey(parameters.collectionAddress);
-            } catch (e) {
-              throw new Error(`Invalid collection address: ${parameters.collectionAddress}`);
+            if (!isPlaceholder(parameters.collectionAddress)) {
+              const collectionValidation = validateSolanaAddress(parameters.collectionAddress);
+              if (!collectionValidation.valid) {
+                throw new Error(`Invalid collection address: ${collectionValidation.error}`);
+              }
             }
-            try {
-              new PublicKey(parameters.recipientAddress);
-            } catch (e) {
-              throw new Error(`Invalid recipient address: ${parameters.recipientAddress}`);
+            if (!isPlaceholder(parameters.recipientAddress)) {
+              const validation = validateSolanaAddress(parameters.recipientAddress);
+              if (!validation.valid) {
+                throw new Error(`Invalid recipient address: ${validation.error}`);
+              }
             }
           } else if (transactionData.transactionType === 'BATCH_AIRDROP') {
             if (!parameters.mintAddress) {
@@ -537,20 +555,22 @@ export class ActionsService {
               throw new Error('BATCH_AIRDROP requires recipients array parameter');
             }
             // Validate mint address
-            try {
-              new PublicKey(parameters.mintAddress);
-            } catch (e) {
-              throw new Error(`Invalid mint address: ${parameters.mintAddress}`);
+            if (!isPlaceholder(parameters.mintAddress)) {
+              const mintValidation = validateSolanaAddress(parameters.mintAddress);
+              if (!mintValidation.valid) {
+                throw new Error(`Invalid mint address: ${mintValidation.error}`);
+              }
             }
             // Validate each recipient
             for (const recipient of parameters.recipients) {
               if (!recipient.address || !recipient.amount) {
                 throw new Error('BATCH_AIRDROP recipients must have address and amount');
               }
-              try {
-                new PublicKey(recipient.address);
-              } catch (e) {
-                throw new Error(`Invalid recipient address: ${recipient.address}`);
+              if (!isPlaceholder(recipient.address)) {
+                const recipientValidation = validateSolanaAddress(recipient.address);
+                if (!recipientValidation.valid) {
+                  throw new Error(`Invalid recipient address: ${recipientValidation.error}`);
+                }
               }
             }
           }

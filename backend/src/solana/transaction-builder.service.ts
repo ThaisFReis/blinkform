@@ -18,6 +18,7 @@ import {
   ASSOCIATED_TOKEN_PROGRAM_ID,
 } from '@solana/spl-token';
 import { MetaplexService } from './metaplex.service';
+import { validateSolanaAddress, isPlaceholder } from '../utils/solana-validation.utils';
 
 @Injectable()
 export class TransactionBuilderService {
@@ -33,15 +34,10 @@ export class TransactionBuilderService {
   }
 
   /**
-   * Validates a Solana address format
+   * Validates a Solana address format with strict base58 checking
    */
-  private validateSolanaAddress(address: string): boolean {
-    try {
-      new PublicKey(address);
-      return true;
-    } catch {
-      return false;
-    }
+  private validateSolanaAddressStrict(address: string): { valid: boolean; error?: string } {
+    return validateSolanaAddress(address);
   }
 
   /**
@@ -517,6 +513,17 @@ export class TransactionBuilderService {
         if (parameters.amount === undefined || parameters.amount === null) {
           throw new Error('SPL_TRANSFER requires amount parameter');
         }
+
+        // Validate addresses
+        const splRecipientValidation = this.validateSolanaAddressStrict(parameters.recipientAddress);
+        if (!splRecipientValidation.valid) {
+          throw new Error(`SPL_TRANSFER invalid recipientAddress: ${splRecipientValidation.error}`);
+        }
+        const splMintValidation = this.validateSolanaAddressStrict(parameters.mintAddress);
+        if (!splMintValidation.valid) {
+          throw new Error(`SPL_TRANSFER invalid mintAddress: ${splMintValidation.error}`);
+        }
+
         transaction = await this.createSplTransferTransaction(
           account,
           parameters.recipientAddress,
@@ -531,11 +538,13 @@ export class TransactionBuilderService {
         this.logger.log(`${transactionType} requested with parameters:`, parameters);
 
         // Validate required parameters
-        if (!this.validateSolanaAddress(parameters.mintAddress)) {
-          throw new Error(`${transactionType} requires valid mintAddress parameter`);
+        const mintValidation = this.validateSolanaAddressStrict(parameters.mintAddress);
+        if (!mintValidation.valid) {
+          throw new Error(`${transactionType} invalid mintAddress: ${mintValidation.error}`);
         }
-        if (!this.validateSolanaAddress(parameters.recipientAddress)) {
-          throw new Error(`${transactionType} requires valid recipientAddress parameter`);
+        const recipientValidation = this.validateSolanaAddressStrict(parameters.recipientAddress);
+        if (!recipientValidation.valid) {
+          throw new Error(`${transactionType} invalid recipientAddress: ${recipientValidation.error}`);
         }
         if (!this.validateAmount(parameters.amount)) {
           throw new Error(`${transactionType} requires valid amount parameter`);
@@ -566,8 +575,9 @@ export class TransactionBuilderService {
         if (!this.validateAmount(parameters.initialSupply)) {
           throw new Error('CREATE_TOKEN requires valid initialSupply parameter');
         }
-        if (!this.validateSolanaAddress(parameters.recipientAddress)) {
-          throw new Error('CREATE_TOKEN requires valid recipientAddress parameter');
+        const recipientValidation = this.validateSolanaAddressStrict(parameters.recipientAddress);
+        if (!recipientValidation.valid) {
+          throw new Error(`CREATE_TOKEN invalid recipientAddress: ${recipientValidation.error}`);
         }
         if (parameters.uri && !this.validateUri(parameters.uri)) {
           throw new Error('CREATE_TOKEN requires valid URI parameter');
@@ -607,6 +617,17 @@ export class TransactionBuilderService {
         if (!parameters.recipientAddress) {
           throw new Error('MINT_NFT requires recipientAddress parameter');
         }
+
+        // Validate addresses
+        const nftCollectionValidation = this.validateSolanaAddressStrict(parameters.collectionAddress);
+        if (!nftCollectionValidation.valid) {
+          throw new Error(`MINT_NFT invalid collectionAddress: ${nftCollectionValidation.error}`);
+        }
+        const nftRecipientValidation = this.validateSolanaAddressStrict(parameters.recipientAddress);
+        if (!nftRecipientValidation.valid) {
+          throw new Error(`MINT_NFT invalid recipientAddress: ${nftRecipientValidation.error}`);
+        }
+
         transaction = await this.createNftMintTransaction(parameters);
         break;
 
@@ -614,8 +635,9 @@ export class TransactionBuilderService {
         this.logger.log('BATCH_AIRDROP requested with parameters:', parameters);
 
         // Validate required parameters
-        if (!this.validateSolanaAddress(parameters.mintAddress)) {
-          throw new Error('BATCH_AIRDROP requires valid mintAddress parameter');
+        const airdropMintValidation = this.validateSolanaAddressStrict(parameters.mintAddress);
+        if (!airdropMintValidation.valid) {
+          throw new Error(`BATCH_AIRDROP invalid mintAddress: ${airdropMintValidation.error}`);
         }
         if (!parameters.recipients || !Array.isArray(parameters.recipients) || parameters.recipients.length === 0) {
           throw new Error('BATCH_AIRDROP requires non-empty recipients array parameter');
@@ -624,8 +646,9 @@ export class TransactionBuilderService {
         // Validate each recipient
         for (let i = 0; i < parameters.recipients.length; i++) {
           const recipient = parameters.recipients[i];
-          if (!this.validateSolanaAddress(recipient.address)) {
-            throw new Error(`BATCH_AIRDROP recipient ${i} has invalid address: ${recipient.address}`);
+          const recipientValidation = this.validateSolanaAddressStrict(recipient.address);
+          if (!recipientValidation.valid) {
+            throw new Error(`BATCH_AIRDROP recipient ${i} invalid address: ${recipientValidation.error}`);
           }
           if (!this.validateAmount(recipient.amount)) {
             throw new Error(`BATCH_AIRDROP recipient ${i} has invalid amount: ${recipient.amount}`);

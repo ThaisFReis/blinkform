@@ -8,7 +8,7 @@ import {
   Connection,
   NodeChange,
   EdgeChange,
-  useReactFlow,
+  ConnectionLineType,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import { useFormBuilderStore } from '@/store/formBuilderStore';
@@ -260,9 +260,35 @@ const GraphBuilder = () => {
   // Custom edge styling - gray default, purple when selected
   const defaultEdgeOptions = {
     type: 'smoothstep',
-    style: { stroke: '#4b5563', strokeWidth: 2 },
+    style: {
+      stroke: '#6b7280',
+      strokeWidth: 2.5,
+    },
     animated: false,
+    markerEnd: {
+      type: 'arrowclosed' as const,
+      color: '#6b7280',
+      width: 20,
+      height: 20,
+    },
   };
+
+  // Enhanced edges with hover and selection effects
+  const enhancedEdges = edges.map((edge) => ({
+    ...edge,
+    ...defaultEdgeOptions,
+    style: {
+      ...defaultEdgeOptions.style,
+      stroke: edge.selected ? '#a855f7' : '#6b7280',
+      strokeWidth: edge.selected ? 3 : 2.5,
+    },
+    markerEnd: {
+      ...defaultEdgeOptions.markerEnd,
+      color: edge.selected ? '#a855f7' : '#6b7280',
+    },
+    interactionWidth: 10, // Makes edges easier to hover and click
+    className: 'react-flow__edge-custom',
+  }));
 
   // Generic QuestionNode that renders the appropriate specific node
   const QuestionNode = (props: any) => {
@@ -331,7 +357,7 @@ const GraphBuilder = () => {
     <div className="h-full w-full pb-20 lg:pb-0">
       <ReactFlow
         nodes={nodes}
-        edges={edges}
+        edges={enhancedEdges}
         nodeTypes={nodeTypes}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
@@ -341,6 +367,12 @@ const GraphBuilder = () => {
         onEdgeContextMenu={onEdgeContextMenu}
         isValidConnection={isValidConnection}
         defaultEdgeOptions={defaultEdgeOptions}
+        connectionLineType={ConnectionLineType.SmoothStep}
+        connectionLineStyle={{
+          stroke: '#a855f7',
+          strokeWidth: 2.5,
+          strokeDasharray: '5, 5',
+        }}
         style={{ background: 'transparent' }}
         fitView
         attributionPosition="bottom-left"
