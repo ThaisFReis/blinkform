@@ -102,6 +102,7 @@ export class SchemaParserService {
       // Handle transaction nodes
       const transactionData = currentNode.data;
       const transactionType = transactionData.transactionType;
+      const isDemoMode = process.env.DEMO_MODE === 'true';
 
       let transactionDescription = 'Confirm the transaction details below';
 
@@ -127,27 +128,39 @@ export class SchemaParserService {
         params = {};
       }
 
-      switch (transactionType) {
-        case 'SYSTEM_TRANSFER':
-          transactionDescription = `Transfer ${params?.amount || 0} SOL to ${params?.recipientAddress || 'recipient'}`;
-          break;
-        case 'SPL_TRANSFER':
-          transactionDescription = `Transfer ${params?.amount || 0} tokens to ${params?.recipientAddress || 'recipient'}`;
-          break;
-        case 'SPL_MINT':
-          transactionDescription = `Mint ${params?.amount || 0} tokens to ${params?.recipientAddress || 'recipient'}`;
-          break;
-        default:
-          transactionDescription = 'Execute custom transaction';
-      }
+      if (isDemoMode) {
+        // In demo mode, show mock completion
+        transactionDescription = `Demo Mode: This would ${transactionType.toLowerCase().replace('_', ' ')} ${params?.amount || 0} tokens/assets. No real transaction will be created.`;
+        baseResponse.title = formTitle;
+        baseResponse.description = transactionDescription;
+        baseResponse.label = 'Complete Demo';
+        baseResponse.links.actions = [{
+          label: 'Complete Demo',
+          href: `${baseUrl}/api/actions/${formId}?confirm=demo`
+        }];
+      } else {
+        switch (transactionType) {
+          case 'SYSTEM_TRANSFER':
+            transactionDescription = `Transfer ${params?.amount || 0} SOL to ${params?.recipientAddress || 'recipient'}`;
+            break;
+          case 'SPL_TRANSFER':
+            transactionDescription = `Transfer ${params?.amount || 0} tokens to ${params?.recipientAddress || 'recipient'}`;
+            break;
+          case 'SPL_MINT':
+            transactionDescription = `Mint ${params?.amount || 0} tokens to ${params?.recipientAddress || 'recipient'}`;
+            break;
+          default:
+            transactionDescription = 'Execute custom transaction';
+        }
 
-      baseResponse.title = formTitle;
-      baseResponse.description = transactionDescription;
-      baseResponse.label = 'Confirm Transaction';
-      baseResponse.links.actions = [{
-        label: 'Confirm Transaction',
-        href: `${baseUrl}/api/actions/${formId}?confirm=transaction`
-      }];
+        baseResponse.title = formTitle;
+        baseResponse.description = transactionDescription;
+        baseResponse.label = 'Confirm Transaction';
+        baseResponse.links.actions = [{
+          label: 'Confirm Transaction',
+          href: `${baseUrl}/api/actions/${formId}?confirm=transaction`
+        }];
+      }
     } else {
       // Handle question nodes
       const questionType = currentNode.data?.questionType;
@@ -206,6 +219,10 @@ export class SchemaParserService {
         return true;
       case 'transaction':
         // For transaction nodes, we just need confirmation
+        const isDemoMode = process.env.DEMO_MODE === 'true';
+        if (isDemoMode) {
+          return input === 'demo' || input?.confirm === 'demo' || input === 'transaction' || input?.confirm === 'transaction';
+        }
         return input === 'transaction' || input?.confirm === 'transaction';
       case 'input':
         if (!node.data?.validation?.required) return true;
