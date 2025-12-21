@@ -1,6 +1,6 @@
 import { Injectable, Logger, Inject } from '@nestjs/common';
 import { KeypairService } from './keypair.service';
-import { Connection, PublicKey, VersionedTransaction } from '@solana/web3.js';
+import { Connection } from '@solana/web3.js';
 import { createUmi } from '@metaplex-foundation/umi-bundle-defaults';
 import {
   Umi,
@@ -13,9 +13,15 @@ import {
   percentAmount,
   createNoopSigner,
 } from '@metaplex-foundation/umi';
-import { mplTokenMetadata, createNft, createV1, updateV1 } from '@metaplex-foundation/mpl-token-metadata';
+import { 
+  mplTokenMetadata, 
+  createNft, 
+  createV1, 
+  mintV1,
+  updateV1,
+  TokenStandard 
+} from '@metaplex-foundation/mpl-token-metadata';
 import { fromWeb3JsPublicKey, toWeb3JsTransaction } from '@metaplex-foundation/umi-web3js-adapters';
-
 
 export interface CreateTokenParams {
   name: string;
@@ -72,38 +78,30 @@ export class MetaplexService {
   ) {
     const rpcUrl = process.env.SOLANA_RPC_URL || 'https://api.devnet.solana.com';
     this.connection = new Connection(rpcUrl, 'confirmed');
-// Initialize UMI with RPC URL
-this.umi = createUmi(rpcUrl);
+    this.umi = createUmi(rpcUrl);
 
-// Ensure signer identity is set before adding plugins
-this.ensureSignerIdentity();
+    this.ensureSignerIdentity();
 
-// Add Metaplex plugins
-try {
-  this.umi.use(mplTokenMetadata());
-  this.logger.log('mplTokenMetadata plugin installed successfully');
-} catch (error) {
-  this.logger.error('Failed to install Metaplex plugins:', error);
-  throw error;
-}
-    this.logger.log(`Metaplex service initialized with RPC: ${rpcUrl}`);
+    try {
+      this.umi.use(mplTokenMetadata());
+      this.logger.log('mplTokenMetadata plugin installed successfully');
+    } catch (error) {
+      this.logger.error('Failed to install Metaplex plugins:', error);
+      throw error;
+    }
   }
 
   private ensureSignerIdentity() {
     const mintAuthority = this.keypairService.getMintAuthority();
-    this.logger.log(`Mint authority available: ${!!mintAuthority}`);
     if (mintAuthority) {
       const umiSigner = createSignerFromKeypair(this.umi, {
         publicKey: fromWeb3JsPublicKey(mintAuthority.publicKey),
         secretKey: mintAuthority.secretKey,
       });
       this.umi.use(signerIdentity(umiSigner));
-      this.logger.log('Signer identity set with mint authority');
     } else {
-      // Generate a dummy signer to avoid NullSigner errors
       const dummySigner = generateSigner(this.umi);
       this.umi.use(signerIdentity(dummySigner));
-      this.logger.log('Signer identity set with generated dummy signer');
     }
   }
 
@@ -111,53 +109,58 @@ try {
     try {
       this.logger.log(`Creating token: ${params.name} (${params.symbol}) for user ${params.userAccount}`);
 
-      // 1. Define the User as a Signer (NoopSigner)
-      // We don't have their secret key, but we know they MUST sign this transaction.
+      // 1. Create a "No-Op" Signer for the User
       const userPublicKey = publicKey(params.userAccount);
       const userSigner = createNoopSigner(userPublicKey);
 
-      // 2. Generate a new Keypair for the Mint Account
-      // This MUST be signed by the backend because we generated the secret key here.
+      // 2. Generate the Mint Keypair
       const mint = generateSigner(this.umi);
 
-      // 3. Determine Recipient (Default to User if not provided)
+      // 3. Determine Recipient (Default to User)
       const recipient = params.recipientAddress ? publicKey(params.recipientAddress) : userPublicKey;
 
-      // 4. Build Transaction
-      const tx = transactionBuilder()
+      // 4. Build the Transaction
+      // We explicitly set the User as the authority and payer.
+      let builder = transactionBuilder()
         .add(
           createV1(this.umi, {
             mint: mint,
-            authority: userSigner, // User is the Authority
-            payer: userSigner,     // User pays the fees
-            updateAuthority: userSigner, // User can update metadata later
+            authority: userSigner,       // User is Authority
+            payer: userSigner,           // User pays fee
+            updateAuthority: userSigner, // User keeps control
             name: params.name,
             symbol: params.symbol,
             uri: params.uri || '',
             sellerFeeBasisPoints: percentAmount(0),
             decimals: some(params.decimals || 9),
-            tokenStandard: 0, // Fungible
+            tokenStandard: TokenStandard.Fungible,
           })
         );
 
-      // 5. Build and Sign PARTIALLY
-      // We only have the 'mint' keypair. We sign with 'mint'.
-      // The 'userSigner' is a NoopSigner, so Umi won't try to sign with it,
-      // but it will include it in the instruction as a required signer.
-      const umiTx = await tx.buildAndSign(this.umi);
+      // 5. Add Mint Instruction if initial supply > 0
+      if (params.initialSupply > 0) {
+        builder = builder.add(
+          mintV1(this.umi, {
+            mint: mint.publicKey,
+            authority: userSigner,
+            amount: params.initialSupply,
+            tokenOwner: recipient,
+            tokenStandard: TokenStandard.Fungible,
+          })
+        );
+      }
 
-      // 6. Convert to Web3.js and Serialize
+      // 6. Build and Sign (Partial)
+      const umiTx = await builder.buildAndSign(this.umi);
+
+      // 7. Serialize
+      // VersionedTransaction.serialize() takes NO arguments.
+      // It does not enforce all signatures by default during serialization.
       const web3Tx = toWeb3JsTransaction(umiTx);
-
-      // IMPORTANT: The transaction now has the Mint's signature.
-      // It is missing the User's signature (fee payer/authority).
-      // The frontend/wallet will append the user's signature.
-
       const serialized = Buffer.from(web3Tx.serialize()).toString('base64');
 
-      this.logger.log(`Token creation transaction built. Mint: ${mint.publicKey}`);
+      this.logger.log(`Token creation transaction built. Mint Address: ${mint.publicKey}`);
       return serialized;
-
     } catch (error) {
       this.logger.error('Failed to create token with metadata:', error);
       throw new Error(`Failed to create token: ${error.message}`);
@@ -168,9 +171,6 @@ try {
     try {
       this.logger.log(`Creating NFT collection: ${params.name} (${params.symbol})`);
 
-      const collectionAuthority = this.keypairService.getCollectionAuthority();
-
-      // Generate new collection mint
       const collectionMint = generateSigner(this.umi);
 
       const tx = transactionBuilder()
@@ -182,17 +182,16 @@ try {
             symbol: params.symbol,
             uri: params.uri,
             sellerFeeBasisPoints: percentAmount(params.sellerFeeBasisPoints || 5),
-            decimals: some(0), // NFTs have 0 decimals
-            tokenStandard: 4, // ProgrammableNonFungible
+            decimals: some(0),
+            tokenStandard: TokenStandard.ProgrammableNonFungible,
             isCollection: true,
           })
         );
 
-      // Build and convert to web3.js
       const umiTx = await tx.buildAndSign(this.umi);
-
       const web3Tx = toWeb3JsTransaction(umiTx);
-
+      
+      // Fix: removed argument
       const serialized = Buffer.from(web3Tx.serialize()).toString('base64');
 
       this.logger.log(`NFT collection creation transaction created: ${collectionMint.publicKey}`);
@@ -208,9 +207,6 @@ try {
       this.logger.log(`Minting NFT from collection: ${params.collectionAddress}`);
 
       const collectionMint = publicKey(params.collectionAddress);
-      const recipient = publicKey(params.recipientAddress);
-
-      // Generate new NFT mint
       const nftMint = generateSigner(this.umi);
 
       const tx = transactionBuilder()
@@ -220,16 +216,15 @@ try {
             authority: this.umi.identity,
             name: params.name,
             uri: params.uri,
-            sellerFeeBasisPoints: percentAmount(5), // Default 5%
+            sellerFeeBasisPoints: percentAmount(5),
             collection: some({ verified: false, key: collectionMint }),
           })
         );
 
-      // Build and convert to web3.js
       const umiTx = await tx.buildAndSign(this.umi);
-
       const web3Tx = toWeb3JsTransaction(umiTx);
-
+      
+      // Fix: removed argument
       const serialized = Buffer.from(web3Tx.serialize()).toString('base64');
 
       this.logger.log(`NFT mint transaction created: ${nftMint.publicKey}`);
@@ -260,11 +255,10 @@ try {
           })
         );
 
-      // Build and convert to web3.js
       const umiTx = await tx.buildAndSign(this.umi);
-
       const web3Tx = toWeb3JsTransaction(umiTx);
-
+      
+      // Fix: removed argument
       const serialized = Buffer.from(web3Tx.serialize()).toString('base64');
 
       this.logger.log(`Metadata update transaction created for: ${params.mintAddress}`);
@@ -278,9 +272,6 @@ try {
   async burnTokens(params: BurnTokensParams): Promise<string> {
     try {
       this.logger.log(`Burning ${params.amount} tokens from ${params.ownerAddress}`);
-
-      // For token burning, we need to use SPL token instructions
-      // This is a simplified implementation - in production you'd want more validation
       throw new Error('Token burning not yet implemented - requires SPL token integration');
     } catch (error) {
       this.logger.error('Failed to burn tokens:', error);
@@ -291,9 +282,6 @@ try {
   async freezeTokenAccount(params: FreezeTokenAccountParams): Promise<string> {
     try {
       this.logger.log(`${params.freeze ? 'Freezing' : 'Thawing'} token account: ${params.accountAddress}`);
-
-      // For freeze/thaw, we need to use SPL token instructions
-      // This requires freeze authority to be set on the mint
       throw new Error('Token freeze/thaw not yet implemented - requires SPL token integration');
     } catch (error) {
       this.logger.error('Failed to freeze/thaw token account:', error);
@@ -304,8 +292,6 @@ try {
   async transferMintAuthority(params: { mintAddress: string, newAuthority: string }): Promise<string> {
     try {
       this.logger.log(`Transferring mint authority to: ${params.newAuthority}`);
-
-      // This would require SPL token setAuthority instruction
       throw new Error('Authority transfer not yet implemented - requires SPL token integration');
     } catch (error) {
       this.logger.error('Failed to transfer mint authority:', error);
