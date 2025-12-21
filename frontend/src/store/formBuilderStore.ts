@@ -26,6 +26,7 @@ export type FormBuilderStore = NodesSlice & EdgesSlice & MetadataSlice & ApiSlic
     isFormStarted: boolean;
   };
   startMobilePreview: () => void;
+  startMobileForm: () => void;
   navigateToNode: (nodeId: string) => void;
   goBackInPreview: () => void;
   updateResponse: (nodeId: string, value: any) => void;
@@ -120,6 +121,16 @@ export const useFormBuilderStore = create<FormBuilderStore>()(
           },
 
           startMobilePreview: () => {
+            // Just initialize the preview, don't start the form yet
+            set((state: any) => {
+              state.mobilePreview.currentNodeId = null;
+              state.mobilePreview.isFormStarted = false;
+              state.mobilePreview.navigationHistory = [];
+              state.mobilePreview.responses = {};
+            });
+          },
+
+          startMobileForm: () => {
             const { nodes } = get();
             // Try to find a start node first, otherwise use the first question node
             const startNode = nodes.find(node => node.type === 'start');

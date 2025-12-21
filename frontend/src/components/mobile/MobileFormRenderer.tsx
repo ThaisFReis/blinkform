@@ -18,6 +18,9 @@ export const MobileFormRenderer: React.FC = () => {
     updateResponse,
     goBackInPreview,
     resetMobilePreview,
+    startMobileForm,
+    title,
+    description,
   } = useFormBuilderStore();
 
   const currentNode = useMemo(() => {
@@ -204,6 +207,62 @@ export const MobileFormRenderer: React.FC = () => {
     return Math.round(((currentIndex + 1) / totalNodes) * 100);
   };
 
+  const startForm = () => {
+    startMobileForm();
+  };
+
+  // Show the blink card if form hasn't started
+  if (!mobilePreview.isFormStarted) {
+    return (
+      <div className="min-h-screen bg-gray-50 py-12 px-4">
+        <div className="max-w-md mx-auto">
+          {/* Blink Card */}
+          <div className="bg-white rounded-2xl shadow-lg border border-gray-200 overflow-hidden">
+            {/* Header */}
+            <div className="bg-gradient-to-r from-blue-500 to-purple-600 p-4">
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
+                  <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
+                  </svg>
+                </div>
+                <div>
+                  <h2 className="text-white font-bold text-lg">{title || 'Untitled Form'}</h2>
+                  <p className="text-white text-opacity-90 text-sm">blinkform.xyz</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Content */}
+            <div className="p-6">
+              {description && (
+                <p className="text-gray-700 mb-6 text-sm leading-relaxed">
+                  {description}
+                </p>
+              )}
+
+              <div className="space-y-3">
+                <button
+                  onClick={startForm}
+                  className="w-full bg-blue-500 hover:bg-blue-600 text-white py-3 px-4 rounded-lg font-medium transition-colors"
+                >
+                  Start Form
+                </button>
+
+                <div className="text-center">
+                  <p className="text-xs text-gray-500">
+                    {nodes.length} question{nodes.length !== 1 ? 's' : ''} • Interactive Solana form
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Show the form renderer
   return (
     <div className="min-h-screen bg-white flex flex-col">
       {/* Progress Bar */}
