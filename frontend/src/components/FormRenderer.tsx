@@ -1,11 +1,12 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
-import { BlinkFormNode, isQuestionNode, isTransactionNode, isEndNode } from '@/types/nodes';
+import { BlinkFormNode, isQuestionNode, isTransactionNode, isEndNode, isStartNode } from '@/types/nodes';
 import { MobileInputNode } from './mobile/MobileInputNode';
 import { MobileChoiceNode } from './mobile/MobileChoiceNode';
 import { MobileTransactionNode } from './mobile/MobileTransactionNode';
 import { MobileEndNode } from './mobile/MobileEndNode';
+import { MobileStartNode } from './mobile/MobileStartNode';
 
 interface FormRendererProps {
   nodes: BlinkFormNode[];
@@ -80,10 +81,14 @@ export const FormRenderer: React.FC<FormRendererProps> = ({
   };
 
   const startForm = () => {
+    // Try to find a start node first, otherwise use the first question node
+    const startNode = nodes.find(node => node.type === 'start');
     const firstQuestionNode = nodes.find(node => node.type === 'question');
-    if (firstQuestionNode) {
-      setCurrentNodeId(firstQuestionNode.id);
-      setNavigationHistory([firstQuestionNode.id]);
+
+    const targetNode = startNode || firstQuestionNode;
+    if (targetNode) {
+      setCurrentNodeId(targetNode.id);
+      setNavigationHistory([targetNode.id]);
       setIsFormStarted(true);
     }
   };
@@ -209,6 +214,13 @@ export const FormRenderer: React.FC<FormRendererProps> = ({
             setNavigationHistory([]);
             setIsFormStarted(false);
           }}
+        />
+      );
+    } else if (isStartNode(currentNode)) {
+      return (
+        <MobileStartNode
+          data={currentNode.data}
+          onNext={() => handleNodeNext()}
         />
       );
     } else {

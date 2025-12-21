@@ -121,12 +121,16 @@ export const useFormBuilderStore = create<FormBuilderStore>()(
 
           startMobilePreview: () => {
             const { nodes } = get();
+            // Try to find a start node first, otherwise use the first question node
+            const startNode = nodes.find(node => node.type === 'start');
             const firstQuestionNode = nodes.find(node => node.type === 'question');
-            if (firstQuestionNode) {
+
+            const targetNode = startNode || firstQuestionNode;
+            if (targetNode) {
               set((state: any) => {
-                state.mobilePreview.currentNodeId = firstQuestionNode.id;
+                state.mobilePreview.currentNodeId = targetNode.id;
                 state.mobilePreview.isFormStarted = true;
-                state.mobilePreview.navigationHistory = [firstQuestionNode.id];
+                state.mobilePreview.navigationHistory = [targetNode.id];
                 state.mobilePreview.responses = {};
               });
             }

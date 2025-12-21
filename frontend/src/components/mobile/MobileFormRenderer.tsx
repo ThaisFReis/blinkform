@@ -2,11 +2,12 @@
 
 import React, { useMemo } from 'react';
 import { useFormBuilderStore } from '@/store/formBuilderStore';
-import { BlinkFormNode, isQuestionNode, isTransactionNode, isEndNode } from '@/types/nodes';
+import { BlinkFormNode, isQuestionNode, isTransactionNode, isEndNode, isStartNode } from '@/types/nodes';
 import { MobileInputNode } from './MobileInputNode';
 import { MobileChoiceNode } from './MobileChoiceNode';
 import { MobileTransactionNode } from './MobileTransactionNode';
 import { MobileEndNode } from './MobileEndNode';
+import { MobileStartNode } from './MobileStartNode';
 
 export const MobileFormRenderer: React.FC = () => {
   const {
@@ -175,6 +176,13 @@ export const MobileFormRenderer: React.FC = () => {
         <MobileEndNode
           data={currentNode.data}
           onRestart={resetMobilePreview}
+        />
+      );
+    } else if (isStartNode(currentNode)) {
+      return (
+        <MobileStartNode
+          data={currentNode.data}
+          onNext={() => handleNodeNext()}
         />
       );
     } else {
