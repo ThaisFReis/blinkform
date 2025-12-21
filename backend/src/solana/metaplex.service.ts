@@ -150,12 +150,10 @@ export class MetaplexService {
         );
       }
 
-      // 6. Build and Sign (Partial)
-      const umiTx = await builder.buildAndSign(this.umi);
+      // 6. Build (Partial - user will sign)
+      const umiTx = await builder.build(this.umi);
 
       // 7. Serialize
-      // VersionedTransaction.serialize() takes NO arguments.
-      // It does not enforce all signatures by default during serialization.
       const web3Tx = toWeb3JsTransaction(umiTx);
       const serialized = Buffer.from(web3Tx.serialize()).toString('base64');
 
@@ -188,10 +186,8 @@ export class MetaplexService {
           })
         );
 
-      const umiTx = await tx.buildAndSign(this.umi);
+      const umiTx = await tx.build(this.umi);
       const web3Tx = toWeb3JsTransaction(umiTx);
-
-      // Fix: removed argument
       const serialized = Buffer.from(web3Tx.serialize()).toString('base64');
 
       this.logger.log(`[DEBUG] NFT collection transaction created: ${collectionMint.publicKey}, size=${serialized.length}, signatures=${web3Tx.signatures.length}, blockhash=${web3Tx.message.recentBlockhash}`);
@@ -221,10 +217,8 @@ export class MetaplexService {
           })
         );
 
-      const umiTx = await tx.buildAndSign(this.umi);
+      const umiTx = await tx.build(this.umi);
       const web3Tx = toWeb3JsTransaction(umiTx);
-
-      // Fix: removed argument
       const serialized = Buffer.from(web3Tx.serialize()).toString('base64');
 
       this.logger.log(`[DEBUG] NFT mint transaction created: ${nftMint.publicKey}, size=${serialized.length}, signatures=${web3Tx.signatures.length}, blockhash=${web3Tx.message.recentBlockhash}`);
@@ -255,10 +249,8 @@ export class MetaplexService {
           })
         );
 
-      const umiTx = await tx.buildAndSign(this.umi);
+      const umiTx = await tx.build(this.umi);
       const web3Tx = toWeb3JsTransaction(umiTx);
-      
-      // Fix: removed argument
       const serialized = Buffer.from(web3Tx.serialize()).toString('base64');
 
       this.logger.log(`Metadata update transaction created for: ${params.mintAddress}`);
