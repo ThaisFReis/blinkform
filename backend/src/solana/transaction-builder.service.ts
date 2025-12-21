@@ -384,9 +384,22 @@ export class TransactionBuilderService {
 
       case 'CREATE_TOKEN': {
         // Validation handled in validations section, strict checks
+        this.logger.log('CREATE_TOKEN requested with parameters:', parameters);
+
         if (!parameters.name) throw new Error('CREATE_TOKEN requires name');
         
-        transaction = await this.createTokenCreationTransaction(parameters, account);
+         if (!this.validateAmount(parameters.initialSupply)) {
+          throw new Error('CREATE_TOKEN requires valid initialSupply parameter');
+        }
+
+        // SAFETY FIX: Ensure initialSupply is a number before passing to Metaplex
+        const sanitizedParams = {
+            ...parameters,
+            initialSupply: Number(parameters.initialSupply),
+            decimals: Number(parameters.decimals || 9)
+        };
+
+        transaction = await this.createTokenCreationTransaction(sanitizedParams, account);
         break;
       }
 
