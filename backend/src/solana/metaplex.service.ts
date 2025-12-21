@@ -11,6 +11,7 @@ import {
   signerIdentity,
   createSignerFromKeypair,
   percentAmount,
+  createNoopSigner,
 } from '@metaplex-foundation/umi';
 import { mplTokenMetadata, createNft, createV1, updateV1 } from '@metaplex-foundation/mpl-token-metadata';
 import { fromWeb3JsPublicKey, toWeb3JsTransaction } from '@metaplex-foundation/umi-web3js-adapters';
@@ -108,39 +109,55 @@ try {
 
   async createTokenWithMetadata(params: CreateTokenParams): Promise<string> {
     try {
-      this.logger.log(`Creating token with metadata: ${params.name} (${params.symbol})`);
+      this.logger.log(`Creating token: ${params.name} (${params.symbol}) for user ${params.userAccount}`);
 
-      this.ensureSignerIdentity();
+      // 1. Define the User as a Signer (NoopSigner)
+      // We don't have their secret key, but we know they MUST sign this transaction.
+      const userPublicKey = publicKey(params.userAccount);
+      const userSigner = createNoopSigner(userPublicKey);
 
-      // Generate new mint signer
+      // 2. Generate a new Keypair for the Mint Account
+      // This MUST be signed by the backend because we generated the secret key here.
       const mint = generateSigner(this.umi);
 
-      // Create the token with metadata
+      // 3. Determine Recipient (Default to User if not provided)
+      const recipient = params.recipientAddress ? publicKey(params.recipientAddress) : userPublicKey;
+
+      // 4. Build Transaction
       const tx = transactionBuilder()
         .add(
           createV1(this.umi, {
-            mint,
-            authority: this.umi.identity,
+            mint: mint,
+            authority: userSigner, // User is the Authority
+            payer: userSigner,     // User pays the fees
+            updateAuthority: userSigner, // User can update metadata later
             name: params.name,
             symbol: params.symbol,
             uri: params.uri || '',
-            sellerFeeBasisPoints: percentAmount(0), // Tokens don't have royalties
+            sellerFeeBasisPoints: percentAmount(0),
             decimals: some(params.decimals || 9),
-            tokenStandard: 0, // Fungible token
+            tokenStandard: 0, // Fungible
           })
         );
 
-      // Build and convert to web3.js transaction
+      // 5. Build and Sign PARTIALLY
+      // We only have the 'mint' keypair. We sign with 'mint'.
+      // The 'userSigner' is a NoopSigner, so Umi won't try to sign with it,
+      // but it will include it in the instruction as a required signer.
       const umiTx = await tx.buildAndSign(this.umi);
 
-      // Convert UMI transaction to web3.js VersionedTransaction
+      // 6. Convert to Web3.js and Serialize
       const web3Tx = toWeb3JsTransaction(umiTx);
 
-      // Serialize for client signing
+      // IMPORTANT: The transaction now has the Mint's signature.
+      // It is missing the User's signature (fee payer/authority).
+      // The frontend/wallet will append the user's signature.
+
       const serialized = Buffer.from(web3Tx.serialize()).toString('base64');
 
-      this.logger.log(`Token creation transaction created: ${mint.publicKey}`);
+      this.logger.log(`Token creation transaction built. Mint: ${mint.publicKey}`);
       return serialized;
+
     } catch (error) {
       this.logger.error('Failed to create token with metadata:', error);
       throw new Error(`Failed to create token: ${error.message}`);

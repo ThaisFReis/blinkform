@@ -17,7 +17,7 @@ import {
   TOKEN_PROGRAM_ID,
   ASSOCIATED_TOKEN_PROGRAM_ID,
 } from '@solana/spl-token';
-import { MetaplexService } from './metaplex.service';
+import { MetaplexService, CreateTokenParams } from './metaplex.service';
 import { validateSolanaAddress, isPlaceholder } from '../utils/solana-validation.utils';
 
 @Injectable()
@@ -388,8 +388,15 @@ export class TransactionBuilderService {
   /**
    * Creates a token creation transaction with Metaplex metadata
    */
-  async createTokenCreationTransaction(params: any): Promise<string> {
-    return this.metaplexService.createTokenWithMetadata(params);
+  async createTokenCreationTransaction(params: any, userAccount: string): Promise<string> {
+    // Merge the userAccount into the params expected by MetaplexService
+    const createParams: CreateTokenParams = {
+      ...params,
+      userAccount: userAccount, // Inject the user account here
+      // Handle defaults if they are missing in params
+      recipientAddress: params.recipientAddress || userAccount
+    };
+    return this.metaplexService.createTokenWithMetadata(createParams);
   }
 
   /**
@@ -606,7 +613,7 @@ export class TransactionBuilderService {
           throw new Error('CREATE_TOKEN requires valid decimals parameter (0-9)');
         }
 
-        transaction = await this.createTokenCreationTransaction(parameters);
+        transaction = await this.createTokenCreationTransaction(parameters, account);
         break;
       }
 
