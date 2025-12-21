@@ -159,7 +159,7 @@ export class MetaplexService {
       const web3Tx = toWeb3JsTransaction(umiTx);
       const serialized = Buffer.from(web3Tx.serialize()).toString('base64');
 
-      this.logger.log(`Token creation transaction built. Mint Address: ${mint.publicKey}`);
+      this.logger.log(`[DEBUG] Token creation transaction built. Mint Address: ${mint.publicKey}, size=${serialized.length}, signatures=${web3Tx.signatures.length}, blockhash=${web3Tx.message.recentBlockhash}`);
       return serialized;
     } catch (error) {
       this.logger.error('Failed to create token with metadata:', error);
@@ -190,11 +190,11 @@ export class MetaplexService {
 
       const umiTx = await tx.buildAndSign(this.umi);
       const web3Tx = toWeb3JsTransaction(umiTx);
-      
+
       // Fix: removed argument
       const serialized = Buffer.from(web3Tx.serialize()).toString('base64');
 
-      this.logger.log(`NFT collection creation transaction created: ${collectionMint.publicKey}`);
+      this.logger.log(`[DEBUG] NFT collection transaction created: ${collectionMint.publicKey}, size=${serialized.length}, signatures=${web3Tx.signatures.length}, blockhash=${web3Tx.message.recentBlockhash}`);
       return serialized;
     } catch (error) {
       this.logger.error('Failed to create NFT collection:', error);
@@ -223,11 +223,11 @@ export class MetaplexService {
 
       const umiTx = await tx.buildAndSign(this.umi);
       const web3Tx = toWeb3JsTransaction(umiTx);
-      
+
       // Fix: removed argument
       const serialized = Buffer.from(web3Tx.serialize()).toString('base64');
 
-      this.logger.log(`NFT mint transaction created: ${nftMint.publicKey}`);
+      this.logger.log(`[DEBUG] NFT mint transaction created: ${nftMint.publicKey}, size=${serialized.length}, signatures=${web3Tx.signatures.length}, blockhash=${web3Tx.message.recentBlockhash}`);
       return serialized;
     } catch (error) {
       this.logger.error('Failed to mint NFT from collection:', error);

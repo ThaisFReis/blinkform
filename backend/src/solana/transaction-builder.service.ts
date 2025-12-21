@@ -116,7 +116,9 @@ export class TransactionBuilderService {
         })
       );
 
-      return Buffer.from(transaction.serialize({ requireAllSignatures: false })).toString('base64');
+      const serialized = Buffer.from(transaction.serialize({ requireAllSignatures: false })).toString('base64');
+      this.logger.log(`[DEBUG] System transfer transaction created: blockhash=${blockhash}, size=${serialized.length}, signatures=${transaction.signatures.length}`);
+      return serialized;
     } catch (error) {
       this.logger.error('Failed to create SOL transfer:', error);
       throw new Error(`Failed to create SOL transfer: ${error.message}`);

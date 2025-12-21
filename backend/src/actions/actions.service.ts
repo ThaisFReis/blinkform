@@ -714,6 +714,7 @@ export class ActionsService {
         }
 
         // Return TransactionResponse (requires blockchain signature)
+        console.log(`[DEBUG] Returning transaction response: size=${transaction.length}, timestamp=${new Date().toISOString()}`);
         return {
           transaction: transaction,
           message: detailedMessage,
